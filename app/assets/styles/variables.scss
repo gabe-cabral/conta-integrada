@@ -2,7 +2,7 @@
 $enable-caret:                true;
 $enable-rounded:              true;
 $enable-shadows:              true;
-$enable-gradients:            true;
+$enable-gradients:            false;
 $enable-transitions:          true;
 $enable-reduced-motion:       true;
 $enable-smooth-scroll:        true;
@@ -39,8 +39,8 @@ $gray-900: #212529 !default;
 $primary: #591902;
 $brown-light: #A66B37;
 $green-dark: #182621;
-$green: #39594A;
-$green-light: #5E8C77;
+$green: #217345; //#39594A;
+$green-light: #33C481;
 
 // Other colors
 $blue: #0d6efd;
