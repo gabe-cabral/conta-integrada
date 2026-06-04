@@ -6,9 +6,15 @@ const menuItems = [
   { name: 'Orçamento', link: '/budget' },
 ];
 
-const { loggedIn } = useUserSession()
+const userMenuItens = [
+  { name: 'Contas', link: '/user/accounts' },
+  { name: 'Cartões', link: '/' },
+  { name: 'Categorias', link: '/' },
+];
 
-watch(loggedIn, (newVal) => {
+const { loggedIn: userIsLogged } = useUserSession()
+
+watch(userIsLogged, (newVal) => {
   if (!newVal) {
     navigateTo('/login')
   }
@@ -26,49 +32,71 @@ onMounted(async () => {
 </script>
 
 <template>
-  <nav class="navbar navbar-expand-lg bg-transparent border-bottom border-primary">
-    <div class="container justify-content-center">
-      <a class="navbar-brand text-primary" href="#">Conta Integrada</a>
-      <AuthState>
-        <template #default="{ loggedIn, clear, user }">
-          <div v-if="loggedIn" class="mx-auto">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-              <li v-for="menu in menuItems" :key="menu.link" class="nav-item">
-                <NuxtLink class="nav-link active" aria-current="page" :to="menu.link" exact-active-class="active">
-                  {{ menu.name }}
-                </NuxtLink>
-              </li>
-            </ul>
-          </div>
-          <div v-if="loggedIn" class="dropdown text-end">
-            <a href="#"
-              class="d-flex align-items-center link-body-emphasis text-decoration-none dropdown-toggle"
-              data-bs-toggle="dropdown" aria-expanded="false">
-              <img src="https://github.com/mdo.png" alt="mdo" width="32" height="32" class="rounded-circle me-2">
-              <span class="d-inline-block text-truncate" style="max-width: 10rem;">{{ user?.name?.split(' ')?.at(0) }}</span>
-            </a>
-            <ul class="dropdown-menu dropdown-menu-end text-small" style="">
-              <li><a class="dropdown-item" href="#">New project...</a></li>
-              <li><a class="dropdown-item" href="#">Settings</a></li>
-              <li><a class="dropdown-item" href="#">Profile</a></li>
-              <li>
-                <hr class="dropdown-divider">
-              </li>
-              <li>
-                <button type="button" class="dropdown-item text-danger fw-bold" @click="clear">
-                  <i class="bi bi-box-arrow-right me-1" /> Sair
-                </button>
-              </li>
-            </ul>
-          </div>
-          <NuxtLink v-else to="/login" class="btn btn-primary ms-auto">Entrar</NuxtLink>
-        </template>
-        <template #placeholder>
-          <div class="spinner-border" role="status">
-            <span class="visually-hidden">Verificando sessão...</span>
-          </div>
-        </template>
-      </AuthState>
-    </div>
-  </nav>
+  <header>
+    <nav class="navbar navbar-expand-lg">
+      <div class="container">
+        <a class="navbar-brand me-4" href="#">
+          <img src="/logo.svg" alt="Conta Integrada" height="48" class="d-inline-block align-text-top">
+        </a>
+        <AuthState>
+          <template #default="{ loggedIn, clear, user }">
+            <LayoutSearch :logged-in="loggedIn" class="mx-md-auto my-2 my-md-0" />
+            <div v-if="loggedIn" class="dropdown text-end">
+              <a href="#"
+                 class="d-flex align-items-center link-body-emphasis text-decoration-none dropdown-toggle"
+                 data-bs-toggle="dropdown" aria-expanded="false">
+                <img src="https://github.com/mdo.png" alt="mdo" width="32" height="32"
+                     class="rounded-circle me-2">
+                <span class="d-inline-block text-truncate"
+                      style="max-width: 10rem;">{{ user?.name?.split(' ')?.at(0) }}</span>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end text-small" style="">
+                <li v-for="menu in userMenuItens" :key="menu.link" class="dropdown-item">
+                  <NuxtLink class="nav-link active" aria-current="page" :to="menu.link"
+                            exact-active-class="active">
+                    {{ menu.name }}
+                  </NuxtLink>
+                </li>
+                <li>
+                  <hr class="dropdown-divider">
+                </li>
+                <li><a class="dropdown-item" href="#">Profile</a></li>
+                <li>
+                  <button type="button" class="dropdown-item text-danger fw-bold" @click="clear">
+                    <i class="bi bi-box-arrow-right me-1" /> Sair
+                  </button>
+                </li>
+              </ul>
+            </div>
+            <NuxtLink v-else to="/login" class="btn btn-primary ms-auto">Entrar</NuxtLink>
+          </template>
+        </AuthState>
+      </div>
+    </nav>
+    <nav class="navbar navbar-expand-lg bg-alternative py-3" data-bs-theme="dark">
+      <div class="container justify-content-between">
+        <div class="navbar-brand text-uppercase">{{ $route.meta.title }}</div>
+        <AuthState>
+          <template #default="{ loggedIn }">
+            <div v-if="loggedIn" class="mx-auto">
+              <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li v-for="menu in menuItems" :key="menu.link" class="nav-item">
+                  <NuxtLink class="nav-link active" aria-current="page" :to="menu.link"
+                            exact-active-class="active">
+                    {{ menu.name }}
+                  </NuxtLink>
+                </li>
+              </ul>
+            </div>
+            <div id="ci_cta" />
+          </template>
+          <template #placeholder>
+            <div class="spinner-border" role="status">
+              <span class="visually-hidden">Verificando sessão...</span>
+            </div>
+          </template>
+        </AuthState>
+      </div>
+    </nav>
+  </header>
 </template>

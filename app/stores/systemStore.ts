@@ -1,4 +1,4 @@
-import type { BaseResponseModel } from '@/models/BaseResponseModel';
+import type { BaseResponse } from '../models/base/BaseResponseModel';
 import { defineStore } from 'pinia';
 import type { RouteLocationAsRelativeGeneric } from 'vue-router';
 
@@ -22,6 +22,7 @@ interface SystemState {
   pageTitle: string | undefined;
   ctaButton: CallToAction | undefined;
   toasts: ToastAlert[];
+  defaultCurrency: string;
 }
 
 const useSystemStore = defineStore('system', {
@@ -29,6 +30,7 @@ const useSystemStore = defineStore('system', {
     pageTitle: undefined,
     ctaButton: undefined,
     toasts: [] as ToastAlert[],
+    defaultCurrency: 'BRL',
   } as SystemState),
 
   getters: {},
@@ -60,7 +62,7 @@ const useSystemStore = defineStore('system', {
       }
     },
 
-    addResultErrorMessage(result: BaseResponseModel<object>, defaultTitle: string = 'Aconteceu um erro') {
+    addResultErrorMessage(result: BaseResponse<object>, defaultTitle: string = 'Aconteceu um erro') {
       let title = defaultTitle;
       let message = 'Ocorreu um erro desconhecido na solicitação.';
 
@@ -86,6 +88,8 @@ const useSystemStore = defineStore('system', {
     clearStore() {
       this.pageTitle = 'Início';
       this.ctaButton = undefined;
+      this.toasts = [];
+      this.defaultCurrency = 'BRL';
     },
   },
 });
