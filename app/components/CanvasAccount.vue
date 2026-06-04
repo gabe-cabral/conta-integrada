@@ -1,0 +1,202 @@
+<script setup lang="ts">
+import useSystemStore from '~/stores/systemStore';
+import { useAppStore } from '~/stores/appStore';
+import type { BankAccount } from '~~/shared/schemas/bankAccounts.js';
+
+interface AccountForm extends Omit<BankAccount, '_id' | 'createdAt' | 'userId'> {
+  _id: string | null;
+  createdAt?: Date;
+  userId?: string;
+}
+
+const emits = defineEmits<{
+  close: [];
+}>();
+
+const props = withDefaults(defineProps<{
+  id?: string | null;
+  account?: BankAccount | null;
+}>(), {
+  id: null,
+  account: null,
+});
+
+const appStore = useAppStore();
+const systemStore = useSystemStore();
+
+const loading = ref(false);
+const sending = ref(false);
+const validated = ref(false);
+const account = ref<AccountForm | null>(null);
+const formCurrentAmount = ref(0);
+const formIncomeAmount = ref(0);
+const formExpensesAmount = ref(0);
+
+const accountTypes = [
+  { value: 'CHECKING', label: 'Conta corrente' },
+  { value: 'SAVINGS', label: 'Poupanca' },
+  { value: 'CREDIT_CARD', label: 'Cartao de credito' },
+  { value: 'INVESTMENT', label: 'Investimento' },
+  { value: 'LOAN', label: 'Emprestimo' },
+  { value: 'WALLET', label: 'Carteira' },
+  { value: 'OTHER', label: 'Outro' },
+] as const;
+
+const submitLabel = computed(() => props.id === 'new' ? 'Criar conta' : 'Salvar alteracoes');
+
+function getCurrencySymbol(code: string) {
+  const currency = appStore.currencies.find(c => c.code === code);
+  return currency ? currency.symbol : code;
+}
+
+function closePanel() {
+  account.value = null;
+  emits('close');
+}
+
+function setMoneyRefs(source: AccountForm) {
+  formCurrentAmount.value = source.current.amountInCents / 100;
+  formIncomeAmount.value = source.income.amountInCents / 100;
+  formExpensesAmount.value = source.expenses.amountInCents / 100;
+}
+
+function createNew() {
+  const newAccount: AccountForm = {
+    _id: null,
+    brand: '',
+    current: {
+      amountInCents: 0,
+      currency: systemStore.defaultCurrency,
+    },
+    name: '',
+    type: 'CHECKING',
+    expenses: {
+      amountInCents: 0,
+      currency: systemStore.defaultCurrency,
+    },
+    income: {
+      amountInCents: 0,
+      currency: systemStore.defaultCurrency,
+    },
+    number: '',
+    updatedAt: null,
+  };
+
+  account.value = newAccount;
+  setMoneyRefs(newAccount);
+}
+
+function loadFromProp(source: BankAccount) {
+  const loadedAccount: AccountForm = {
+    ...source,
+    _id: source._id ?? null,
+    number: source.number ?? '',
+  };
+
+  account.value = loadedAccount;
+  setMoneyRefs(loadedAccount);
+}
+
+function syncAccount() {
+  if (!props.id) {
+    account.value = null;
+    return;
+  }
+
+  if (props.id === 'new') {
+    createNew();
+    return;
+  }
+
+  if (props.account) {
+    loadFromProp(props.account);
+  } else {
+    account.value = null;
+  }
+}
+
+function submit() {
+  validated.value = true;
+
+  if (!account.value) return;
+
+  sending.value = true;
+  account.value.current.amountInCents = Math.round(formCurrentAmount.value * 100);
+  account.value.income.amountInCents = Math.round(formIncomeAmount.value * 100);
+  account.value.expenses.amountInCents = Math.round(formExpensesAmount.value * 100);
+  sending.value = false;
+}
+
+watch(() => [props.id, props.account] as const, syncAccount, { immediate: true });
+</script>
+
+<template>
+  <BaseCanvas :id="props.id" kind="account" title="conta" :loading="loading" :sending="sending"
+              :validated="validated" loading-label="Obtendo conta..." :submit-label="submitLabel"
+              @close="closePanel" @submit="submit">
+    <template v-if="account">
+      <p v-if="account.updatedAt">
+        <small class="text-muted fst-italic">
+          Alterado ultima vez {{ relativeTimeHelper(account.updatedAt) }}<br>
+          <RouterLink :to="{ name: 'parameter-history', params: { id: props.id } }">
+            <i class="bi bi-clock-history" /> ver historico
+          </RouterLink>
+        </small>
+      </p>
+
+      <div class="mb-3">
+        <label for="account_name" class="form-label">Nome</label>
+        <input id="account_name" v-model="account.name" type="text" class="form-control" required minlength="3"
+               maxlength="100">
+      </div>
+
+      <div class="mb-3">
+        <label for="account_brand" class="form-label">Instituicao</label>
+        <input id="account_brand" v-model="account.brand" type="text" class="form-control" required maxlength="100">
+      </div>
+
+      <div class="mb-3">
+        <label for="account_type" class="form-label">Tipo</label>
+        <select id="account_type" v-model="account.type" class="form-select" required>
+          <option v-for="type in accountTypes" :key="type.value" :value="type.value">
+            {{ type.label }}
+          </option>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label for="account_number" class="form-label">Numero</label>
+        <input id="account_number" v-model="account.number" type="text" class="form-control" maxlength="100">
+      </div>
+
+      <div class="mb-3">
+        <label for="account_current" class="form-label">Saldo atual</label>
+        <div class="input-group">
+          <span class="input-group-text">{{ getCurrencySymbol(account.current.currency) }}</span>
+          <input id="account_current" v-model="formCurrentAmount" type="number" class="form-control" step="0.01">
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="account_income" class="form-label">Receitas</label>
+        <div class="input-group">
+          <span class="input-group-text">{{ getCurrencySymbol(account.income.currency) }}</span>
+          <input id="account_income" v-model="formIncomeAmount" type="number" class="form-control" min="0" step="0.01">
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="account_expenses" class="form-label">Despesas</label>
+        <div class="input-group">
+          <span class="input-group-text">{{ getCurrencySymbol(account.expenses.currency) }}</span>
+          <input id="account_expenses" v-model="formExpensesAmount" type="number" class="form-control" min="0"
+                 step="0.01">
+        </div>
+      </div>
+    </template>
+
+    <p v-else class="text-muted mb-0">
+      Conta nao encontrada.
+    </p>
+  </BaseCanvas>
+</template>

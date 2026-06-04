@@ -14,7 +14,7 @@ interface TransactionForm extends Omit<Transaction, '_id' | 'date' | 'sourceId' 
   sourceId: string | null;
 }
 
-const { $api } = useNuxtApp();
+const { $userApi } = useNuxtApp();
 const router = useRouter();
 
 const emits = defineEmits(['close']);
@@ -111,7 +111,7 @@ async function submit() {
   }
 
   try {
-    const result = await $api<Transaction>('/transactions', {
+    const result = await $userApi<Transaction>('/transactions', {
       method: props.id === 'new' ? 'PUT' : 'PATCH',
       body: {
         ...transaction.value,
