@@ -16,9 +16,9 @@ export function parseTransaction(tx: any): Transaction {
 }
 
 export async function useUserTransactions(userId: string, query: UserTransactionsRequestQuery): Promise<Transaction[]> {
-  const { $api } = useNuxtApp();
+  const { $userApi } = useNuxtApp();
 
-  const result = await $api<Transaction[]>(`/users/${userId}/transactions`, {
+  const result = await $userApi<Transaction[]>('/transactions', {
     method: 'GET',
     query,
   });

@@ -3,12 +3,15 @@ import useSystemStore from "~/stores/systemStore"
 export default defineNuxtPlugin((nuxtApp) => {
   const { session } = useUserSession()
 
-  const api = $fetch.create({
+  const userApi = $fetch.create({
     baseURL: 'http://localhost:3000/api',
 
     onRequest({ request, options, error }) {
+      if (!session.value?.user) throw new Error('User not found in session');
+
       options.headers.set('X-Correlation-ID', crypto.randomUUID())
-      options.headers.set('X-User-ID', session.value?.user?.id || 'guest')
+      options.headers.set('X-User-ID', session.value.user.id)
+      options.baseURL += '/users/' + (session.value.user.id)
 
       if (error) console.error('API Request Error:', error)
     },
@@ -44,10 +47,10 @@ export default defineNuxtPlugin((nuxtApp) => {
     },
   })
 
-  // Expose to useNuxtApp().$api
+  // Expose to useNuxtApp().$userApi
   return {
     provide: {
-      api,
+      userApi,
     },
   }
 })

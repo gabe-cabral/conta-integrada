@@ -1,9 +1,8 @@
 import { z } from 'zod';
-import { ObjectId } from 'mongodb';
 
-export const zodObjectId = z.unknown()
-  .refine((value) => ObjectId.isValid(value as any))
-  .meta({ bsonType: "objectId" });
+export const zodObjectId = z.string()
+  .regex(/^[a-f\d]{24}$/i)
+  .meta({ bsonType: 'objectId' });
 
 export const zodBsonDatetime = z.unknown()
   .refine((value) => !Number.isNaN(new Date(value as any).getTime()))
