@@ -17,10 +17,9 @@ export default defineNuxtPlugin((nuxtApp) => {
     },
 
     async onResponseError({ response, error }) {
-      const systemStore = useSystemStore()
-
       if (response.status === 401) {
         await nuxtApp.runWithContext(() => {
+          const systemStore = useSystemStore()
           navigateTo('/login')
 
           systemStore.addMessage(
@@ -31,14 +30,17 @@ export default defineNuxtPlugin((nuxtApp) => {
             5)
         })
       } else {
-        console.warn('API Response Error:', error)
-        systemStore.addMessage(
-          `Erro ${response.status}: ${error?.message || 'Ocorreu um erro ao processar sua solicitação.'}`,
-          error?.name || 'Erro de API',
-          'danger',
-          'bi-bug-fill',
-          5
-        )
+        await nuxtApp.runWithContext(() => {
+          const systemStore = useSystemStore()
+          console.warn('API Response Error:', error)
+          systemStore.addMessage(
+            `Erro ${response.status}: ${error?.message || 'Ocorreu um erro ao processar sua solicitação.'}`,
+            error?.name || 'Erro de API',
+            'danger',
+            'bi-bug-fill',
+            5
+          )
+        })
       }
     },
 
