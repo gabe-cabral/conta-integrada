@@ -20,5 +20,14 @@ export const bankAccountSchema = userAuditableRecordSchema.extend({
   expenses: MoneySchema,
 });
 
+export const bankAccountCreateSchema = bankAccountSchema.omit({
+  _id: true,
+  userId: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 export type BankAccountData = z.input<typeof bankAccountSchema>;
 export type BankAccount = z.infer<typeof bankAccountSchema>;
+export type BankAccountCreateData = z.input<typeof bankAccountCreateSchema>;
+export type BankAccountCreate = z.infer<typeof bankAccountCreateSchema>;

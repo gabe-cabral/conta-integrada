@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import useSystemStore from '~/stores/systemStore';
 import { useAppStore } from '~/stores/appStore';
-import type { BankAccount } from '~~/shared/schemas/bankAccounts.js';
+import { bankAccountCreateSchema } from '~~/shared/schemas/bankAccounts.js';
+import type { BankAccount, BankAccountCreateData, BankAccountData } from '~~/shared/schemas/bankAccounts.js';
 
 interface AccountForm extends Omit<BankAccount, '_id' | 'createdAt' | 'userId'> {
   _id: string | null;
@@ -11,6 +12,7 @@ interface AccountForm extends Omit<BankAccount, '_id' | 'createdAt' | 'userId'> 
 
 const emits = defineEmits<{
   close: [];
+  saved: [account: BankAccountData];
 }>();
 
 const props = withDefaults(defineProps<{
@@ -23,6 +25,7 @@ const props = withDefaults(defineProps<{
 
 const appStore = useAppStore();
 const systemStore = useSystemStore();
+const { $userApi } = useNuxtApp() as unknown as { $userApi: typeof $fetch };
 
 const loading = ref(false);
 const sending = ref(false);
@@ -115,16 +118,35 @@ function syncAccount() {
   }
 }
 
-function submit() {
+async function submit() {
   validated.value = true;
 
   if (!account.value) return;
+  if (account.value._id) return;
 
   sending.value = true;
   account.value.current.amountInCents = Math.round(formCurrentAmount.value * 100);
   account.value.income.amountInCents = Math.round(formIncomeAmount.value * 100);
   account.value.expenses.amountInCents = Math.round(formExpensesAmount.value * 100);
-  sending.value = false;
+
+  try {
+    const payload: BankAccountCreateData = {
+      type: account.value.type,
+      name: account.value.name,
+      brand: account.value.brand,
+      number: account.value.number || undefined,
+      current: account.value.current,
+      income: account.value.income,
+      expenses: account.value.expenses,
+    };
+    const body = bankAccountCreateSchema.parse(payload);
+    const saved = await $userApi<BankAccountData>('/accounts', { method: 'POST', body });
+
+    emits('saved', saved);
+    closePanel();
+  } finally {
+    sending.value = false;
+  }
 }
 
 watch(() => [props.id, props.account] as const, syncAccount, { immediate: true });

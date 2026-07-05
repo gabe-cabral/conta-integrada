@@ -40,6 +40,23 @@ function clearSelection() {
   selectedAccount.value = null;
 }
 
+function saveAccount(account: BankAccountData) {
+  const parsed = bankAccountSchema.safeParse(account);
+
+  if (!parsed.success) {
+    console.warn('Unexpected response format for saved account:', parsed.error);
+    return;
+  }
+
+  const index = accounts.value.findIndex(item => item._id === parsed.data._id);
+
+  if (index >= 0) {
+    accounts.value[index] = parsed.data;
+  } else {
+    accounts.value.push(parsed.data);
+  }
+}
+
 async function load() {
   loading.value = true;
 
@@ -82,21 +99,13 @@ load();
   </Teleport>
 
   <LayoutPage>
-    <div class="d-flex align-items-center justify-content-between">
-      <h4 class="text-uppercase font-monospace text-muted mb-0">{{ selectedAccount }}</h4>
-      <span v-if="accounts.length" class="text-muted ms-auto me-4">{{ accounts.length }} contas</span>
-      <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
-        <div class="btn-group" role="group" aria-label="Second group">
-          <button type="button" class="btn btn-outline-alternative" @click="selectAccount('new')">
-            <i class="bi bi-plus-lg me-1" /> Adicionar conta
-          </button>
-        </div>
-      </div>
+    <div class="d-flex align-items-center justify-content-between mt-3">
+      <span v-if="accounts.length" class="text-muted ms-3">{{ accounts.length }} contas</span>
     </div>
 
     <PageLoading v-if="loading">Carregando contas...</PageLoading>
 
-    <div v-else class="list-group bg-white shadow-sm mt-4">
+    <div v-else class="list-group bg-white shadow-sm mt-3">
       <button v-for="account in accounts" :key="account._id ?? account.name" type="button"
               class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
               @click="account._id && selectAccount(account._id)">
@@ -108,6 +117,6 @@ load();
       </button>
     </div>
 
-    <CanvasAccount :id="selectedAccount" :account="selectedAccountData" @close="clearSelection" />
+    <CanvasAccount :id="selectedAccount" :account="selectedAccountData" @close="clearSelection" @saved="saveAccount" />
   </LayoutPage>
 </template>
