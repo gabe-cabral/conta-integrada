@@ -17,6 +17,7 @@ export default defineNuxtConfig({
   ],
 
   runtimeConfig: {
+    internalApiSecret: process.env.INTERNAL_API_SECRET || '',
     session: {
       name: 'nuxt-session',
       password: process.env.NUXT_SESSION_PASSWORD || 'supersecret',

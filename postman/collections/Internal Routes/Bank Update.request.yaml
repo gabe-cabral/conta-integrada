@@ -1,0 +1,20 @@
+$kind: http-request
+name: Bank Update
+url: "{{HOST}}/api/internal/financial-institutions/:id"
+method: PATCH
+pathVariables:
+  id: 6a4e995bfced1eb997cb51ae
+body:
+  type: json
+  content: "{\r
+
+    \  \"displayName\": \"Banco do Brasil SA\",\r
+
+    \  \"alternateNames\": [\r
+
+    \    \"BB\", \"BBRAS\"\r
+
+    \  ]\r
+
+    }"
+order: 4353483944804340

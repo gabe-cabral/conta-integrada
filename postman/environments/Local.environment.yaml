@@ -1,0 +1,6 @@
+name: Local
+values:
+  - key: API_SECRET
+    value: ''
+  - key: HOST
+    value: 'http://localhost:3000'

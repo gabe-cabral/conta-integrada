@@ -1,0 +1,7 @@
+$kind: http-request
+name: Bank Delete
+url: "{{HOST}}/api/internal/financial-institutions/:id"
+method: DELETE
+pathVariables:
+  id: 6a4e995bfced1eb997cb51ae
+order: 4468428333626881

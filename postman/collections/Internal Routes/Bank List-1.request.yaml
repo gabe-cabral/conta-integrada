@@ -1,0 +1,5 @@
+$kind: http-request
+name: Bank List
+url: "{{HOST}}/api/internal/financial-institutions"
+method: GET
+order: 3984048245050646

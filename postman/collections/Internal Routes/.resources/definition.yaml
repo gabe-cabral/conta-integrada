@@ -1,0 +1,9 @@
+$kind: collection
+name: Internal Routes
+auth:
+  - id: 055ebc0a-cac5-4c9e-9884-ba57c1368144
+    type: apikey
+    name: API Key
+    credentials:
+      key: x-internal-api-secret
+      value: "{{API_SECRET}}"

@@ -1,0 +1,157 @@
+$kind: http-request
+url: "{{HOST}}/api/internal/financial-institutions"
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"type\": \"BankOrCreditUnion\",\r
+
+    \  \"countryCode\": \"BR\",\r
+
+    \  \"name\": \"BCO DO BRASIL S.A.\",\r
+
+    \  \"displayName\": \"Banco do Brasil\",\r
+
+    \  \"legalName\": \"BANCO DO BRASIL S.A.\",\r
+
+    \  \"alternateNames\": [\r
+
+    \    \"BB\"\r
+
+    \  ],\r
+
+    \  \"url\": \"https://www.bb.com.br\",\r
+
+    \  \"status\": \"active\",\r
+
+    \  \"institutionType\": \"bank\",\r
+
+    \  \"identifiers\": [\r
+
+    \    {\r
+
+    \      \"scheme\": \"BR_ISPB\",\r
+
+    \      \"value\": \"00000000\",\r
+
+    \      \"primary\": true,\r
+
+    \      \"issuer\": \"BCB\",\r
+
+    \      \"countryCode\": \"BR\"\r
+
+    \    },\r
+
+    \    {\r
+
+    \      \"scheme\": \"BR_COMPE\",\r
+
+    \      \"value\": \"001\",\r
+
+    \      \"issuer\": \"BCB\",\r
+
+    \      \"countryCode\": \"BR\"\r
+
+    \    },\r
+
+    \    {\r
+
+    \      \"scheme\": \"BR_CNPJ\",\r
+
+    \      \"value\": \"00000000000191\",\r
+
+    \      \"issuer\": \"Receita Federal do Brasil\",\r
+
+    \      \"countryCode\": \"BR\"\r
+
+    \    },\r
+
+    \    {\r
+
+    \      \"scheme\": \"BIC\",\r
+
+    \      \"value\": \"BRASBRRJXXX\",\r
+
+    \      \"issuer\": \"SWIFT\"\r
+
+    \    },\r
+
+    \    {\r
+
+    \      \"scheme\": \"LEI\",\r
+
+    \      \"value\": \"XXXXXXXXXXXXXXXXXXXX\",\r
+
+    \      \"issuer\": \"GLEIF\"\r
+
+    \    }\r
+
+    \  ],\r
+
+    \  \"regulatoryRegistrations\": [\r
+
+    \    {\r
+
+    \      \"authority\": \"BCB\",\r
+
+    \      \"authorityCountryCode\": \"BR\",\r
+
+    \      \"registrationType\": \"STR_PARTICIPANT\",\r
+
+    \      \"registrationId\": \"00000000\",\r
+
+    \      \"status\": \"active\",\r
+
+    \      \"startedAt\": \"2002-04-22\"\r
+
+    \    },\r
+
+    \    {\r
+
+    \      \"authority\": \"BCB\",\r
+
+    \      \"authorityCountryCode\": \"BR\",\r
+
+    \      \"registrationType\": \"PIX_PARTICIPANT\",\r
+
+    \      \"registrationId\": \"00000000\",\r
+
+    \      \"status\": \"active\"\r
+
+    \    }\r
+
+    \  ],\r
+
+    \  \"branding\": {\r
+
+    \    \"logoUrl\": \"https://www.bb.com.br/docs/pub/inst/img/LogoBB.svg\",\r
+
+    \    \"logoSource\": \"quemparticipa-openfinance\",\r
+
+    \    \"brandColor\": \"#fcfc30\",\r
+
+    \    \"verified\": true\r
+
+    \  },\r
+
+    \  \"sources\": [\r
+
+    \    {\r
+
+    \      \"sourceName\": \"BCB_STR_PARTICIPANTS\",\r
+
+    \      \"sourceUrl\": \"https://www.bcb.gov.br/content/estabilidadefinanceira/str1/ParticipantesSTR.csv\",\r
+
+    \      \"retrievedAt\": \"2026-07-05T00:00:00Z\",\r
+
+    \      \"confidence\": \"official\"\r
+
+    \    }\r
+
+    \  ],\r
+
+    \  \"lastSyncedAt\": \"2026-07-08T00:00:00Z\"\r
+
+    }"
+order: 1783522678976

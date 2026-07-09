@@ -1,0 +1,7 @@
+$kind: http-request
+name: Bank Get
+url: "{{HOST}}/api/internal/financial-institutions/:id"
+method: GET
+pathVariables:
+  id: 6a4e995bfced1eb997cb51ae
+order: 4344376924319306
