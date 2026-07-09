@@ -15,4 +15,3 @@ tool_timeout_sec = 120
 
 [mcp_servers.azure_devops.env]
 ado_mcp_project = "Conta Integrada"
-ado_mcp_team = "Nome do Time"
