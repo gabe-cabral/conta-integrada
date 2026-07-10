@@ -4,10 +4,11 @@ import zodToMongoSchema from "zod-to-mongo-schema";
 import type { Transaction } from '../../../shared/types/transactions.ts';
 import { transactionsSchema } from '../../../server/repositories/TransactionsRepo.ts';
 import { getClient } from "../client.ts";
+import { env } from '~~/env';
 
 async function setup(): Promise<Collection<Transaction> | null> {
   const collectionName = 'transactions';
-  const { db } = await getClient(process.env.MONGODB_ADMIN_CERT_PATH);
+  const { db } = await getClient(env.MONGODB_ADMIN_CERT_PATH);
 
   // Convert to MongoDB JSON Schema
   const mongoSchema = zodToMongoSchema(transactionsSchema);

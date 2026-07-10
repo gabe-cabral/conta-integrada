@@ -3,10 +3,11 @@ import { MongoServerError } from "mongodb";
 import type { TransactionCategory } from '../../../shared/types/transactions.ts';
 import { categorySchema } from '../../../server/repositories/CategoriesRepo.ts';
 import { getClient } from "../client.ts";
+import { env } from '~~/env';
 
 async function setup(): Promise<Collection<TransactionCategory> | null> {
   const collectionName = 'categories';
-  const { db } = await getClient(process.env.MONGODB_ADMIN_CERT_PATH);
+  const { db } = await getClient(env.MONGODB_ADMIN_CERT_PATH);
 
   try {
     const coll = await db.createCollection<TransactionCategory>(collectionName, {

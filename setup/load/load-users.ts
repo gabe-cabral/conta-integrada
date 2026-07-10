@@ -1,14 +1,15 @@
 import { getSecureClient } from '../database/client.ts';
 import { getKeyAltName } from "../../server/utils/key-alt-name.ts";
 import type { User } from '../../shared/types/user.ts';
+import { env } from '~~/env';
 
 async function load(): Promise<string | null> {
   const { db, createDek, client } = await getSecureClient();
   const coll = db.collection<User>('users');
 
   const record = {
-    name: process.env.ADMIN_NAME,
-    email: process.env.ADMIN_EMAIL,
+    name: env.ADMIN_NAME,
+    email: env.ADMIN_EMAIL,
   } as User;
 
   let adminUser = await coll.findOne({ email: record.email });

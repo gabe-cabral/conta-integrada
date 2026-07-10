@@ -2,6 +2,7 @@ import { ClientEncryption, MongoClient } from 'mongodb';
 import { getKMSProviderCredentials, getCustomerMasterKeyCredentials, getAutoEncryptionOptions } from './helper.ts';
 import type { ClientEncryptionOptions, Collection, CreateCollectionOptions, Db, Document, UUID } from 'mongodb';
 import type { KMSProviderName } from './helper.ts';
+import { env } from '~~/env';
 
 export type CreateEncryptedCollectionFunction = <TSchema extends Document = Document>(
   encryptedCollectionName: string,
@@ -12,16 +13,16 @@ async function getClient(userCertFile?: string): Promise<{
   client: MongoClient;
   db: Db;
 }> {
-  const uri = process.env.MONGODB_URI;
+  const uri = env.MONGODB_URI;
   if (!uri) throw new Error('Sem URL do MongoDB');
 
   const normalClient = new MongoClient(uri, {
-    tlsCertificateKeyFile: userCertFile || process.env.MONGODB_CERT_PATH,
+    tlsCertificateKeyFile: userCertFile || env.MONGODB_CERT_PATH,
   });
 
   await normalClient.connect();
 
-  const db = normalClient.db(process.env.MONGODB_DATA_DB);
+  const db = normalClient.db(env.MONGODB_DATA_DB);
 
   async function gracefulShutdown(signal: string) {
     console.log(`\nReceived ${signal}. Closing MongoDB...`);
@@ -55,9 +56,9 @@ async function getSecureClient(userCertFile?: string): Promise<{
   createEncryptedCollection: CreateEncryptedCollectionFunction;
   createDek: (keyAltNames?: string[]) => Promise<UUID>;
 }> {
-  const uri = process.env.MONGODB_URI;
-  const kmsProviderName = (process.env.MONGODB_KMS_PROVIDER_NAME || 'gcp') as KMSProviderName;
-  const keyVaultNamespace = `${process.env.MONGODB_KEY_VAULT_DB_NAME}.${process.env.MONGODB_KEY_VAULT_COLLECTION_NAME}`;
+  const uri = env.MONGODB_URI;
+  const kmsProviderName = (env.MONGODB_KMS_PROVIDER_NAME || 'gcp') as KMSProviderName;
+  const keyVaultNamespace = `${env.MONGODB_KEY_VAULT_DB_NAME}.${env.MONGODB_KEY_VAULT_COLLECTION_NAME}`;
 
   if (!uri) throw new Error('Sem URL do MongoDB');
 
@@ -71,7 +72,7 @@ async function getSecureClient(userCertFile?: string): Promise<{
   );
 
   const encryptedClient = new MongoClient(uri, {
-    tlsCertificateKeyFile: userCertFile || process.env.MONGODB_CERT_PATH,
+    tlsCertificateKeyFile: userCertFile || env.MONGODB_CERT_PATH,
     autoEncryption: autoEncryptionOptions,
   });
 
@@ -82,7 +83,7 @@ async function getSecureClient(userCertFile?: string): Promise<{
 
   await encryptedClient.connect();
 
-  const db = encryptedClient.db(process.env.MONGODB_DATA_DB);
+  const db = encryptedClient.db(env.MONGODB_DATA_DB);
 
   async function createEncryptedCollection<TSchema extends Document = Document>(
     encryptedCollectionName: string,

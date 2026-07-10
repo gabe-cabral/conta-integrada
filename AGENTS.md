@@ -33,6 +33,8 @@ Ao concluir um trabalho, escreva um comentário na discussão da história com a
 - Não introduza novas dependências de produção sem necessidade clara.
 - Não altere arquivos de segredo, certificados, `.env` ou dados sensíveis sem solicitação explícita.
 - Se uma mudança tocar autenticação, criptografia, banco ou segurança, valide com mais cuidado e explique o impacto.
+- Quando consumir uma variável de ambiente importe o arquivo `import { env } from '~~/env';` e obtenha daí a variável. Não use `process.env` diretamente.
+  - Lembre-se de criar a definição da variável no arquivo `env.ts`.
 
 ## Fluxo Recomendado
 

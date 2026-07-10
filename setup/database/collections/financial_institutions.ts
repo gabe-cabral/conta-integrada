@@ -2,6 +2,7 @@ import type { Collection, Document, ObjectId } from 'mongodb';
 import { MongoServerError } from 'mongodb';
 import type { FinancialInstitution } from '../../../shared/schemas/financialInstitutions.ts';
 import { getClient } from '../client.ts';
+import { env } from '~~/env';
 
 const collectionName = 'financial_institutions';
 
@@ -150,7 +151,7 @@ const financialInstitutionCollectionSchema = {
 } as Document;
 
 async function setup(): Promise<Collection<FinancialInstitutionDocument> | null> {
-  const { db } = await getClient(process.env.MONGODB_ADMIN_CERT_PATH);
+  const { db } = await getClient(env.MONGODB_ADMIN_CERT_PATH);
 
   try {
     const coll = await db.createCollection<FinancialInstitutionDocument>(collectionName, {

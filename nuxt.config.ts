@@ -1,5 +1,6 @@
 import { fileURLToPath } from 'node:url';
 import { ViteImageOptimizer } from 'vite-plugin-image-optimizer';
+import './env'; // Load environment variables from env.ts
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
