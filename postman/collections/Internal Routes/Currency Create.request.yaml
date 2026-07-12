@@ -1,0 +1,26 @@
+$kind: http-request
+name: Currency Create
+url: "{{HOST}}/api/internal/currency"
+method: POST
+body:
+  type: json
+  content: |-
+    {
+      "_id": "BRL",
+      "names": {
+        "en": "Brazilian real",
+        "pt-BR": "Real brasileiro",
+        "es": "Real brasileno"
+      },
+      "symbol": "R$",
+      "numericCode": "986",
+      "minorUnit": 2,
+      "countryUsage": [
+        {
+          "countryCode": "BRA",
+          "type": "official"
+        }
+      ],
+      "active": true
+    }
+order: 4470123450000002

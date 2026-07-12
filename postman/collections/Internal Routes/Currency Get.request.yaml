@@ -1,0 +1,7 @@
+$kind: http-request
+name: Currency Get
+url: "{{HOST}}/api/internal/currency/:id"
+method: GET
+pathVariables:
+  id: BRL
+order: 4470123450000003

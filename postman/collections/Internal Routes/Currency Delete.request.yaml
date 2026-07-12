@@ -1,0 +1,7 @@
+$kind: http-request
+name: Currency Delete
+url: "{{HOST}}/api/internal/currency/:id"
+method: DELETE
+pathVariables:
+  id: BRL
+order: 4470123450000005

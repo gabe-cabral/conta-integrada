@@ -1,0 +1,20 @@
+$kind: http-request
+name: Currency Update
+url: "{{HOST}}/api/internal/currency/:id"
+method: PATCH
+pathVariables:
+  id: BRL
+body:
+  type: json
+  content: |-
+    {
+      "names": {
+        "en": "Brazilian real",
+        "pt-BR": "Real brasileiro",
+        "es": "Real brasileno"
+      },
+      "symbol": "R$",
+      "minorUnit": 2,
+      "active": true
+    }
+order: 4470123450000004

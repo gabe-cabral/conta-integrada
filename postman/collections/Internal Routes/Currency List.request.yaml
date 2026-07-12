@@ -1,0 +1,5 @@
+$kind: http-request
+name: Currency List
+url: "{{HOST}}/api/internal/currency"
+method: GET
+order: 4470123450000001

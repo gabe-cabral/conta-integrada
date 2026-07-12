@@ -1,0 +1,21 @@
+import { z } from 'zod';
+import CurrencyRepo from '~~/server/repositories/CurrencyRepo';
+import { currencyCodeSchema } from '~~/shared/schemas/currency';
+
+const routeSchema = z.strictObject({
+  id: currencyCodeSchema,
+});
+
+export default defineEventHandler(async (event) => {
+  requireInternalApiAccess(event);
+
+  const { id } = await getValidatedRouterParams(event, routeSchema.parse);
+  const repository = new CurrencyRepo();
+  const result = await repository.deleteCurrency(id);
+
+  if (result.deletedCount === 0) {
+    throw createError({ statusCode: 404, message: `Currency ${id} not found` });
+  }
+
+  return { ok: true };
+});
