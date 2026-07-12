@@ -15,10 +15,10 @@ export const env = createEnv({
 
     // GCP
     GCP_EMAIL: z.email(),
-    GCP_PRIVATE_KEY: z.string().trim().min(100).regex(/-----BEGIN PRIVATE KEY-----/).regex(/-----END PRIVATE KEY-----/),
+    GCP_PRIVATE_KEY: z.string().trim().min(100).includes('\n'),
 
     // MongoDB
-    MONGODB_URI: z.string().trim().url().refine((value) => /^(mongodb(?:\+srv)?:\/\/)/i.test(value), {
+    MONGODB_URI: z.string().trim().refine((value) => /^(mongodb(?:\+srv)?:\/\/)/i.test(value), {
       message: 'Must start with mongodb:// or mongodb+srv://',
     }),
     MONGODB_DATA_DB: z.string().trim().min(5).max(32).regex(/^[A-Za-z0-9_-]+$/),

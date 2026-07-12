@@ -2,7 +2,7 @@ import { ClientEncryption, MongoClient } from 'mongodb';
 import { getKMSProviderCredentials, getCustomerMasterKeyCredentials, getAutoEncryptionOptions } from './helper.ts';
 import type { ClientEncryptionOptions, Collection, CreateCollectionOptions, Db, Document, UUID } from 'mongodb';
 import type { KMSProviderName } from './helper.ts';
-import { env } from '~~/env';
+import { env } from '../../env.ts';
 
 export type CreateEncryptedCollectionFunction = <TSchema extends Document = Document>(
   encryptedCollectionName: string,

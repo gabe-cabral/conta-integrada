@@ -4,7 +4,7 @@ import zodToMongoSchema from "zod-to-mongo-schema";
 import type { Transaction } from '../../../shared/types/transactions.ts';
 import { transactionsSchema } from '../../../server/repositories/TransactionsRepo.ts';
 import { getClient } from "../client.ts";
-import { env } from '~~/env';
+import { env } from '../../../env.ts';
 
 async function setup(): Promise<Collection<Transaction> | null> {
   const collectionName = 'transactions';

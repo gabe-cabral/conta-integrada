@@ -2,7 +2,7 @@ import type { Collection, Document, ObjectId } from 'mongodb';
 import { MongoServerError } from 'mongodb';
 import type { FinancialInstitution } from '../../../shared/schemas/financialInstitutions.ts';
 import { getClient } from '../client.ts';
-import { env } from '~~/env';
+import { env } from '../../../env.ts';
 
 const collectionName = 'financial_institutions';
 

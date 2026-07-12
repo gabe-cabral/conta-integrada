@@ -3,7 +3,7 @@ import { MongoServerError } from "mongodb";
 import type { TransactionCategory } from '../../../shared/types/transactions.ts';
 import { categorySchema } from '../../../server/repositories/CategoriesRepo.ts';
 import { getClient } from "../client.ts";
-import { env } from '~~/env';
+import { env } from '../../../env.ts';
 
 async function setup(): Promise<Collection<TransactionCategory> | null> {
   const collectionName = 'categories';

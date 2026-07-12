@@ -1,5 +1,5 @@
 import crypto from 'crypto';
-import { env } from '~~/env';
+import { env } from '../../env.ts';
 
 export function getKeyAltName(userId: string): string {
   return crypto

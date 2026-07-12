@@ -3,10 +3,10 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "build": "nuxt build -- --env-file=.env",
-    "dev": "nuxt dev -- --env-file=.env",
+    "build": "nuxt build",
+    "dev": "nuxt dev",
     "generate": "nuxt generate",
-    "preview": "nuxt preview -- --env-file=.env",
+    "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "setup-db": "node --experimental-strip-types --env-file=.env ./setup/database/index.ts"
   },

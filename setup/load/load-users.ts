@@ -1,7 +1,7 @@
 import { getSecureClient } from '../database/client.ts';
 import { getKeyAltName } from "../../server/utils/key-alt-name.ts";
 import type { User } from '../../shared/types/user.ts';
-import { env } from '~~/env';
+import { env } from '../../env.ts';
 
 async function load(): Promise<string | null> {
   const { db, createDek, client } = await getSecureClient();
