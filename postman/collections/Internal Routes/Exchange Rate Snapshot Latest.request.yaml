@@ -1,0 +1,5 @@
+$kind: http-request
+name: Exchange Rate Snapshot Latest
+url: "{{HOST}}/api/internal/exchange-rate-snapshots/latest?baseCurrency=USD&at=2026-07-12&status=complete"
+method: GET
+order: 4471123450000006

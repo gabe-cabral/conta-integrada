@@ -1,0 +1,30 @@
+$kind: http-request
+name: Exchange Rate Snapshot Update
+url: "{{HOST}}/api/internal/exchange-rate-snapshots/:id"
+method: PUT
+pathVariables:
+  id: USD_2026-07-12
+body:
+  type: json
+  content: |-
+    {
+      "valuationDate": "2026-07-12",
+      "baseCurrency": "USD",
+      "rates": {
+        "USD": "1",
+        "BRL": "5.46",
+        "COP": "4120.3571",
+        "EUR": "0.8617253"
+      },
+      "provider": {
+        "name": "openExchangeRates",
+        "referenceDate": "2026-07-12",
+        "timestamp": "2026-07-12T00:01:10.000Z",
+        "retrievedAt": "2026-07-12T00:05:06.000Z"
+      },
+      "carriedForward": false,
+      "status": "complete",
+      "expectedCurrencies": ["USD", "BRL", "COP", "EUR"],
+      "missingCurrencies": []
+    }
+order: 4471123450000007

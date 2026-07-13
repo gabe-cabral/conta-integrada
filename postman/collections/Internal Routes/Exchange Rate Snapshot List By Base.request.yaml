@@ -1,0 +1,5 @@
+$kind: http-request
+name: Exchange Rate Snapshot List By Base
+url: "{{HOST}}/api/internal/exchange-rate-snapshots?baseCurrency=USD&status=complete&limit=50&offset=0"
+method: GET
+order: 4471123450000003

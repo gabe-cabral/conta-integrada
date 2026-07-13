@@ -1,0 +1,5 @@
+$kind: http-request
+name: Exchange Rate Snapshot List
+url: "{{HOST}}/api/internal/exchange-rate-snapshots"
+method: GET
+order: 4471123450000002
