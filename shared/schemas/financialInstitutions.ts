@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { auditableRecordSchema } from '../zod/zodBase.js';
+import { currencyCodeSchema, type CurrencyCode } from './currency.js';
 
 /**
  * ISO 3166-1 alpha-2 country code.
@@ -224,6 +225,8 @@ export interface FinancialInstitution {
   status: InstitutionStatus;
   /** Business classification used by the application. */
   institutionType: InstitutionType;
+  /** ISO 4217 currencies normally accepted by the institution. */
+  defaultCurrencies: CurrencyCode[];
   /** Flexible identifiers used for deduplication and matching. */
   identifiers: FinancialInstitutionIdentifier[];
   /** Regulatory authorizations and participation records. */
@@ -299,6 +302,7 @@ export const financialInstitutionSchema = auditableRecordSchema.extend({
   url: z.string().trim().url().optional(),
   status: institutionStatusSchema,
   institutionType: institutionTypeSchema,
+  defaultCurrencies: z.array(currencyCodeSchema).min(1),
   identifiers: z.array(financialInstitutionIdentifierSchema).min(1),
   regulatoryRegistrations: z.array(regulatoryRegistrationSchema).default([]),
   branding: financialInstitutionBrandingSchema.optional(),

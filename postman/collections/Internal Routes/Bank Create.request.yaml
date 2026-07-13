@@ -27,6 +27,14 @@ body:
 
     \  \"institutionType\": \"bank\",\r
 
+    \  \"defaultCurrencies\": [\r
+
+    \    \"BRL\",\r
+
+    \    \"USD\"\r
+
+    \  ],\r
+
     \  \"identifiers\": [\r
 
     \    {\r

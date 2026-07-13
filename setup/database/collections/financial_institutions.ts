@@ -20,6 +20,7 @@ const financialInstitutionCollectionSchema = {
     'name',
     'status',
     'institutionType',
+    'defaultCurrencies',
     'identifiers',
     'sources',
     'createdAt',
@@ -67,6 +68,15 @@ const financialInstitutionCollectionSchema = {
     institutionType: {
       enum: ['bank', 'credit_union', 'payment_institution', 'brokerage', 'digital_wallet', 'central_bank', 'other'],
       description: 'Business classification used by the application',
+    },
+    defaultCurrencies: {
+      bsonType: 'array',
+      minItems: 1,
+      description: 'ISO 4217 currencies normally accepted by the institution',
+      items: {
+        bsonType: 'string',
+        pattern: '^[A-Z]{3}$',
+      },
     },
     identifiers: {
       bsonType: 'array',
@@ -199,6 +209,7 @@ async function setup(): Promise<Collection<FinancialInstitutionDocument> | null>
 async function createIndexes(coll: Collection<FinancialInstitutionDocument>) {
   await coll.createIndexes([
     { key: { countryCode: 1, status: 1, name: 1 }, name: 'country-status-name' },
+    { key: { defaultCurrencies: 1, countryCode: 1, status: 1 }, name: 'currency-country-status' },
     { key: { 'identifiers.scheme': 1, 'identifiers.value': 1 }, name: 'identifier-scheme-value' },
     {
       key: {
