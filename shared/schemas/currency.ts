@@ -20,7 +20,7 @@ export interface CurrencyCountryUsage {
   type: CurrencyUsageType;
 }
 
-export interface Currency {
+export interface CurrencyDetail {
   _id: CurrencyCode;
   names: Record<string, string>;
   symbol?: string;

@@ -2,6 +2,7 @@ import type { Currency } from "~~/shared/types/finances";
 import type { TransactionCategory, TransactionTypeDisplay } from "~~/shared/types/transactions";
 import type { UserPreference } from "~~/shared/schemas/userPreferences";
 import useSystemStore from "./systemStore";
+import isoCodeToCurrency from '~/utils/isoCodeToCurrency';
 
 export interface AppState {
   currencies: Currency[];
@@ -34,20 +35,12 @@ export const useAppStore = defineStore('appStore', () => {
     currencies.value = currencyList;
   }
 
-  function toCurrency(code: string): Currency {
-    const parts = new Intl.NumberFormat(undefined, { style: 'currency', currency: code })
-      .formatToParts(0);
-    const symbol = parts.find((part) => part.type === 'currency')?.value ?? code;
-    const label = new Intl.DisplayNames(undefined, { type: 'currency' }).of(code) ?? code;
-
-    return { code, label, symbol };
-  }
-
   async function getUserPreferences() {
     if (!user?.value?.id) throw new Error('User not logged in');
 
-    const preference = await $fetch<UserPreference>(`/api/users/${user.value.id}/user_preferences`);
-    currencies.value = preference.currencies.map(toCurrency);
+    const requestFetch = import.meta.server ? useRequestFetch() : $fetch;
+    const preference = await requestFetch<UserPreference>(`/api/users/${user.value.id}/user_preferences`);
+    currencies.value = preference.currencies.map(isoCodeToCurrency);
     systemStore.setDefaultCurrency(preference.defaultCurrency);
   }
 

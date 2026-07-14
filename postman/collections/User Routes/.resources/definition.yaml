@@ -1,0 +1,5 @@
+$kind: collection
+name: User Routes
+description: Define the routes that requires an `userId` to access. Used mainly in the web application interface.
+variables:
+  user_id: ""

@@ -10,6 +10,8 @@ const userMenuItens = [
   { name: 'Contas', link: '/user/accounts' },
   { name: 'Cartões', link: '/' },
   { name: 'Categorias', link: '/' },
+  { separator: true },
+  { name: 'Preferências', link: '/user/preferences' },
 ];
 
 const { loggedIn: userIsLogged } = useUserSession()
@@ -51,8 +53,9 @@ onMounted(async () => {
                       style="max-width: 10rem;">{{ user?.name?.split(' ')?.at(0) }}</span>
               </a>
               <ul class="dropdown-menu dropdown-menu-end text-small" style="">
-                <li v-for="menu in userMenuItens" :key="menu.link" class="dropdown-item">
-                  <NuxtLink class="nav-link active" aria-current="page" :to="menu.link"
+                <li v-for="menu in userMenuItens" :key="menu.link" :class="{ 'dropdown-item': !menu.separator }">
+                  <hr v-if="menu.separator" class="dropdown-divider">
+                  <NuxtLink v-else class="nav-link active" aria-current="page" :to="menu.link"
                             exact-active-class="active">
                     {{ menu.name }}
                   </NuxtLink>
