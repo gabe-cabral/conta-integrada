@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// Doc: https://tom-select.js.org/
 import TomSelect from 'tom-select';
 import type { TomSettings } from 'tom-select/dist/esm/types/settings.js';
 
@@ -39,6 +40,9 @@ onMounted(() => {
       remove_button: {
         title: 'Remover',
       },
+      // clear_button: {
+      //   title: 'Remover todos',
+      // },
     },
     placeholder: props.placeholder,
     create: false,

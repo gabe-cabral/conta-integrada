@@ -74,7 +74,14 @@ bun run preview
 
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
 
-# Resources
+## Dependencies
+
+- [Nuxt](https://nuxt.com/) - The web framework used
+- [Bootstrap](https://getbootstrap.com/) - The CSS framework used
+- [MongoDB](https://www.mongodb.com/) - The database used
+- [TomSelect](https://tom-select.js.org/) - The select input library used to multiple selections
+
+# Recursos
 
 ## Bank Logos
 
