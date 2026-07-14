@@ -1,0 +1,7 @@
+$kind: http-request
+name: Financial Space Delete
+url: "{{HOST}}/api/users/{{user_id}}/financial-spaces/:spaceId"
+method: DELETE
+pathVariables:
+  spaceId: 6a4e995bfced1eb997cb51ae
+order: 5100000000000004

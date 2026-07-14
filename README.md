@@ -81,6 +81,12 @@ Check out the [deployment documentation](https://nuxt.com/docs/getting-started/d
 - [MongoDB](https://www.mongodb.com/) - The database used
 - [TomSelect](https://tom-select.js.org/) - The select input library used to multiple selections
 
+## Funcionalidades
+
+### Espaços financeiros
+
+Os espaços organizam contas, cartões, categorias e moedas em contextos independentes, como Casa, Pessoal ou Empresa. Cada espaço possui identidade visual própria, pode limitar as categorias disponíveis e pode ser exibido como uma visão separada na página inicial.
+
 # Recursos
 
 ## Bank Logos

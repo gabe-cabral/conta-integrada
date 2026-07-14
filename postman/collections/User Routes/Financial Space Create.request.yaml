@@ -1,0 +1,18 @@
+$kind: http-request
+name: Financial Space Create
+url: "{{HOST}}/api/users/{{user_id}}/financial-spaces"
+method: POST
+body:
+  type: json
+  content: |-
+    {
+      "name": "Casa",
+      "description": "Contas e despesas da residência",
+      "icon": "house-fill",
+      "color": "#286AAE",
+      "categoryMode": "all",
+      "categoryIds": [],
+      "currencies": ["BRL", "USD"],
+      "showOnDashboard": true
+    }
+order: 5100000000000001

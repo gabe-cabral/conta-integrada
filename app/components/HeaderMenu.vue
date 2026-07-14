@@ -8,6 +8,7 @@ const menuItems = [
 
 const userMenuItens = [
   { name: 'Contas', link: '/user/accounts' },
+  { name: 'Espaços', link: '/user/financial-spaces' },
   { name: 'Cartões', link: '/' },
   { name: 'Categorias', link: '/' },
   { separator: true },
@@ -37,9 +38,9 @@ onMounted(async () => {
   <header>
     <nav class="navbar navbar-expand-lg">
       <div class="container">
-        <a class="navbar-brand me-4" href="#">
+        <NuxtLink class="navbar-brand me-4" :to="{ name: 'index' }">
           <img src="/logo.svg" alt="Conta Integrada" height="48" class="d-inline-block align-text-top">
-        </a>
+        </NuxtLink>
         <AuthState>
           <template #default="{ loggedIn, clear, user }">
             <LayoutSearch :logged-in="loggedIn" class="mx-md-auto my-2 my-md-0" />

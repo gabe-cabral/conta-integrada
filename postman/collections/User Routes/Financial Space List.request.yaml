@@ -1,0 +1,5 @@
+$kind: http-request
+name: Financial Space List
+url: "{{HOST}}/api/users/{{user_id}}/financial-spaces"
+method: GET
+order: 5100000000000000

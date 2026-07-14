@@ -1,0 +1,15 @@
+$kind: http-request
+name: Financial Space Update
+url: "{{HOST}}/api/users/{{user_id}}/financial-spaces/:spaceId"
+method: PATCH
+pathVariables:
+  spaceId: 6a4e995bfced1eb997cb51ae
+body:
+  type: json
+  content: |-
+    {
+      "description": "Contexto financeiro principal da família",
+      "icon": "people-fill",
+      "showOnDashboard": true
+    }
+order: 5100000000000003

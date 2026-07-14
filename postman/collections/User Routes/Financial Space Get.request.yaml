@@ -1,0 +1,7 @@
+$kind: http-request
+name: Financial Space Get
+url: "{{HOST}}/api/users/{{user_id}}/financial-spaces/:spaceId"
+method: GET
+pathVariables:
+  spaceId: 6a4e995bfced1eb997cb51ae
+order: 5100000000000002
