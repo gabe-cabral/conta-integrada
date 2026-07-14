@@ -1,5 +1,6 @@
 import type { Currency } from "~~/shared/types/finances";
 import type { TransactionCategory, TransactionTypeDisplay } from "~~/shared/types/transactions";
+import type { UserPreference } from "~~/shared/schemas/userPreferences";
 import useSystemStore from "./systemStore";
 
 export interface AppState {
@@ -31,6 +32,23 @@ export const useAppStore = defineStore('appStore', () => {
 
   function setCurrencyList(currencyList: Currency[]) {
     currencies.value = currencyList;
+  }
+
+  function toCurrency(code: string): Currency {
+    const parts = new Intl.NumberFormat(undefined, { style: 'currency', currency: code })
+      .formatToParts(0);
+    const symbol = parts.find((part) => part.type === 'currency')?.value ?? code;
+    const label = new Intl.DisplayNames(undefined, { type: 'currency' }).of(code) ?? code;
+
+    return { code, label, symbol };
+  }
+
+  async function getUserPreferences() {
+    if (!user?.value?.id) throw new Error('User not logged in');
+
+    const preference = await $fetch<UserPreference>(`/api/users/${user.value.id}/user_preferences`);
+    currencies.value = preference.currencies.map(toCurrency);
+    systemStore.setDefaultCurrency(preference.defaultCurrency);
   }
 
   function setLastInputDate(date: Date | null) {
@@ -78,6 +96,7 @@ export const useAppStore = defineStore('appStore', () => {
     setLastInputDate,
     setLastInputCategoryId,
     setLastInputSourceId,
+    getUserPreferences,
     getCategories,
   };
 });

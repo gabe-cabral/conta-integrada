@@ -42,8 +42,10 @@ Ao concluir um trabalho, escreva um comentário na discussão da história com a
 - Antes de editar, inspecione o contexto local e localize implementações similares.
 - Prefira mudanças pequenas e coesas.
 - Reaproveite helpers, schemas e repositories já existentes.
+- Todo registro que pertence a um usuário deve herdar `userAuditableRecordWithIdSchema` de `shared/zod/zodBase.ts`.
 - Quando criar comportamento novo, busque encaixe com os módulos compartilhados em `shared/`, `server/` e `app/`.
 - Não faça commits - eu vou verificar o código após suas alterações.
+- Quando criar novos endpoints na API, criar as requisições de teste no Postman em `/postman/collections/`.
 
 ## Verificação
 

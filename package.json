@@ -8,7 +8,7 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "setup-db": "node --experimental-strip-types --env-file=.env ./setup/database/index.ts",
+    "db:setup": "node --experimental-strip-types --env-file=.env ./setup/database/index.ts",
     "db:load": "node --experimental-strip-types --env-file=.env ./setup/load/index.ts"
   },
   "dependencies": {

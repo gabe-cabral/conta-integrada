@@ -1,4 +1,3 @@
-import type { ObjectId } from "mongodb";
 import type { AuditableRecord } from "./base";
 
 export interface User extends AuditableRecord {

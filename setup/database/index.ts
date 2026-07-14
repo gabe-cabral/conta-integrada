@@ -6,6 +6,7 @@ import { setup as setupTransactions } from './collections/transactions.ts';
 import { setup as setupFinancialInstitutions } from './collections/financial_institutions.ts';
 import { setup as setupCurrency } from './collections/currency.ts';
 import { setup as setupExchangeRateSnapshots } from './collections/exchange_rate_snapshots.ts';
+import { setup as setupUserPreferences } from './collections/user_preferences.ts';
 
 async function main() {
   // await setupUser();
@@ -15,6 +16,7 @@ async function main() {
   // await setupPersonDocuments();
   // await setupFinancialInstitutions();
   // await setupCurrency();
+  await setupUserPreferences();
   await setupExchangeRateSnapshots();
 }
 

@@ -36,6 +36,10 @@ const useSystemStore = defineStore('system', {
   getters: {},
 
   actions: {
+    setDefaultCurrency(currency: string) {
+      this.defaultCurrency = currency;
+    },
+
     setTitle(title?: string) {
       this.pageTitle = title;
     },
