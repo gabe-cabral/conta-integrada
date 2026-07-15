@@ -7,15 +7,15 @@ const menuItems = [
 ];
 
 const userMenuItens = [
-  { name: 'Contas', link: '/user/accounts' },
-  { name: 'Espaços', link: '/user/financial-spaces' },
-  { name: 'Cartões', link: '/' },
-  { name: 'Categorias', link: '/' },
+  { name: 'Contas', link: '/user/accounts', icon: 'bank' },
+  { name: 'Espaços', link: '/user/financial-spaces', icon: 'boxes' },
+  { name: 'Cartões', link: '/', icon: 'credit-card' },
+  { name: 'Categorias', link: '/', icon: 'bookmarks' },
   { separator: true },
-  { name: 'Preferências', link: '/user/preferences' },
+  { name: 'Preferências', link: '/user/preferences', icon: 'toggles2' },
 ];
 
-const { loggedIn: userIsLogged } = useUserSession()
+const { loggedIn: userIsLogged } = useUserSession();
 
 watch(userIsLogged, (newVal) => {
   if (!newVal) {
@@ -24,6 +24,7 @@ watch(userIsLogged, (newVal) => {
 })
 
 onMounted(async () => {
+  // Carregamos aqui para evitar erro de hidratação do bootstrap no SSR
   const { Dropdown } = await import('bootstrap');
 
   await nextTick();
@@ -41,9 +42,11 @@ onMounted(async () => {
         <NuxtLink class="navbar-brand me-4" :to="{ name: 'index' }">
           <img src="/logo.svg" alt="Conta Integrada" height="48" class="d-inline-block align-text-top">
         </NuxtLink>
+        
         <AuthState>
           <template #default="{ loggedIn, clear, user }">
             <LayoutSearch :logged-in="loggedIn" class="mx-md-auto my-2 my-md-0" />
+
             <div v-if="loggedIn" class="dropdown text-end">
               <a href="#"
                  class="d-flex align-items-center link-body-emphasis text-decoration-none dropdown-toggle"
@@ -53,11 +56,13 @@ onMounted(async () => {
                 <span class="d-inline-block text-truncate"
                       style="max-width: 10rem;">{{ user?.name?.split(' ')?.at(0) }}</span>
               </a>
+
               <ul class="dropdown-menu dropdown-menu-end text-small" style="">
                 <li v-for="menu in userMenuItens" :key="menu.link" :class="{ 'dropdown-item': !menu.separator }">
                   <hr v-if="menu.separator" class="dropdown-divider">
                   <NuxtLink v-else class="nav-link active" aria-current="page" :to="menu.link"
                             exact-active-class="active">
+                    <i class="bi me-2" :class="[`bi-${menu.icon}`]" v-if="menu.icon" />
                     {{ menu.name }}
                   </NuxtLink>
                 </li>
@@ -67,19 +72,22 @@ onMounted(async () => {
                 <li><a class="dropdown-item" href="#">Profile</a></li>
                 <li>
                   <button type="button" class="dropdown-item text-danger fw-bold" @click="clear">
-                    <i class="bi bi-box-arrow-right me-1" /> Sair
+                    <i class="bi bi-box-arrow-right me-2" /> Sair
                   </button>
                 </li>
               </ul>
             </div>
+
             <NuxtLink v-else to="/login" class="btn btn-primary ms-auto">Entrar</NuxtLink>
           </template>
         </AuthState>
       </div>
     </nav>
+
     <nav class="navbar navbar-expand-lg bg-alternative py-3" data-bs-theme="dark">
       <div class="container justify-content-between">
         <div class="navbar-brand text-uppercase">{{ $route.meta.title }}</div>
+
         <AuthState>
           <template #default="{ loggedIn }">
             <div v-if="loggedIn" class="mx-auto">
@@ -94,6 +102,7 @@ onMounted(async () => {
             </div>
             <div id="ci_cta" />
           </template>
+
           <template #placeholder>
             <div class="spinner-border" role="status">
               <span class="visually-hidden">Verificando sessão...</span>

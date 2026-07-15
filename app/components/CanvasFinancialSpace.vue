@@ -258,6 +258,13 @@ onUnmounted(() => iconDropdown?.dispose());
         <div class="form-text text-end">{{ countTextCharacters(financialSpace.description) }}/150</div>
       </div>
 
+      <div class="mb-3 form-check">
+        <input id="financial_space_dashboard" v-model="financialSpace.showOnDashboard"
+               type="checkbox" class="form-check-input">
+        <label for="financial_space_dashboard" class="form-check-label">Exibir na página
+          inicial</label>
+      </div>
+
       <div class="mb-3">
         <label class="form-label">Ícone</label>
         <div class="dropdown">
@@ -287,38 +294,40 @@ onUnmounted(() => iconDropdown?.dispose());
         <label for="financial_space_color" class="form-label">Cor</label>
         <div class="input-group">
           <input id="financial_space_color" v-model="financialSpace.color" type="color"
-                 class="form-control form-control-color" title="Escolher cor do espaço" @input="markColorAsManual">
-          <span class="input-group-text font-monospace">{{ financialSpace.color.toUpperCase() }}</span>
+                 class="form-control form-control-color" title="Escolher cor do espaço"
+                 @input="markColorAsManual" style="max-width: 5rem">
+          <input id="financial_space_color_hex" v-model.trim="financialSpace.color" type="text"
+                 class="form-control font-monospace text-uppercase" title="Escolher cor do espaço"
+                 @input="markColorAsManual">
         </div>
       </div>
 
-      <div class="mb-3 form-check">
-        <input id="financial_space_all_categories" v-model="allCategories" type="checkbox" class="form-check-input">
-        <label for="financial_space_all_categories" class="form-check-label">
-          Todas as categorias estão disponíveis nesse espaço
-        </label>
-      </div>
-
-      <div v-if="!allCategories" class="mb-3">
-        <label class="form-label">Categorias disponíveis</label>
-        <CategorySelectionList v-model="financialSpace.categoryIds" :categories="availableCategories"
-                               empty-label="Nenhuma categoria ativa disponível." />
-        <div class="form-text">Selecione as categorias e subcategorias que poderão ser usadas neste espaço.</div>
-      </div>
-
       <div class="mb-3">
-        <label for="financial_space_currencies" class="form-label">Moedas utilizadas</label>
+        <label for="financial_space_currencies" class="form-label">Moedas utilizadas neste espaço</label>
         <MultiSelectField id="financial_space_currencies" v-model="financialSpace.currencies"
                           :options="currencyOptions" class="form-select" :multiple="true"
                           placeholder="Selecione as moedas disponíveis no espaço"
                           aria-label="Moedas disponíveis no espaço" />
       </div>
 
-      <div class="mb-3 form-check">
-        <input id="financial_space_dashboard" v-model="financialSpace.showOnDashboard" type="checkbox"
-               class="form-check-input">
-        <label for="financial_space_dashboard" class="form-check-label">Exibir na página inicial</label>
-      </div>
+      <fieldset class="mt-4">
+        <legend class="form-label">Categorias</legend>
+        <div class="form-text mb-2">Defina quais categorias estarão disponíveis neste espaço.</div>
+
+        <div class="mb-3 form-check">
+          <input id="financial_space_all_categories" v-model="allCategories" type="checkbox" class="form-check-input">
+          <label for="financial_space_all_categories" class="form-check-label">
+            Todas as categorias estão disponíveis nesse espaço
+          </label>
+        </div>
+
+        <div v-if="!allCategories" class="mb-3">
+          <label class="form-label">Categorias disponíveis</label>
+          <CategorySelectionList v-model="financialSpace.categoryIds" :categories="availableCategories"
+                                empty-label="Nenhuma categoria ativa disponível." />
+          <div class="form-text">Selecione as categorias e subcategorias que poderão ser usadas neste espaço.</div>
+        </div>
+      </fieldset>
     </template>
 
     <p v-else class="text-muted mb-0">Espaço não encontrado.</p>
