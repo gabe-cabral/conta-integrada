@@ -1,10 +1,10 @@
 import zodToMongoSchema from 'zod-to-mongo-schema';
 import { MongoServerError } from 'mongodb';
 
-import type { Transaction } from '../../../shared/types/transactions.ts';
+import type { Transaction } from '#shared/types/transactions.ts';
 import type { Collection } from 'mongodb';
 
-import { transactionsSchema } from '../../../server/repositories/TransactionsRepo.ts';
+import { transactionsSchema } from '#server/repositories/TransactionsRepo.ts';
 import { getClient } from '../client.ts';
 import { env } from '../../../env.ts';
 

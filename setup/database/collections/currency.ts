@@ -1,6 +1,6 @@
 import { MongoServerError } from 'mongodb';
 
-import type { Currency } from '../../../shared/schemas/currency.ts';
+import type { Currency } from '#shared/schemas/currency.ts';
 import type { Collection, Document } from 'mongodb';
 
 import { getClient } from '../client.ts';

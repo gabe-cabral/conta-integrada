@@ -1,6 +1,6 @@
-import type { Transaction } from '../../shared/types/transactions.ts';
+import type { Transaction } from '#shared/types/transactions.ts';
 
-import TransactionsRepo from '../../server/repositories/TransactionsRepo.ts';
+import TransactionsRepo from '#server/repositories/TransactionsRepo.ts';
 
 async function load(userId: string) {
   const transactionRepo = new TransactionsRepo();

@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb';
 
-import type { UserPreference, UserPreferenceCreate } from '../../shared/schemas/userPreferences.ts';
+import type { UserPreference, UserPreferenceCreate } from '#shared/schemas/userPreferences.ts';
 
 import { getClient } from '../database/client.ts';
 

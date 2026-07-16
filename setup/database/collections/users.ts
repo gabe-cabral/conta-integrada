@@ -1,4 +1,4 @@
-import type { User } from '../../../shared/types/user.ts';
+import type { User } from '#shared/types/user.ts';
 import type { Collection } from 'mongodb';
 
 import { getSecureClient } from '../client.ts';

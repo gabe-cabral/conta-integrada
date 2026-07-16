@@ -1,6 +1,6 @@
 import { MongoServerError } from 'mongodb';
 
-import type { UserPreference } from '../../../shared/schemas/userPreferences.ts';
+import type { UserPreference } from '#shared/schemas/userPreferences.ts';
 import type { Collection, Document } from 'mongodb';
 
 import { getClient } from '../client.ts';

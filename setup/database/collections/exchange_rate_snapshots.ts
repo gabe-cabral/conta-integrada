@@ -1,6 +1,6 @@
 import { MongoServerError } from 'mongodb';
 
-import type { ExchangeRateSnapshotDocument } from '../../../server/utils/exchangeRateSnapshots.ts';
+import type { ExchangeRateSnapshotDocument } from '#server/utils/exchangeRateSnapshots.ts';
 import type { Collection, Document } from 'mongodb';
 
 import { getClient } from '../client.ts';

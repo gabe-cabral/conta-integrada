@@ -3,7 +3,7 @@ import type { AnyBulkWriteOperation } from 'mongodb';
 import {
   type Currency,
   currencyCreateSchema,
-} from '../../shared/schemas/currency.ts';
+} from '#shared/schemas/currency.ts';
 import { getClient } from '../database/client.ts';
 
 const initialCurrencies = currencyCreateSchema.array().parse([

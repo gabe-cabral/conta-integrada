@@ -1,6 +1,6 @@
 import { MongoServerError } from 'mongodb';
 
-import type { FinancialInstitution } from '../../../shared/schemas/financialInstitutions.ts';
+import type { FinancialInstitution } from '#shared/schemas/financialInstitutions.ts';
 import type { Collection, Document, ObjectId } from 'mongodb';
 
 import { getClient } from '../client.ts';

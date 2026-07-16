@@ -2,6 +2,14 @@
   "name": "conta-integrada",
   "type": "module",
   "private": true,
+  "imports": {
+    "#shared/*.ts": "./shared/*.ts",
+    "#shared/*": "./shared/*.ts",
+    "#server/*.ts": "./server/*.ts",
+    "#server/*": "./server/*.ts",
+    "#setup/*.ts": "./setup/*.ts",
+    "#setup/*": "./setup/*.ts"
+  },
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",

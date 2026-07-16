@@ -1,10 +1,10 @@
 import { ObjectId } from 'mongodb';
 
-import type { TransactionCategory } from '../../shared/types/transactions.ts';
+import type { TransactionCategory } from '#shared/types/transactions.ts';
 import type { Binary } from 'mongodb';
 
 import data from './conta-integrada-dev.categories.json' with { type: 'json' };
-import { getKeyAltName } from '../../server/utils/key-alt-name.ts';
+import { getKeyAltName } from '#server/utils/key-alt-name.ts';
 import { getSecureClient } from '../database/client.ts';
 
 interface TransactionCategoryDb extends Omit<TransactionCategory, 'name' | '_id' | 'parentId' | 'userId'> {

@@ -1,6 +1,6 @@
-import type { User } from '../../shared/types/user.ts';
+import type { User } from '#shared/types/user.ts';
 
-import { getKeyAltName } from '../../server/utils/key-alt-name.ts';
+import { getKeyAltName } from '#server/utils/key-alt-name.ts';
 import { getSecureClient } from '../database/client.ts';
 import { env } from '../../env.ts';
 
