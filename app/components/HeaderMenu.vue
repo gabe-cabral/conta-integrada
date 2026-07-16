@@ -1,27 +1,27 @@
 <script setup lang="ts">
 const menuItems = [
   { name: 'Início', link: '/' },
-  { name: 'Transações', link: '/transactions' },
   { name: 'Investimentos', link: '/investments' },
   { name: 'Orçamento', link: '/budget' },
+  { name: 'Transações', link: '/transactions' },
 ];
 
 const userMenuItens = [
-  { name: 'Contas', link: '/user/accounts', icon: 'bank' },
-  { name: 'Espaços', link: '/user/financial-spaces', icon: 'boxes' },
   { name: 'Cartões', link: '/', icon: 'credit-card' },
   { name: 'Categorias', link: '/', icon: 'bookmarks' },
-  { separator: true },
+  { name: 'Contas', link: '/user/accounts', icon: 'bank' },
+  { name: 'Espaços', link: '/user/financial-spaces', icon: 'boxes' },
   { name: 'Preferências', link: '/user/preferences', icon: 'toggles2' },
+  { separator: true },
 ];
 
 const { loggedIn: userIsLogged } = useUserSession();
 
 watch(userIsLogged, (newVal) => {
   if (!newVal) {
-    navigateTo('/login')
+    navigateTo('/login');
   }
-})
+});
 
 onMounted(async () => {
   // Carregamos aqui para evitar erro de hidratação do bootstrap no SSR
@@ -42,7 +42,7 @@ onMounted(async () => {
         <NuxtLink class="navbar-brand me-4" :to="{ name: 'index' }">
           <img src="/logo.svg" alt="Conta Integrada" height="48" class="d-inline-block align-text-top">
         </NuxtLink>
-        
+
         <AuthState>
           <template #default="{ loggedIn, clear, user }">
             <LayoutSearch :logged-in="loggedIn" class="mx-md-auto my-2 my-md-0" />
@@ -62,7 +62,7 @@ onMounted(async () => {
                   <hr v-if="menu.separator" class="dropdown-divider">
                   <NuxtLink v-else class="nav-link active" aria-current="page" :to="menu.link"
                             exact-active-class="active">
-                    <i class="bi me-2" :class="[`bi-${menu.icon}`]" v-if="menu.icon" />
+                    <i v-if="menu.icon" class="bi me-2" :class="[`bi-${menu.icon}`]" />
                     {{ menu.name }}
                   </NuxtLink>
                 </li>

@@ -1,5 +1,7 @@
 import { ObjectId } from 'mongodb';
+
 import type { UserPreference, UserPreferenceCreate } from '../../shared/schemas/userPreferences.ts';
+
 import { getClient } from '../database/client.ts';
 
 async function load(userId: string): Promise<void> {
@@ -9,7 +11,7 @@ async function load(userId: string): Promise<void> {
     createdAt: new Date(),
     updatedAt: null,
     defaultCurrency: 'BRL',
-    currencies: ['BRL', 'USD', 'EUR', 'COP'],
+    currencies: ['BRL', 'COP', 'EUR', 'USD'],
   };
 
   const result = await db.collection<UserPreference>('user_preferences').updateOne(

@@ -1,14 +1,10 @@
 import { type Collection, ObjectId, type UpdateResult } from 'mongodb';
-import type { UserPreference, UserPreferenceUpdate } from '~~/shared/schemas/userPreferences';
 import { useDatabase } from '~~/server/utils/mongo';
+
+import type { UserPreference, UserPreferenceUpdate } from '~~/shared/schemas/userPreferences';
 
 class UserPreferencesRepo {
   readonly #collectionName = 'user_preferences';
-
-  async #getCollection(): Promise<Collection<UserPreference>> {
-    const db = await useDatabase();
-    return db.collection<UserPreference>(this.#collectionName);
-  }
 
   async getByUserId(userId: string): Promise<UserPreference | null> {
     const collection = await this.#getCollection();
@@ -20,6 +16,11 @@ class UserPreferencesRepo {
     return collection.updateOne({ userId: ObjectId.createFromHexString(userId) }, {
       $set: { ...changes, updatedAt: new Date() },
     });
+  }
+
+  async #getCollection(): Promise<Collection<UserPreference>> {
+    const db = await useDatabase();
+    return db.collection<UserPreference>(this.#collectionName);
   }
 }
 

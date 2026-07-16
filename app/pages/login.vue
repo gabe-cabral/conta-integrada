@@ -2,34 +2,34 @@
 const { register, authenticate } = useWebAuthn({
   registerEndpoint: '/api/webauthn/register', // Default
   authenticateEndpoint: '/api/webauthn/authenticate', // Default
-})
+});
 
-const { fetch: fetchUserSession, loggedIn } = useUserSession()
+const { fetch: fetchUserSession, loggedIn } = useUserSession();
 
-const userName = ref('')
-const signingUp = ref(false)
-const checking = ref(false)
+const userName = ref('');
+const signingUp = ref(false);
+const checking = ref(false);
 
 async function submit() {
-  checking.value = true
+  checking.value = true;
 
   if (signingUp.value) {
     await register({ userName: userName.value })
-      .then(fetchUserSession) // refetch the user session
-    return
+      .then(fetchUserSession); // refetch the user session
+    return;
   }
 
   await authenticate(userName.value)
-    .then(fetchUserSession) // refetch the user session
+    .then(fetchUserSession); // refetch the user session
 
-  checking.value = false
+  checking.value = false;
 }
 
 watch(loggedIn, (newVal) => {
   if (newVal) {
-    navigateTo('/')
+    navigateTo('/');
   }
-})
+});
 </script>
 
 <template>

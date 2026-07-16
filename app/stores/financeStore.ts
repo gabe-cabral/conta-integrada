@@ -13,18 +13,6 @@ export const useFinanceStore = defineStore('financeStore', {
         this.lastUpdated = new Date();
         this.balances = [
           {
-            income: { amountInCents: 500000, currency: 'USD' },
-            expenses: { amountInCents: 1000, currency: 'USD' },
-            currentBalance: { amountInCents: 499000, currency: 'USD' },
-            projectedBalance: { amountInCents: 510800, currency: 'USD' },
-            currency: 'USD',
-            essentialExpenses: null,
-            otherExpenses: null,
-            investments: {
-              amountInCents: -309, currency: 'USD', percentage: -0.05,
-            },
-          },
-          {
             income: { amountInCents: 0, currency: 'EUR' },
             expenses: { amountInCents: 0, currency: 'EUR' },
             currentBalance: { amountInCents: 10000, currency: 'EUR' },
@@ -52,19 +40,21 @@ export const useFinanceStore = defineStore('financeStore', {
               amountInCents: 50000, currency: 'BRL', percentage: 0.3,
             },
           },
+          {
+            income: { amountInCents: 500000, currency: 'USD' },
+            expenses: { amountInCents: 1000, currency: 'USD' },
+            currentBalance: { amountInCents: 499000, currency: 'USD' },
+            projectedBalance: { amountInCents: 510800, currency: 'USD' },
+            currency: 'USD',
+            essentialExpenses: null,
+            otherExpenses: null,
+            investments: {
+              amountInCents: -309, currency: 'USD', percentage: -0.05,
+            },
+          },
         ];
 
         this.cards = [
-          {
-            brand: 'visa',
-            number: '1234',
-            current: {
-              amountInCents: 1803010051,
-              currency: 'COP',
-              percentage: 0.01,
-            },
-            invoiceDate: new Date(2026, 0, 25),
-          },
           {
             brand: 'mastercard',
             number: '9070',
@@ -74,6 +64,16 @@ export const useFinanceStore = defineStore('financeStore', {
               percentage: 0.3,
             },
             invoiceDate: new Date(2026, 0, 30),
+          },
+          {
+            brand: 'visa',
+            number: '1234',
+            current: {
+              amountInCents: 1803010051,
+              currency: 'COP',
+              percentage: 0.01,
+            },
+            invoiceDate: new Date(2026, 0, 25),
           },
         ];
 

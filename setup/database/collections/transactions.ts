@@ -1,9 +1,11 @@
-import type { Collection } from "mongodb";
-import { MongoServerError } from "mongodb";
-import zodToMongoSchema from "zod-to-mongo-schema";
+import zodToMongoSchema from 'zod-to-mongo-schema';
+import { MongoServerError } from 'mongodb';
+
 import type { Transaction } from '../../../shared/types/transactions.ts';
+import type { Collection } from 'mongodb';
+
 import { transactionsSchema } from '../../../server/repositories/TransactionsRepo.ts';
-import { getClient } from "../client.ts";
+import { getClient } from '../client.ts';
 import { env } from '../../../env.ts';
 
 async function setup(): Promise<Collection<Transaction> | null> {
@@ -16,15 +18,15 @@ async function setup(): Promise<Collection<Transaction> | null> {
   try {
     const coll = await db.createCollection<Transaction>(collectionName, {
       validator: { $jsonSchema: mongoSchema },
-      validationLevel: "strict",
-      validationAction: "error",
+      validationLevel: 'strict',
+      validationAction: 'error',
     });
 
     console.log(`Collection "${collectionName}" successfully created!`);
 
     await coll.createIndexes([
-      { key: { userId: 1 }, name: 'user-id' },
       { key: { userId: 1 }, name: 'user-date', partialFilterExpression: { date: -1 } },
+      { key: { userId: 1 }, name: 'user-id' },
     ]);
 
     return coll;
@@ -36,19 +38,19 @@ async function setup(): Promise<Collection<Transaction> | null> {
         await db.command({
           collMod: collectionName,
           validator,
-          validationLevel: "strict",
-          validationAction: "error",
+          validationLevel: 'strict',
+          validationAction: 'error',
         });
 
         console.log(`Schema da coleção '${collectionName}' atualizado!`);
       } catch (error) {
         if (error instanceof MongoServerError) {
-          console.error("Erro do MongoDB ao atualizar schema:", error.message);
+          console.error('Erro do MongoDB ao atualizar schema:', error.message);
         }
         throw error;
       }
     } else {
-      console.error("Erro ao criar coleção:", error);
+      console.error('Erro ao criar coleção:', error);
     }
 
     return null;

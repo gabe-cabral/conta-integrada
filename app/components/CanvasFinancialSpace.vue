@@ -1,39 +1,41 @@
 <script setup lang="ts">
-import type { Dropdown } from 'bootstrap';
-import { useAppStore } from '~/stores/appStore';
-import useSystemStore from '~/stores/systemStore';
-import generateColorFromText from '~/utils/generateColorFromText';
 import {
-  FINANCIAL_SPACE_ICON_GROUPS,
   countTextCharacters,
-  financialSpaceCreateSchema,
+  FINANCIAL_SPACE_ICON_GROUPS,
   type FinancialSpace,
+  financialSpaceCreateSchema,
   type FinancialSpaceData,
 } from '~~/shared/schemas/financialSpaces';
+
+import type { Dropdown } from 'bootstrap';
+
+import generateColorFromText from '~/utils/generateColorFromText';
+import useSystemStore from '~/stores/systemStore';
+import { useAppStore } from '~/stores/appStore';
 
 type FinancialSpaceIcon = NonNullable<FinancialSpace['icon']>;
 
 interface FinancialSpaceForm {
-  _id: string | null;
-  name: string;
-  description: string;
-  icon: FinancialSpaceIcon;
-  color: string;
-  categoryMode: FinancialSpace['categoryMode'];
-  categoryIds: string[];
-  currencies: string[];
-  showOnDashboard: boolean;
-  updatedAt: Date | null;
+  _id: string | null
+  name: string
+  description: string
+  icon: FinancialSpaceIcon
+  color: string
+  categoryMode: FinancialSpace['categoryMode']
+  categoryIds: string[]
+  currencies: string[]
+  showOnDashboard: boolean
+  updatedAt: Date | null
 }
 
 const emits = defineEmits<{
-  close: [];
-  saved: [financialSpace: FinancialSpaceData];
+  close: []
+  saved: [financialSpace: FinancialSpaceData]
 }>();
 
 const props = withDefaults(defineProps<{
-  id?: string | null;
-  financialSpace?: FinancialSpace | null;
+  financialSpace?: FinancialSpace | null
+  id?: string | null
 }>(), {
   id: null,
   financialSpace: null,
@@ -196,13 +198,13 @@ async function submit() {
 }
 
 watch(
-  () => [props.id, props.financialSpace] as const,
+  () => [props.financialSpace, props.id] as const,
   syncFinancialSpace,
   { immediate: true },
 );
 
 watch(
-  () => [financialSpace.value?.name, financialSpace.value?.icon] as const,
+  () => [financialSpace.value?.icon, financialSpace.value?.name] as const,
   ([name, icon]) => {
     if (!financialSpace.value || colorManuallyChanged.value || !icon) return;
     financialSpace.value.color = generateColorFromText(name || 'Espaço', icon);
@@ -295,7 +297,7 @@ onUnmounted(() => iconDropdown?.dispose());
         <div class="input-group">
           <input id="financial_space_color" v-model="financialSpace.color" type="color"
                  class="form-control form-control-color" title="Escolher cor do espaço"
-                 @input="markColorAsManual" style="max-width: 5rem">
+                 style="max-width: 5rem" @input="markColorAsManual">
           <input id="financial_space_color_hex" v-model.trim="financialSpace.color" type="text"
                  class="form-control font-monospace text-uppercase" title="Escolher cor do espaço"
                  @input="markColorAsManual">

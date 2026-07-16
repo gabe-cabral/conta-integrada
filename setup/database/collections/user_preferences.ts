@@ -1,15 +1,17 @@
-import type { Collection, Document } from 'mongodb';
 import { MongoServerError } from 'mongodb';
+
 import type { UserPreference } from '../../../shared/schemas/userPreferences.ts';
-import { env } from '../../../env.ts';
+import type { Collection, Document } from 'mongodb';
+
 import { getClient } from '../client.ts';
+import { env } from '../../../env.ts';
 
 const collectionName = 'user_preferences';
 
 const userPreferencesCollectionSchema = {
   title: 'UserPreference',
   bsonType: 'object',
-  required: ['userId', 'defaultCurrency', 'currencies'],
+  required: ['currencies', 'defaultCurrency', 'userId'],
   properties: {
     _id: { bsonType: 'objectId' },
     userId: { bsonType: 'objectId' },

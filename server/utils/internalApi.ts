@@ -1,5 +1,6 @@
-import type { H3Event } from 'h3';
 import { createError, getHeader } from 'h3';
+
+import type { H3Event } from 'h3';
 
 export function requireInternalApiAccess(event: H3Event): void {
   const { internalApiSecret } = useRuntimeConfig();

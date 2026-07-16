@@ -1,10 +1,10 @@
 <script setup lang="ts">
-  const props = defineProps({
-    balance: {
-      type: Object as PropType<Balance>,
-      required: true,
-    },
-  });
+const props = defineProps({
+  balance: {
+    type: Object as PropType<Balance>,
+    required: true,
+  },
+});
 </script>
 
 <template>

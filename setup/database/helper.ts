@@ -1,4 +1,4 @@
-import type { 
+import type {
   AutoEncryptionOptions, AWSEncryptionKeyOptions, AzureEncryptionKeyOptions, ClientEncryption, Db,
   GCPEncryptionKeyOptions, KMIPEncryptionKeyOptions, KMSProviders,
 } from 'mongodb';
@@ -60,13 +60,13 @@ export function getKMSProviderCredentials(
 
     default:
       throw new Error(
-        `Unrecognized value for KMS provider name "${kmsProviderName}" encountered while retrieving KMS credentials.`
+        `Unrecognized value for KMS provider name "${kmsProviderName}" encountered while retrieving KMS credentials.`,
       );
   }
 }
 
 export function getCustomerMasterKeyCredentials(
-  kmsProviderName: KMSProviderName
+  kmsProviderName: KMSProviderName,
 ): AWSEncryptionKeyOptions | AzureEncryptionKeyOptions | GCPEncryptionKeyOptions | KMIPEncryptionKeyOptions {
   let customerMasterKeyCredentials;
 
@@ -96,7 +96,7 @@ export function getCustomerMasterKeyCredentials(
       return customerMasterKeyCredentials as KMIPEncryptionKeyOptions;
     default:
       throw new Error(
-        `Unrecognized value for KMS provider name "${kmsProviderName}" encountered while retrieving Customer Master Key credentials.`
+        `Unrecognized value for KMS provider name "${kmsProviderName}" encountered while retrieving Customer Master Key credentials.`,
       );
   }
 }
@@ -104,7 +104,7 @@ export function getCustomerMasterKeyCredentials(
 export function getAutoEncryptionOptions(
   kmsProviderName: KMSProviderName,
   keyVaultNamespace: string,
-  kmsProviders: KMSProviders
+  kmsProviders: KMSProviders,
 ): AutoEncryptionOptions {
   const autoEncryptionOptions = {
     keyVaultNamespace,
@@ -127,7 +127,7 @@ export async function createEncryptedCollection(
   encryptedCollectionName: string,
   kmsProviderName: KMSProviderName,
   encryptedFieldsMap: Document,
-  customerMasterKeyCredentials: any
+  customerMasterKeyCredentials: any,
 ) {
   try {
     await clientEncryption.createEncryptedCollection(
@@ -137,11 +137,11 @@ export async function createEncryptedCollection(
         provider: kmsProviderName,
         createCollectionOptions: encryptedFieldsMap,
         masterKey: customerMasterKeyCredentials,
-      }
+      },
     );
   } catch (err) {
     throw new Error(
-      `Unable to create encrypted collection due to the following error: ${err}`
+      `Unable to create encrypted collection due to the following error: ${err}`,
     );
   }
 }

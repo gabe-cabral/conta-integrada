@@ -1,8 +1,10 @@
-import type { Collection, Document } from 'mongodb';
 import { MongoServerError } from 'mongodb';
-import { env } from '../../../env.ts';
+
 import type { ExchangeRateSnapshotDocument } from '../../../server/utils/exchangeRateSnapshots.ts';
+import type { Collection, Document } from 'mongodb';
+
 import { getClient } from '../client.ts';
+import { env } from '../../../env.ts';
 
 const collectionName = 'exchange_rate_snapshots';
 
@@ -11,14 +13,14 @@ const exchangeRateSnapshotCollectionSchema = {
   bsonType: 'object',
   required: [
     '_id',
-    'valuationDate',
     'baseCurrency',
-    'rates',
-    'provider',
     'carriedForward',
-    'status',
     'createdAt',
+    'provider',
+    'rates',
+    'status',
     'updatedAt',
+    'valuationDate',
   ],
   properties: {
     _id: {
@@ -149,13 +151,13 @@ async function setup(): Promise<Collection<ExchangeRateSnapshotDocument> | null>
 async function createIndexes(coll: Collection<ExchangeRateSnapshotDocument>) {
   await coll.createIndexes([
     {
+      key: { baseCurrency: 1, status: 1, valuationDate: -1 },
+      name: 'base-currency-status-valuation-date-desc',
+    },
+    {
       key: { baseCurrency: 1, valuationDate: 1 },
       name: 'base-currency-valuation-date',
       unique: true,
-    },
-    {
-      key: { baseCurrency: 1, status: 1, valuationDate: -1 },
-      name: 'base-currency-status-valuation-date-desc',
     },
   ]);
 }

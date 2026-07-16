@@ -1,6 +1,6 @@
-import { z } from 'zod';
-import CurrencyRepo from '~~/server/repositories/CurrencyRepo';
 import { currencyCodeSchema } from '~~/shared/schemas/currency';
+import CurrencyRepo from '~~/server/repositories/CurrencyRepo';
+import { z } from 'zod';
 
 const routeSchema = z.strictObject({
   id: currencyCodeSchema,

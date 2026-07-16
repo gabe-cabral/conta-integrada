@@ -1,4 +1,5 @@
 import { z } from 'zod';
+
 import type { Money } from '../types/finances.js';
 
 export const MoneySchema = z.strictObject({

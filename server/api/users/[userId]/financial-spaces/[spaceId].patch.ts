@@ -1,8 +1,8 @@
-import { z } from 'zod';
-import FinancialSpacesRepo from '~~/server/repositories/FinancialSpacesRepo';
-import { assertFinancialSpaceCategoriesBelongToUser } from '~~/server/utils/financialSpaces';
 import { financialSpaceCreateSchema, financialSpaceUpdateSchema } from '~~/shared/schemas/financialSpaces';
+import { assertFinancialSpaceCategoriesBelongToUser } from '~~/server/utils/financialSpaces';
+import FinancialSpacesRepo from '~~/server/repositories/FinancialSpacesRepo';
 import { zodObjectId } from '~~/shared/zod/mongodb';
+import { z } from 'zod';
 
 const routeSchema = z.strictObject({
   userId: zodObjectId,

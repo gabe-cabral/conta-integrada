@@ -9,8 +9,8 @@ await financeStore.fetchBalances();
 appStore.setCurrencyList([
   { code: 'BRL', label: 'Real Brasileiro', symbol: 'R$' },
   { code: 'COP', label: 'Peso Colombiano', symbol: '$' },
-  { code: 'USD', label: 'Dólar Americano', symbol: 'US$' },
   { code: 'EUR', label: 'Euro', symbol: '€' },
+  { code: 'USD', label: 'Dólar Americano', symbol: 'US$' },
 ]);
 </script>
 

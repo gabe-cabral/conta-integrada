@@ -6,4 +6,4 @@ export default defineAppConfig({
       primary: '#217345',
     },
   },
-})
+});

@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { useFinanceStore } from '~/stores/financeStore';
 import type { Money } from '#shared/types/finances';
+
+import { useFinanceStore } from '~/stores/financeStore';
 
 definePageMeta({
   middleware: ['authenticated'],
@@ -10,21 +11,24 @@ const { user } = useUserSession();
 const financeStore = useFinanceStore();
 
 const essentialExpenses = computed(
-  () => financeStore.balances.filter(balance => balance.essentialExpenses?.amountInCents)).value
+  () => financeStore.balances.filter(balance => balance.essentialExpenses?.amountInCents),
+).value
   .map(balance => balance.essentialExpenses as Money);
 
 const otherExpenses = computed(
-  () => financeStore.balances.filter(balance => balance.otherExpenses?.amountInCents)).value
+  () => financeStore.balances.filter(balance => balance.otherExpenses?.amountInCents),
+).value
   .map(balance => balance.otherExpenses as Money);
 
 const investments = computed(
-  () => financeStore.balances.filter(balance => balance.investments?.amountInCents)).value
+  () => financeStore.balances.filter(balance => balance.investments?.amountInCents),
+).value
   .map(balance => balance.investments as Money);
 
 const analyticalData = ref([
   { id: 'essential-expenses', label: 'Gastos essenciais', pct: 0.26, data: essentialExpenses },
-  { id: 'other-expenses', label: 'Gastos outros', pct: 0.3, data: otherExpenses },
   { id: 'investments', label: 'Investimentos', pct: 0.4, data: investments },
+  { id: 'other-expenses', label: 'Gastos outros', pct: 0.3, data: otherExpenses },
 ]);
 </script>
 

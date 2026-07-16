@@ -35,7 +35,7 @@ onMounted(() => {
     <span class="visually-hidden">Carregando...</span>
   </div>
 
-  <template v-else> 
+  <template v-else>
     <div class="d-flex align-items-stretch gap-3 overflow-x-auto pb-2">
       <CardWidget v-for="card in cards" :key="card.number" :card="card" class="bg-white shadow-sm" />
     </div>

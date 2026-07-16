@@ -1,16 +1,17 @@
-import type { Binary, Document, ObjectId } from 'mongodb';
 import type { FinancialSpace } from '../../shared/schemas/financialSpaces.js';
+import type { Binary, Document, ObjectId } from 'mongodb';
+
 import BaseSecureUserScopedRepo, { type UpdateUserScopedRecord } from './BaseSecureRepo.js';
 
 type FinancialSpaceDbDocument = Omit<
   FinancialSpace,
   '_id' | 'userId' | 'name' | 'description' | 'categoryIds'
 > & {
-  _id?: ObjectId;
-  userId: ObjectId;
-  name: Binary;
-  description?: Binary;
-  categoryIds: ObjectId[];
+  _id?: ObjectId
+  categoryIds: ObjectId[]
+  description?: Binary
+  name: Binary
+  userId: ObjectId
 } & Document;
 
 class FinancialSpacesRepo extends BaseSecureUserScopedRepo<FinancialSpace, FinancialSpaceDbDocument> {

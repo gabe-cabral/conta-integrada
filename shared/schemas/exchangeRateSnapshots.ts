@@ -1,30 +1,31 @@
 import Decimal from 'decimal.js';
 import { z } from 'zod';
-import { currencyCodeSchema, type CurrencyCode } from './currency.js';
+
+import { type CurrencyCode, currencyCodeSchema } from './currency.js';
 
 export const exchangeRateSnapshotStatusSchema = z.enum(['complete', 'partial']);
 
 export type ExchangeRateSnapshotStatus = z.infer<typeof exchangeRateSnapshotStatusSchema>;
 
 export interface ExchangeRateSnapshotProvider {
-  name: string;
-  referenceDate?: Date;
-  timestamp?: Date;
-  retrievedAt: Date;
+  name: string
+  referenceDate?: Date
+  timestamp?: Date
+  retrievedAt: Date
 }
 
 export interface ExchangeRateSnapshotDto {
-  _id: string;
-  valuationDate: Date;
-  baseCurrency: CurrencyCode;
-  rates: Record<CurrencyCode, string>;
-  provider: ExchangeRateSnapshotProvider;
-  carriedForward: boolean;
-  status: ExchangeRateSnapshotStatus;
-  expectedCurrencies?: CurrencyCode[];
-  missingCurrencies?: CurrencyCode[];
-  createdAt: Date;
-  updatedAt: Date;
+  _id: string
+  valuationDate: Date
+  baseCurrency: CurrencyCode
+  rates: Record<CurrencyCode, string>
+  provider: ExchangeRateSnapshotProvider
+  carriedForward: boolean
+  status: ExchangeRateSnapshotStatus
+  expectedCurrencies?: CurrencyCode[]
+  missingCurrencies?: CurrencyCode[]
+  createdAt: Date
+  updatedAt: Date
 }
 
 export type ExchangeRateSnapshotCreate = Omit<ExchangeRateSnapshotDto, '_id' | 'createdAt' | 'updatedAt'>;
@@ -36,8 +37,8 @@ const utcDayStringSchema = z.string()
 
 const dateToUtcDayStartSchema = z.union([
   z.date(),
-  z.string().refine((value) => !Number.isNaN(Date.parse(value)), { message: 'Invalid date format' }),
-]).transform((value) => normalizeUtcDayStart(value));
+  z.string().refine(value => !Number.isNaN(Date.parse(value)), { message: 'Invalid date format' }),
+]).transform(value => normalizeUtcDayStart(value));
 
 export const exchangeRateSnapshotIdSchema = z.string()
   .trim()
@@ -61,11 +62,11 @@ const providerSchema = z.strictObject({
   referenceDate: dateToUtcDayStartSchema.optional(),
   timestamp: z.union([
     z.date(),
-    z.string().refine((value) => !Number.isNaN(Date.parse(value)), { message: 'Invalid date format' }).transform((value) => new Date(value)),
+    z.string().refine(value => !Number.isNaN(Date.parse(value)), { message: 'Invalid date format' }).transform(value => new Date(value)),
   ]).optional(),
   retrievedAt: z.union([
     z.date(),
-    z.string().refine((value) => !Number.isNaN(Date.parse(value)), { message: 'Invalid date format' }).transform((value) => new Date(value)),
+    z.string().refine(value => !Number.isNaN(Date.parse(value)), { message: 'Invalid date format' }).transform(value => new Date(value)),
   ]),
 });
 
@@ -137,7 +138,7 @@ function validateSnapshotPayload(payload: ExchangeRateSnapshotCreate, ctx: z.Ref
   if (!baseRate || !new Decimal(baseRate).eq(1)) {
     ctx.addIssue({
       code: 'custom',
-      path: ['rates', payload.baseCurrency],
+      path: [payload.baseCurrency, 'rates'],
       message: 'Rates must include the base currency with value 1',
     });
   }

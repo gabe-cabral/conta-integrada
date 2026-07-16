@@ -1,6 +1,6 @@
-import z from 'zod';
-import AccountsRepo from '~~/server/repositories/AccountsRepo';
 import { bankAccountCreateSchema } from '~~/shared/schemas/bankAccounts.js';
+import AccountsRepo from '~~/server/repositories/AccountsRepo';
+import z from 'zod';
 
 const routeSchema = z.object({
   userId: z.string().length(24),

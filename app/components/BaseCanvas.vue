@@ -5,19 +5,19 @@ let offcanvas: Offcanvas | undefined;
 const offcanvasElement = ref<HTMLElement | null>(null);
 
 const emits = defineEmits<{
-  close: [];
-  submit: [];
+  close: []
+  submit: []
 }>();
 
 const props = withDefaults(defineProps<{
-  id?: string | null;
-  kind: string;
-  title: string;
-  loading?: boolean;
-  sending?: boolean;
-  validated?: boolean;
-  loadingLabel?: string;
-  submitLabel?: string;
+  id?: string | null
+  kind: string
+  loading?: boolean
+  loadingLabel?: string
+  sending?: boolean
+  submitLabel?: string
+  title: string
+  validated?: boolean
 }>(), {
   id: null,
   loading: false,

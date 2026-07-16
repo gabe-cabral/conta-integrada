@@ -1,9 +1,11 @@
-import type { Collection, Document } from 'mongodb';
 import { MongoServerError } from 'mongodb';
-import { env } from '../../../env.ts';
+
 import type { FinancialSpace } from '../../../shared/schemas/financialSpaces.ts';
+import type { Collection, Document } from 'mongodb';
+
 import { FINANCIAL_SPACE_ICONS } from '../../../shared/schemas/financialSpaces.ts';
 import { getClient } from '../client.ts';
+import { env } from '../../../env.ts';
 
 const collectionName = 'financial_spaces';
 
@@ -12,13 +14,13 @@ const financialSpacesCollectionSchema = {
   bsonType: 'object',
   required: [
     '_id',
-    'userId',
-    'name',
-    'categoryMode',
     'categoryIds',
-    'showOnDashboard',
+    'categoryMode',
     'createdAt',
+    'name',
+    'showOnDashboard',
     'updatedAt',
+    'userId',
   ],
   properties: {
     _id: { bsonType: 'objectId' },
@@ -48,9 +50,9 @@ const financialSpacesCollectionSchema = {
 
 async function createIndexes(collection: Collection<FinancialSpace>) {
   await collection.createIndexes([
+    { key: { userId: 1, categoryIds: 1 }, name: 'user-categories' },
     { key: { userId: 1, createdAt: 1 }, name: 'user-created-at' },
     { key: { userId: 1, showOnDashboard: 1 }, name: 'user-dashboard' },
-    { key: { userId: 1, categoryIds: 1 }, name: 'user-categories' },
   ]);
 }
 

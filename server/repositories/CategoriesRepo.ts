@@ -1,45 +1,45 @@
-import type { Document } from "mongodb";
+import type { Document } from 'mongodb';
 
 export const categorySchema = {
-  "title": "TransactionCategory",
-  "bsonType": "object",
-  "properties": {
-    "_id": {
-      "bsonType": "objectId",
-      "description": "Category ID"
+  title: 'TransactionCategory',
+  bsonType: 'object',
+  properties: {
+    _id: {
+      bsonType: 'objectId',
+      description: 'Category ID',
     },
-    "name": {
-      "bsonType": "binData",
-      "description": "Category's name",
+    name: {
+      bsonType: 'binData',
+      description: 'Category\'s name',
     },
-    "active": {
-      "bsonType": "bool",
-      "description": "`true` is this category is active"
+    active: {
+      bsonType: 'bool',
+      description: '`true` is this category is active',
     },
-    "color": {
-      "bsonType": ["string", "null"],
-      "description": "Category's color"
+    color: {
+      bsonType: ['null', 'string'],
+      description: 'Category\'s color',
     },
-    "parentId": {
-      "bsonType": ["objectId", "null"],
-      "description": "Group ID"
+    parentId: {
+      bsonType: ['null', 'objectId'],
+      description: 'Group ID',
     },
-    "kind": {
-      "bsonType": "string",
-      "enum": ["INVESTMENT", "EXPENSE", "INCOME", "TRANSFER", "DIVIDEND", "INTEREST", "TAX", "REFUND", "ADJUSTMENT", "CONTRIBUTION", "REDEMPTION"],
-      "description": "TransactionType"
+    kind: {
+      bsonType: 'string',
+      enum: ['ADJUSTMENT', 'CONTRIBUTION', 'DIVIDEND', 'EXPENSE', 'INCOME', 'INTEREST', 'INVESTMENT', 'REDEMPTION', 'REFUND', 'TAX', 'TRANSFER'],
+      description: 'TransactionType',
     },
-    "userId": {
-      "bsonType": "objectId",
-      "description": "Owner ID"
-    }
+    userId: {
+      bsonType: 'objectId',
+      description: 'Owner ID',
+    },
   },
-  "required": [
-    "_id",
-    "name",
-    "active",
-    "kind",
-    "userId"
+  required: [
+    '_id',
+    'active',
+    'kind',
+    'name',
+    'userId',
   ],
-  "additionalProperties": true,
+  additionalProperties: true,
 } as Document;

@@ -1,5 +1,8 @@
-import { expect, it, vi, describe, beforeEach, afterEach } from 'vitest';
-import { setActivePinia, createPinia } from 'pinia';
+import {
+  afterEach, beforeEach, describe, expect, it, vi,
+} from 'vitest';
+import { createPinia, setActivePinia } from 'pinia';
+
 import useSystemStore from './systemStore';
 
 describe('systemStore', () => {
@@ -217,7 +220,7 @@ describe('systemStore', () => {
     it('deve processar invalid-params quando presente', () => {
       const store = useSystemStore();
       const result = {
-        ok: false,
+        'ok': false,
         'invalid-params': [
           { name: 'email', reason: 'Email inválido' },
           { name: 'senha', reason: 'Senha muito curta' },
@@ -235,8 +238,8 @@ describe('systemStore', () => {
       const result = {
         ok: false,
         errors: [
-          { title: 'Erro de validação', detail: 'Dados inválidos', status: 400 },
           { title: 'Erro de permissão', detail: 'Acesso negado', status: 401 },
+          { title: 'Erro de validação', detail: 'Dados inválidos', status: 400 },
         ],
       };
 
@@ -249,11 +252,11 @@ describe('systemStore', () => {
     it('deve priorizar invalid-params sobre errors', () => {
       const store = useSystemStore();
       const result = {
-        ok: false,
+        'ok': false,
         'invalid-params': [
           { name: 'campo', reason: 'Motivo' },
         ],
-        errors: [
+        'errors': [
           { title: 'Erro', detail: 'Detalhe', status: 400 },
         ],
       };
@@ -267,7 +270,7 @@ describe('systemStore', () => {
     it('deve processar invalid-params com um único item', () => {
       const store = useSystemStore();
       const result = {
-        ok: false,
+        'ok': false,
         'invalid-params': [
           { name: 'cpf', reason: 'CPF inválido' },
         ],

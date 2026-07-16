@@ -1,6 +1,6 @@
 export default defineEventHandler(async (event) => {
   try {
-    const method = event.node.req.method
+    const method = event.node.req.method;
 
     if (method === 'GET') {
       const response = await fetch('https://app.organizze.com.br/zze_front/accounts', {
@@ -26,4 +26,4 @@ export default defineEventHandler(async (event) => {
     event.node.res.statusCode = 500;
     return { error: 'Internal Server Error', details: error };
   }
-})
+});

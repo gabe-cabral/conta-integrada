@@ -1,6 +1,6 @@
-import type { Collection, Filter, OptionalUnlessRequiredId, UpdateResult, WithId } from 'mongodb';
 import { MongoServerError, ObjectId } from 'mongodb';
 import { useDatabase } from '~~/server/utils/mongo';
+
 import type {
   FinancialInstitution,
   FinancialInstitutionCreate,
@@ -8,9 +8,12 @@ import type {
   FinancialInstitutionListQuery,
   FinancialInstitutionUpdate,
 } from '~~/shared/schemas/financialInstitutions';
+import type {
+  Collection, Filter, OptionalUnlessRequiredId, UpdateResult, WithId,
+} from 'mongodb';
 
 type FinancialInstitutionDocument = Omit<FinancialInstitution, '_id'> & {
-  _id?: ObjectId;
+  _id?: ObjectId
 };
 
 type FinancialInstitutionRecord = WithId<FinancialInstitutionDocument>;
@@ -18,29 +21,10 @@ type FinancialInstitutionRecord = WithId<FinancialInstitutionDocument>;
 class FinancialInstitutionsRepo {
   readonly #collectionName = 'financial_institutions';
 
-  async #getCollection(): Promise<Collection<FinancialInstitutionDocument>> {
-    const db = await useDatabase();
-    return db.collection(this.#collectionName) as Collection<FinancialInstitutionDocument>;
-  }
-
-  async listRecords(query: FinancialInstitutionListQuery): Promise<FinancialInstitutionRecord[]> {
+  async deleteRecord(id: string): Promise<boolean> {
     const collection = await this.#getCollection();
-    const filter: Filter<FinancialInstitutionDocument> = {};
-
-    if (query.countryCode) filter.countryCode = query.countryCode;
-    if (query.status) filter.status = query.status;
-    if (query.institutionType) filter.institutionType = query.institutionType;
-
-    if (query.q) {
-      filter.$text = { $search: query.q };
-    }
-
-    return collection
-      .find(filter)
-      .sort({ countryCode: 1, displayName: 1, name: 1 })
-      .skip(query.offset)
-      .limit(query.limit)
-      .toArray();
+    const result = await collection.deleteOne({ _id: this.#toObjectId(id) });
+    return result.deletedCount > 0;
   }
 
   async getRecordById(id: string | ObjectId): Promise<FinancialInstitutionRecord | null> {
@@ -75,6 +59,26 @@ class FinancialInstitutionsRepo {
     }
   }
 
+  async listRecords(query: FinancialInstitutionListQuery): Promise<FinancialInstitutionRecord[]> {
+    const collection = await this.#getCollection();
+    const filter: Filter<FinancialInstitutionDocument> = {};
+
+    if (query.countryCode) filter.countryCode = query.countryCode;
+    if (query.status) filter.status = query.status;
+    if (query.institutionType) filter.institutionType = query.institutionType;
+
+    if (query.q) {
+      filter.$text = { $search: query.q };
+    }
+
+    return collection
+      .find(filter)
+      .sort({ countryCode: 1, displayName: 1, name: 1 })
+      .skip(query.offset)
+      .limit(query.limit)
+      .toArray();
+  }
+
   async updateRecord(id: string, changes: FinancialInstitutionUpdate): Promise<UpdateResult> {
     const recordId = this.#toObjectId(id);
     const existing = await this.getRecordById(recordId);
@@ -101,26 +105,6 @@ class FinancialInstitutionsRepo {
     );
   }
 
-  async deleteRecord(id: string): Promise<boolean> {
-    const collection = await this.#getCollection();
-    const result = await collection.deleteOne({ _id: this.#toObjectId(id) });
-    return result.deletedCount > 0;
-  }
-
-  #assertNoRepeatedIdentifiers(identifiers: FinancialInstitutionIdentifier[]): void {
-    const keys = new Set<string>();
-
-    for (const identifier of identifiers) {
-      const key = this.#identifierKey(identifier.countryCode, identifier.scheme, identifier.value);
-
-      if (keys.has(key)) {
-        throw new Error(`Repeated financial institution identifier: ${key}`);
-      }
-
-      keys.add(key);
-    }
-  }
-
   async #assertIdentifiersAvailable(
     countryCode: string,
     identifiers: FinancialInstitutionIdentifier[],
@@ -138,8 +122,8 @@ class FinancialInstitutionsRepo {
             scheme: identifier.scheme,
             value: identifier.value,
             $or: [
-              { countryCode: identifierCountryCode },
               { countryCode: { $exists: false } },
+              { countryCode: identifierCountryCode },
             ],
           },
         },
@@ -149,6 +133,25 @@ class FinancialInstitutionsRepo {
         throw new Error(`Financial institution identifier already exists: ${this.#identifierKey(identifierCountryCode, identifier.scheme, identifier.value)}`);
       }
     }
+  }
+
+  #assertNoRepeatedIdentifiers(identifiers: FinancialInstitutionIdentifier[]): void {
+    const keys = new Set<string>();
+
+    for (const identifier of identifiers) {
+      const key = this.#identifierKey(identifier.countryCode, identifier.scheme, identifier.value);
+
+      if (keys.has(key)) {
+        throw new Error(`Repeated financial institution identifier: ${key}`);
+      }
+
+      keys.add(key);
+    }
+  }
+
+  async #getCollection(): Promise<Collection<FinancialInstitutionDocument>> {
+    const db = await useDatabase();
+    return db.collection(this.#collectionName) as Collection<FinancialInstitutionDocument>;
   }
 
   #identifierKey(countryCode: string | undefined, scheme: string, value: string): string {

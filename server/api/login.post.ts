@@ -1,12 +1,12 @@
-import { z } from 'zod'
+import { z } from 'zod';
 
 const bodySchema = z.object({
   email: z.string().email(),
   password: z.string().min(8),
-})
+});
 
 export default defineEventHandler(async (event) => {
-  const { email, password } = await readValidatedBody(event, bodySchema.parse)
+  const { email, password } = await readValidatedBody(event, bodySchema.parse);
 
   if (email === 'admin' && password === 'admin') {
     // set the user session in the cookie
@@ -15,13 +15,13 @@ export default defineEventHandler(async (event) => {
       user: {
         name: 'John Doe',
       },
-    })
+    });
 
-    return {}
+    return {};
   }
 
   throw createError({
     status: 401,
     message: 'Bad credentials',
-  })
-})
+  });
+});

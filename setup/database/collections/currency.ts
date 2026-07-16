@@ -1,8 +1,10 @@
-import type { Collection, Document } from 'mongodb';
 import { MongoServerError } from 'mongodb';
-import { env } from '../../../env.ts';
+
 import type { Currency } from '../../../shared/schemas/currency.ts';
+import type { Collection, Document } from 'mongodb';
+
 import { getClient } from '../client.ts';
+import { env } from '../../../env.ts';
 
 const collectionName = 'currency';
 
@@ -11,10 +13,10 @@ const currencyCollectionSchema = {
   bsonType: 'object',
   required: [
     '_id',
-    'names',
-    'minorUnit',
-    'countryUsage',
     'active',
+    'countryUsage',
+    'minorUnit',
+    'names',
   ],
   properties: {
     _id: {
@@ -124,7 +126,7 @@ async function setup(): Promise<Collection<Currency> | null> {
 
 async function createIndexes(coll: Collection<Currency>) {
   await coll.createIndexes([
-    { key: { 'countryUsage.countryCode': 1, active: 1 }, name: 'country-usage-active' },
+    { key: { 'countryUsage.countryCode': 1, 'active': 1 }, name: 'country-usage-active' },
   ]);
 }
 

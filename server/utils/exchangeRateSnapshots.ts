@@ -1,17 +1,18 @@
-import Decimal from 'decimal.js';
-import { Decimal128 } from 'mongodb';
-import type {
-  ExchangeRateSnapshotCreate,
-  ExchangeRateSnapshotDto,
-} from '~~/shared/schemas/exchangeRateSnapshots';
 import {
   buildExchangeRateSnapshotId,
   normalizeUtcDayStart,
 } from '~~/shared/schemas/exchangeRateSnapshots';
+import { Decimal128 } from 'mongodb';
+import Decimal from 'decimal.js';
+
+import type {
+  ExchangeRateSnapshotCreate,
+  ExchangeRateSnapshotDto,
+} from '~~/shared/schemas/exchangeRateSnapshots';
 import type { CurrencyCode } from '~~/shared/schemas/currency';
 
 export type ExchangeRateSnapshotDocument = Omit<ExchangeRateSnapshotDto, 'rates'> & {
-  rates: Record<CurrencyCode, Decimal128>;
+  rates: Record<CurrencyCode, Decimal128>
 };
 
 export function decimalStringToDecimal128(value: string): Decimal128 {

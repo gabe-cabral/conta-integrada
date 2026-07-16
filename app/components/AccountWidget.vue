@@ -16,7 +16,7 @@ const props = defineProps({
         <div>
           <small class="text-uppercase text-muted font-monospace">{{ props.account.brand }}</small>
           <p class="card-title mb-0">{{ props.account.number }}</p>
-        </div>     
+        </div>
       </div>
       <h5><MoneyDisplay :money="props.account.current" /></h5>
       <small class="d-block text-success">

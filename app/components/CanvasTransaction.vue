@@ -1,17 +1,18 @@
 <script setup lang="ts">
 import type { Transaction } from '#shared/types/transactions';
+import type { Account } from '~~/shared/types/resources';
 import type { Offcanvas } from 'bootstrap';
+
 import useSystemStore from '~/stores/systemStore';
 import { useAppStore } from '~/stores/appStore';
-import type { Account } from '~~/shared/types/resources';
 
 let offcanvasElement: HTMLElement | null;
 let offcanvas: Offcanvas | undefined;
 
 interface TransactionForm extends Omit<Transaction, '_id' | 'date' | 'sourceId' | 'createdAt' | 'userId'> {
-  _id: string | null;
-  date: Date | null;
-  sourceId: string | null;
+  _id: string | null
+  date: Date | null
+  sourceId: string | null
 }
 
 const { $userApi } = useNuxtApp();
@@ -128,8 +129,7 @@ async function submit() {
     });
 
     systemStore.addMessage(
-      `Transação ${result.description} ${verbPrefix}da com sucesso!`, 'Sucesso',
-      'success', 'bi-check2-circle', 3,
+      `Transação ${result.description} ${verbPrefix}da com sucesso!`, 'Sucesso', 'success', 'bi-check2-circle', 3,
     );
 
     // Volta para a lista

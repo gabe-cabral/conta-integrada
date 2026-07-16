@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { bankAccountSchema } from '~~/shared/schemas/bankAccounts.js';
+
 import type { BankAccount, BankAccountData } from '~~/shared/schemas/bankAccounts.js';
 
 definePageMeta({

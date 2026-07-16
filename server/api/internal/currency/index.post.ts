@@ -1,5 +1,5 @@
-import CurrencyRepo from '~~/server/repositories/CurrencyRepo';
 import { currencyCreateSchema } from '~~/shared/schemas/currency';
+import CurrencyRepo from '~~/server/repositories/CurrencyRepo';
 
 export default defineEventHandler(async (event) => {
   requireInternalApiAccess(event);

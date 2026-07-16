@@ -1,9 +1,10 @@
-import type { Binary, Document, ObjectId } from "mongodb";
-import { zodBsonEncrypt } from "../../shared/zod/mongodb.js";
-import { userAuditableRecordWithIdSchema } from '../../shared/zod/zodBase.js';
-import { accountTypeSchema, type AccountType, type BankAccount } from '../../shared/schemas/bankAccounts.js';
+import type { Binary, Document, ObjectId } from 'mongodb';
+import type z from 'zod';
+
+import { type AccountType, accountTypeSchema, type BankAccount } from '../../shared/schemas/bankAccounts.js';
 import BaseSecureUserScopedRepo, { type UpdateUserScopedRecord } from './BaseSecureRepo.js';
-import z from 'zod';
+import { userAuditableRecordWithIdSchema } from '../../shared/zod/zodBase.js';
+import { zodBsonEncrypt } from '../../shared/zod/mongodb.js';
 
 export const accountsDbSchema = userAuditableRecordWithIdSchema.extend({
   type: accountTypeSchema,
@@ -21,15 +22,15 @@ export const accountsDbSchema = userAuditableRecordWithIdSchema.extend({
 type AccountDbSchema = z.infer<typeof accountsDbSchema>;
 
 type AccountDbDocument = Omit<AccountDbSchema, '_id' | 'userId' | 'name' | 'brand' | 'number' | 'current' | 'income' | 'expenses'> & {
-  _id?: ObjectId;
-  userId: ObjectId;
-  type: AccountType;
-  name: Binary;
-  brand: Binary;
-  number: Binary | null;
-  current: Binary;
-  income: Binary;
-  expenses: Binary;
+  _id?: ObjectId
+  brand: Binary
+  current: Binary
+  expenses: Binary
+  income: Binary
+  name: Binary
+  number: Binary | null
+  type: AccountType
+  userId: ObjectId
 } & Document;
 
 class AccountsRepo extends BaseSecureUserScopedRepo<BankAccount, AccountDbDocument> {
@@ -51,7 +52,7 @@ class AccountsRepo extends BaseSecureUserScopedRepo<BankAccount, AccountDbDocume
       current: await this.encryptRandom(record.current),
       income: await this.encryptRandom(record.income),
       expenses: await this.encryptRandom(record.expenses),
-    }
+    };
 
     return data;
   }

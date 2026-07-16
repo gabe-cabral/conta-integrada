@@ -1,13 +1,15 @@
-import type { Collection, Document, ObjectId } from 'mongodb';
 import { MongoServerError } from 'mongodb';
+
 import type { FinancialInstitution } from '../../../shared/schemas/financialInstitutions.ts';
+import type { Collection, Document, ObjectId } from 'mongodb';
+
 import { getClient } from '../client.ts';
 import { env } from '../../../env.ts';
 
 const collectionName = 'financial_institutions';
 
 type FinancialInstitutionDocument = Omit<FinancialInstitution, '_id'> & {
-  _id?: ObjectId;
+  _id?: ObjectId
 };
 
 const financialInstitutionCollectionSchema = {
@@ -15,15 +17,15 @@ const financialInstitutionCollectionSchema = {
   bsonType: 'object',
   required: [
     '_id',
-    'type',
     'countryCode',
-    'name',
-    'status',
-    'institutionType',
+    'createdAt',
     'defaultCurrencies',
     'identifiers',
+    'institutionType',
+    'name',
     'sources',
-    'createdAt',
+    'status',
+    'type',
     'updatedAt',
   ],
   properties: {
@@ -66,7 +68,7 @@ const financialInstitutionCollectionSchema = {
       description: 'Operational status of the institution',
     },
     institutionType: {
-      enum: ['bank', 'credit_union', 'payment_institution', 'brokerage', 'digital_wallet', 'central_bank', 'other'],
+      enum: ['bank', 'brokerage', 'central_bank', 'credit_union', 'digital_wallet', 'other', 'payment_institution'],
       description: 'Business classification used by the application',
     },
     defaultCurrencies: {
@@ -91,7 +93,7 @@ const financialInstitutionCollectionSchema = {
           issuer: { bsonType: 'string' },
           countryCode: { bsonType: 'string', pattern: '^[A-Z]{2}$' },
           primary: { bsonType: 'bool' },
-          confidence: { enum: ['official', 'verified', 'inferred', 'community', 'unknown'] },
+          confidence: { enum: ['community', 'inferred', 'official', 'unknown', 'verified'] },
           validFrom: { bsonType: 'date' },
           validUntil: { bsonType: 'date' },
         },
@@ -120,10 +122,10 @@ const financialInstitutionCollectionSchema = {
       bsonType: 'object',
       description: 'Logo and visual metadata',
       properties: {
-        logoUrl: { bsonType: ['string', 'null'] },
-        logoKey: { bsonType: ['string', 'null'] },
-        logoSource: { bsonType: ['string', 'null'] },
-        brandColor: { bsonType: ['string', 'null'], pattern: '^#[0-9A-Fa-f]{6}$' },
+        logoUrl: { bsonType: ['null', 'string'] },
+        logoKey: { bsonType: ['null', 'string'] },
+        logoSource: { bsonType: ['null', 'string'] },
+        brandColor: { bsonType: ['null', 'string'], pattern: '^#[0-9A-Fa-f]{6}$' },
         verified: { bsonType: 'bool' },
       },
       additionalProperties: false,
@@ -134,12 +136,12 @@ const financialInstitutionCollectionSchema = {
       description: 'Traceability references for loaded data',
       items: {
         bsonType: 'object',
-        required: ['sourceName', 'retrievedAt', 'confidence'],
+        required: ['confidence', 'retrievedAt', 'sourceName'],
         properties: {
           sourceName: { bsonType: 'string' },
           sourceUrl: { bsonType: 'string' },
           retrievedAt: { bsonType: 'date' },
-          confidence: { enum: ['official', 'verified', 'inferred', 'community', 'unknown'] },
+          confidence: { enum: ['community', 'inferred', 'official', 'unknown', 'verified'] },
         },
         additionalProperties: false,
       },
@@ -208,8 +210,6 @@ async function setup(): Promise<Collection<FinancialInstitutionDocument> | null>
 
 async function createIndexes(coll: Collection<FinancialInstitutionDocument>) {
   await coll.createIndexes([
-    { key: { countryCode: 1, status: 1, name: 1 }, name: 'country-status-name' },
-    { key: { defaultCurrencies: 1, countryCode: 1, status: 1 }, name: 'currency-country-status' },
     { key: { 'identifiers.scheme': 1, 'identifiers.value': 1 }, name: 'identifier-scheme-value' },
     {
       key: {
@@ -221,6 +221,8 @@ async function createIndexes(coll: Collection<FinancialInstitutionDocument>) {
       },
       name: 'institution-search',
     },
+    { key: { countryCode: 1, status: 1, name: 1 }, name: 'country-status-name' },
+    { key: { defaultCurrencies: 1, countryCode: 1, status: 1 }, name: 'currency-country-status' },
   ]);
 }
 

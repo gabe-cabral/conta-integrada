@@ -5,7 +5,7 @@ const accounts = ref<BankAccount[]>([]);
 async function fetchAccounts() {
   try {
     const result = await $fetch<object[]>('/api/accounts');
-    
+
     accounts.value = result.map((d: object) => ({
       title: d.name,
       number: d.id.toString(),

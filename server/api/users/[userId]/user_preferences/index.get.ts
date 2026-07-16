@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import UserPreferencesRepo from '~~/server/repositories/UserPreferencesRepo';
+import { z } from 'zod';
 
 const routeSchema = z.strictObject({ userId: z.string().regex(/^[a-fA-F0-9]{24}$/) });
 

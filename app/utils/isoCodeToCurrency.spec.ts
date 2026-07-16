@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+
 import isoCodeToCurrency from './isoCodeToCurrency';
 
 describe('isoCodeToCurrency', () => {

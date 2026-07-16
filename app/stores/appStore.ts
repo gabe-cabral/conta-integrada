@@ -1,31 +1,33 @@
-import type { Currency } from "~~/shared/types/finances";
-import type { TransactionCategory, TransactionTypeDisplay } from "~~/shared/types/transactions";
-import type { UserPreference } from "~~/shared/schemas/userPreferences";
-import useSystemStore from "./systemStore";
+import type { TransactionCategory, TransactionTypeDisplay } from '~~/shared/types/transactions';
+import type { UserPreference } from '~~/shared/schemas/userPreferences';
+import type { Currency } from '~~/shared/types/finances';
+
 import isoCodeToCurrency from '~/utils/isoCodeToCurrency';
 
+import useSystemStore from './systemStore';
+
 export interface AppState {
-  currencies: Currency[];
-  categories: TransactionCategory[];
-  transactionTypes: TransactionTypeDisplay[];
-  lastInputDate: Date | null;
-  lastInputCategoryId: string | null;
-  lastInputSourceId: string | null;
+  currencies: Currency[]
+  categories: TransactionCategory[]
+  transactionTypes: TransactionTypeDisplay[]
+  lastInputDate: Date | null
+  lastInputCategoryId: string | null
+  lastInputSourceId: string | null
 }
 
 export const useAppStore = defineStore('appStore', () => {
-  const { user } = useUserSession()
-  const systemStore = useSystemStore()
+  const { user } = useUserSession();
+  const systemStore = useSystemStore();
 
   const loading = ref(false);
   const currencies = ref<Currency[]>([]);
   const categories = ref<TransactionCategory[]>([]);
   const transactionTypes = ref<TransactionTypeDisplay[]>([
+    { code: 'CONTRIBUTION', label: 'Aporte' },
     { code: 'EXPENSE', label: 'Despesa' },
     { code: 'INCOME', label: 'Receita' },
-    { code: 'TRANSFER', label: 'Transferência' },
-    { code: 'CONTRIBUTION', label: 'Aporte' },
     { code: 'REDEMPTION', label: 'Resgate' },
+    { code: 'TRANSFER', label: 'Transferência' },
   ]);
   const lastInputDate = ref<Date | null>(null);
   const lastInputCategoryId = ref<string | null>(null);

@@ -1,23 +1,25 @@
 <script setup lang="ts">
-import useSystemStore from '~/stores/systemStore';
-import { useAppStore } from '~/stores/appStore';
 import { bankAccountCreateSchema } from '~~/shared/schemas/bankAccounts.js';
+
 import type { BankAccount, BankAccountCreateData, BankAccountData } from '~~/shared/schemas/bankAccounts.js';
 
+import useSystemStore from '~/stores/systemStore';
+import { useAppStore } from '~/stores/appStore';
+
 interface AccountForm extends Omit<BankAccount, '_id' | 'createdAt' | 'userId'> {
-  _id: string | null;
-  createdAt?: Date;
-  userId?: string;
+  _id: string | null
+  createdAt?: Date
+  userId?: string
 }
 
 const emits = defineEmits<{
-  close: [];
-  saved: [account: BankAccountData];
+  close: []
+  saved: [account: BankAccountData]
 }>();
 
 const props = withDefaults(defineProps<{
-  id?: string | null;
-  account?: BankAccount | null;
+  account?: BankAccount | null
+  id?: string | null
 }>(), {
   id: null,
   account: null,
@@ -37,12 +39,12 @@ const formExpensesAmount = ref(0);
 
 const accountTypes = [
   { value: 'CHECKING', label: 'Conta corrente' },
-  { value: 'SAVINGS', label: 'Poupanca' },
   { value: 'CREDIT_CARD', label: 'Cartao de credito' },
   { value: 'INVESTMENT', label: 'Investimento' },
   { value: 'LOAN', label: 'Emprestimo' },
-  { value: 'WALLET', label: 'Carteira' },
   { value: 'OTHER', label: 'Outro' },
+  { value: 'SAVINGS', label: 'Poupanca' },
+  { value: 'WALLET', label: 'Carteira' },
 ] as const;
 
 const submitLabel = computed(() => props.id === 'new' ? 'Criar conta' : 'Salvar alteracoes');
@@ -149,7 +151,7 @@ async function submit() {
   }
 }
 
-watch(() => [props.id, props.account] as const, syncAccount, { immediate: true });
+watch(() => [props.account, props.id] as const, syncAccount, { immediate: true });
 </script>
 
 <template>

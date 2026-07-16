@@ -1,5 +1,5 @@
-import ExchangeRateSnapshotsRepo from '~~/server/repositories/ExchangeRateSnapshotsRepo';
 import { exchangeRateSnapshotLatestQuerySchema } from '~~/shared/schemas/exchangeRateSnapshots';
+import ExchangeRateSnapshotsRepo from '~~/server/repositories/ExchangeRateSnapshotsRepo';
 
 export default defineEventHandler(async (event) => {
   requireInternalApiAccess(event);

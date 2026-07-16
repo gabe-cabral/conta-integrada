@@ -1,51 +1,52 @@
 import { z } from 'zod';
-import { currencyCodeSchema } from './currency.js';
+
 import { userAuditableRecordWithIdSchema } from '../zod/zodBase.js';
+import { currencyCodeSchema } from './currency.js';
 import { zodObjectId } from '../zod/mongodb.js';
 
 export const FINANCIAL_SPACE_ICON_GROUPS = [
   {
-    name: 'Pessoal',
-    icons: ['house-fill', 'people-fill', 'heart-pulse-fill', 'cup-hot-fill', 'car-front-fill', 'bag-fill'],
-  },
-  {
-    name: 'Trabalho',
-    icons: ['building', 'briefcase-fill', 'kanban-fill', 'tools', 'graph-up-arrow'],
-  },
-  {
     name: 'Contextos',
-    icons: ['bank', 'globe-americas', 'airplane', 'calendar-event-fill', 'wallet2'],
+    icons: ['airplane', 'bank', 'calendar-event-fill', 'globe-americas', 'wallet2'],
   },
   {
     name: 'Outros',
-    icons: ['bullseye', 'safe-fill', 'gift-fill', 'book-fill', 'controller', 'star-fill', 'trophy-fill'],
+    icons: ['book-fill', 'bullseye', 'controller', 'gift-fill', 'safe-fill', 'star-fill', 'trophy-fill'],
+  },
+  {
+    name: 'Pessoal',
+    icons: ['bag-fill', 'car-front-fill', 'cup-hot-fill', 'heart-pulse-fill', 'house-fill', 'people-fill'],
+  },
+  {
+    name: 'Trabalho',
+    icons: ['briefcase-fill', 'building', 'graph-up-arrow', 'kanban-fill', 'tools'],
   },
 ] as const;
 
 export const FINANCIAL_SPACE_ICONS = [
-  'house-fill',
-  'people-fill',
-  'heart-pulse-fill',
-  'cup-hot-fill',
-  'car-front-fill',
-  'bag-fill',
-  'building',
-  'briefcase-fill',
-  'kanban-fill',
-  'tools',
-  'graph-up-arrow',
-  'bank',
-  'globe-americas',
   'airplane',
-  'calendar-event-fill',
-  'wallet2',
-  'bullseye',
-  'safe-fill',
-  'gift-fill',
+  'bag-fill',
+  'bank',
   'book-fill',
+  'briefcase-fill',
+  'building',
+  'bullseye',
+  'calendar-event-fill',
+  'car-front-fill',
   'controller',
+  'cup-hot-fill',
+  'gift-fill',
+  'globe-americas',
+  'graph-up-arrow',
+  'heart-pulse-fill',
+  'house-fill',
+  'kanban-fill',
+  'people-fill',
+  'safe-fill',
   'star-fill',
+  'tools',
   'trophy-fill',
+  'wallet2',
 ] as const;
 
 export const financialSpaceIconSchema = z.enum(FINANCIAL_SPACE_ICONS);
@@ -110,7 +111,7 @@ export const financialSpaceCreateSchema = financialSpaceFieldsSchema
 
 export const financialSpaceUpdateSchema = financialSpaceFieldsSchema
   .partial()
-  .refine((changes) => Object.keys(changes).length > 0, {
+  .refine(changes => Object.keys(changes).length > 0, {
     message: 'At least one financial space field must be provided',
   });
 

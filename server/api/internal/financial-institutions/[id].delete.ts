@@ -1,5 +1,5 @@
-import z from 'zod';
 import FinancialInstitutionsRepo from '~~/server/repositories/FinancialInstitutionsRepo';
+import z from 'zod';
 
 const routeSchema = z.strictObject({
   id: z.string().trim().length(24),

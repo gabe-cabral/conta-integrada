@@ -18,4 +18,4 @@ export default defineEventHandler(async (event) => {
   const collection = db.collection('categories');
 
   return collection.find({ userId: ObjectId.createFromHexString(user.id) }).toArray();
-})
+});

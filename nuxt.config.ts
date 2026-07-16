@@ -1,5 +1,7 @@
 import { fileURLToPath } from 'node:url';
+
 import { ViteImageOptimizer } from 'vite-plugin-image-optimizer';
+
 import './env'; // Load environment variables from env.ts
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
@@ -7,14 +9,14 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
 
-  modules: ['@nuxt/eslint', '@nuxt/hints', '@nuxt/fonts', '@nuxt/scripts', '@pinia/nuxt', '@nuxt/image', 'nuxt-auth-utils'],
+  modules: ['@nuxt/eslint', '@nuxt/fonts', '@nuxt/hints', '@nuxt/image', '@nuxt/scripts', '@pinia/nuxt', 'nuxt-auth-utils'],
   imports: {
     dirs: ['shared/schemas', 'shared/utils'],
   },
   css: [
     '@/assets/styles/bootstrap.scss',
-    '@/assets/styles/main.scss',
     '@/assets/styles/icons.scss',
+    '@/assets/styles/main.scss',
   ],
 
   runtimeConfig: {
@@ -24,7 +26,7 @@ export default defineNuxtConfig({
       password: process.env.NUXT_SESSION_PASSWORD || 'supersecret',
       maxAge: 4 * 60 * 60, // 4 hours,
       cookie: {
-        sameSite: 'lax'
+        sameSite: 'lax',
       },
     },
     mongoDb: {
@@ -54,12 +56,12 @@ export default defineNuxtConfig({
     head: {
       title: 'Conta Integrada',
       link: [
-        { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+        { rel: 'apple-touch-icon', sizes: '180x180', href: '/apple-touch-icon.png' },
         { rel: 'icon', type: 'image/png', href: '/favicon-96x96.png', sizes: '96x96' },
         { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
-        { rel: 'shortcut icon', href: '/favicon.ico' },
-        { rel: 'apple-touch-icon', sizes: '180x180', href: '/apple-touch-icon.png' },
+        { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
         { rel: 'manifest', href: '/site.webmanifest' },
+        { rel: 'shortcut icon', href: '/favicon.ico' },
         // { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
         // { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: 'anonymous' },
         // { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap', media: 'print', onload: 'this.media=\'all\'' },
@@ -80,6 +82,12 @@ export default defineNuxtConfig({
           multipass: true,
           plugins: [
             {
+              name: 'addAttributesToSVGElement',
+              params: {
+                attributes: [{ xmlns: 'http://www.w3.org/2000/svg' }],
+              },
+            },
+            {
               name: 'preset-default',
               params: {
                 overrides: {
@@ -93,12 +101,6 @@ export default defineNuxtConfig({
               },
             },
             'sortAttrs',
-            {
-              name: 'addAttributesToSVGElement',
-              params: {
-                attributes: [{ xmlns: 'http://www.w3.org/2000/svg' }],
-              },
-            },
           ],
         },
         png: { quality: 90 },
@@ -111,7 +113,7 @@ export default defineNuxtConfig({
       preprocessorOptions: {
         scss: {
           additionalData: '@import "@modules/bootstrap/scss/_functions.scss"; @import "@/assets/styles/variables.scss"; @import "@modules/bootstrap/scss/_variables.scss"; @import "@modules/bootstrap/scss/_mixins.scss";',
-          silenceDeprecations: ['global-builtin', 'import', 'color-functions', 'if-function'],
+          silenceDeprecations: ['color-functions', 'global-builtin', 'if-function', 'import'],
         },
       },
     },
@@ -135,4 +137,4 @@ export default defineNuxtConfig({
       ],
     },
   },
-})
+});

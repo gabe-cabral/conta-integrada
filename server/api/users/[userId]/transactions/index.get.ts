@@ -1,8 +1,9 @@
-import { z } from 'zod';
-import { ObjectId } from 'mongodb';
-import { dateStringToDate } from '~~/shared/zod/zodDate';
 import TransactionsRepo from '~~/server/repositories/TransactionsRepo';
-import { UserTransactionsRequestQuery } from '~~/shared/types/transactions';
+import { dateStringToDate } from '~~/shared/zod/zodDate';
+import { ObjectId } from 'mongodb';
+import { z } from 'zod';
+
+import type { UserTransactionsRequestQuery } from '~~/shared/types/transactions';
 
 const repository = new TransactionsRepo();
 

@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { useAppStore } from '~/stores/appStore';
-import { useFinanceStore } from '~/stores/financeStore';
 import {
-  financialSpaceSchema,
   type FinancialSpace,
   type FinancialSpaceData,
+  financialSpaceSchema,
 } from '~~/shared/schemas/financialSpaces';
+
+import { useFinanceStore } from '~/stores/financeStore';
+import { useAppStore } from '~/stores/appStore';
 
 definePageMeta({
   middleware: ['authenticated'],

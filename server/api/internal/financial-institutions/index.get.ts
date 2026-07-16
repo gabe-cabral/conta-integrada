@@ -1,5 +1,5 @@
-import FinancialInstitutionsRepo from '~~/server/repositories/FinancialInstitutionsRepo';
 import { financialInstitutionListQuerySchema } from '~~/shared/schemas/financialInstitutions';
+import FinancialInstitutionsRepo from '~~/server/repositories/FinancialInstitutionsRepo';
 
 export default defineEventHandler(async (event) => {
   requireInternalApiAccess(event);

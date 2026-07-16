@@ -1,6 +1,15 @@
-import type { Collection, DeleteResult, Filter, FindOptions, OptionalUnlessRequiredId, UpdateResult } from 'mongodb';
-import { MongoServerError } from 'mongodb';
+import {
+  buildExchangeRateSnapshotId,
+  exchangeRateSnapshotReplaceSchema,
+  normalizeUtcDayStart,
+} from '~~/shared/schemas/exchangeRateSnapshots';
+import {
+  mapSnapshotCreateToDocument,
+  mapSnapshotDocumentToDto,
+} from '~~/server/utils/exchangeRateSnapshots';
 import { useDatabase } from '~~/server/utils/mongo';
+import { MongoServerError } from 'mongodb';
+
 import type {
   ExchangeRateSnapshotCreate,
   ExchangeRateSnapshotDto,
@@ -8,23 +17,56 @@ import type {
   ExchangeRateSnapshotListQuery,
   ExchangeRateSnapshotReplace,
 } from '~~/shared/schemas/exchangeRateSnapshots';
-import {
-  buildExchangeRateSnapshotId,
-  exchangeRateSnapshotReplaceSchema,
-  normalizeUtcDayStart,
-} from '~~/shared/schemas/exchangeRateSnapshots';
+import type {
+  Collection, DeleteResult, Filter, FindOptions, OptionalUnlessRequiredId, UpdateResult,
+} from 'mongodb';
 import type { ExchangeRateSnapshotDocument } from '~~/server/utils/exchangeRateSnapshots';
-import {
-  mapSnapshotCreateToDocument,
-  mapSnapshotDocumentToDto,
-} from '~~/server/utils/exchangeRateSnapshots';
 
 class ExchangeRateSnapshotsRepo {
   readonly #collectionName = 'exchange_rate_snapshots';
 
-  async #getCollection(): Promise<Collection<ExchangeRateSnapshotDocument>> {
-    const db = await useDatabase();
-    return db.collection(this.#collectionName) as Collection<ExchangeRateSnapshotDocument>;
+  async deleteSnapshot(id: string): Promise<DeleteResult> {
+    const collection = await this.#getCollection();
+    return collection.deleteOne({ _id: id });
+  }
+
+  async getLatestSnapshot(query: ExchangeRateSnapshotLatestQuery): Promise<ExchangeRateSnapshotDto | null> {
+    const collection = await this.#getCollection();
+    const at = query.at ? normalizeUtcDayStart(query.at) : normalizeUtcDayStart(new Date());
+    const document = await collection.findOne(
+      {
+        baseCurrency: query.baseCurrency,
+        status: query.status,
+        valuationDate: { $lte: at },
+      },
+      { sort: { valuationDate: -1 } },
+    );
+
+    return document ? mapSnapshotDocumentToDto(document) : null;
+  }
+
+  async getSnapshotById(id: string): Promise<ExchangeRateSnapshotDto | null> {
+    const collection = await this.#getCollection();
+    const document = await collection.findOne({ _id: id });
+
+    return document ? mapSnapshotDocumentToDto(document) : null;
+  }
+
+  async insertSnapshot(record: ExchangeRateSnapshotCreate): Promise<string> {
+    const collection = await this.#getCollection();
+    const now = new Date();
+    const document = mapSnapshotCreateToDocument(record, now, now);
+
+    try {
+      const result = await collection.insertOne(document as OptionalUnlessRequiredId<ExchangeRateSnapshotDocument>);
+      return result.insertedId;
+    } catch (error) {
+      if (error instanceof MongoServerError && error.code === 11000) {
+        throw new Error('Exchange rate snapshot already exists');
+      }
+
+      throw error;
+    }
   }
 
   async listSnapshots(query: ExchangeRateSnapshotListQuery): Promise<ExchangeRateSnapshotDto[]> {
@@ -51,43 +93,24 @@ class ExchangeRateSnapshotsRepo {
     return documents.map(mapSnapshotDocumentToDto);
   }
 
-  async getSnapshotById(id: string): Promise<ExchangeRateSnapshotDto | null> {
+  async replaceSnapshot(id: string, record: ExchangeRateSnapshotReplace): Promise<UpdateResult<ExchangeRateSnapshotDocument>> {
     const collection = await this.#getCollection();
-    const document = await collection.findOne({ _id: id });
+    const existing = await collection.findOne({ _id: id });
 
-    return document ? mapSnapshotDocumentToDto(document) : null;
-  }
-
-  async getLatestSnapshot(query: ExchangeRateSnapshotLatestQuery): Promise<ExchangeRateSnapshotDto | null> {
-    const collection = await this.#getCollection();
-    const at = query.at ? normalizeUtcDayStart(query.at) : normalizeUtcDayStart(new Date());
-    const document = await collection.findOne(
-      {
-        baseCurrency: query.baseCurrency,
-        status: query.status,
-        valuationDate: { $lte: at },
-      },
-      { sort: { valuationDate: -1 } },
-    );
-
-    return document ? mapSnapshotDocumentToDto(document) : null;
-  }
-
-  async insertSnapshot(record: ExchangeRateSnapshotCreate): Promise<string> {
-    const collection = await this.#getCollection();
-    const now = new Date();
-    const document = mapSnapshotCreateToDocument(record, now, now);
-
-    try {
-      const result = await collection.insertOne(document as OptionalUnlessRequiredId<ExchangeRateSnapshotDocument>);
-      return result.insertedId;
-    } catch (error) {
-      if (error instanceof MongoServerError && error.code === 11000) {
-        throw new Error('Exchange rate snapshot already exists');
-      }
-
-      throw error;
+    if (!existing) {
+      throw new Error('Exchange rate snapshot not found');
     }
+
+    const parsed = exchangeRateSnapshotReplaceSchema.parse(record);
+    const expectedId = buildExchangeRateSnapshotId(parsed.baseCurrency, parsed.valuationDate);
+
+    if (expectedId !== id) {
+      throw new Error('Snapshot id, baseCurrency and valuationDate are inconsistent');
+    }
+
+    const document = mapSnapshotCreateToDocument(parsed, existing.createdAt, new Date());
+
+    return collection.replaceOne({ _id: id }, document);
   }
 
   async upsertSnapshot(record: ExchangeRateSnapshotCreate): Promise<string> {
@@ -109,29 +132,9 @@ class ExchangeRateSnapshotsRepo {
     return document._id;
   }
 
-  async replaceSnapshot(id: string, record: ExchangeRateSnapshotReplace): Promise<UpdateResult<ExchangeRateSnapshotDocument>> {
-    const collection = await this.#getCollection();
-    const existing = await collection.findOne({ _id: id });
-
-    if (!existing) {
-      throw new Error('Exchange rate snapshot not found');
-    }
-
-    const parsed = exchangeRateSnapshotReplaceSchema.parse(record);
-    const expectedId = buildExchangeRateSnapshotId(parsed.baseCurrency, parsed.valuationDate);
-
-    if (expectedId !== id) {
-      throw new Error('Snapshot id, baseCurrency and valuationDate are inconsistent');
-    }
-
-    const document = mapSnapshotCreateToDocument(parsed, existing.createdAt, new Date());
-
-    return collection.replaceOne({ _id: id }, document);
-  }
-
-  async deleteSnapshot(id: string): Promise<DeleteResult> {
-    const collection = await this.#getCollection();
-    return collection.deleteOne({ _id: id });
+  async #getCollection(): Promise<Collection<ExchangeRateSnapshotDocument>> {
+    const db = await useDatabase();
+    return db.collection(this.#collectionName) as Collection<ExchangeRateSnapshotDocument>;
   }
 }
 

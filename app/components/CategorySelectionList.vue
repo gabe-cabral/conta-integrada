@@ -2,29 +2,29 @@
 import type { TransactionCategory } from '~~/shared/types/transactions';
 
 interface CategoryListItem {
-  category: TransactionCategory;
-  depth: number;
-  hasChildren: boolean;
+  category: TransactionCategory
+  depth: number
+  hasChildren: boolean
 }
 
 const props = withDefaults(defineProps<{
-  modelValue: string[];
-  categories: TransactionCategory[];
-  disabled?: boolean;
-  emptyLabel?: string;
+  categories: TransactionCategory[]
+  disabled?: boolean
+  emptyLabel?: string
+  modelValue: string[]
 }>(), {
   disabled: false,
   emptyLabel: 'Nenhuma categoria disponível.',
 });
 
 const emit = defineEmits<{
-  'update:modelValue': [categoryIds: string[]];
+  'update:modelValue': [categoryIds: string[]]
 }>();
 
 const componentId = useId();
 const selectedIds = computed(() => new Set(props.modelValue));
 const categoriesById = computed(() => new Map(
-  props.categories.map(category => [category._id, category]),
+  props.categories.map(category => [category, category._id]),
 ));
 const childrenByParent = computed(() => {
   const children = new Map<string, TransactionCategory[]>();

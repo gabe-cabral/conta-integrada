@@ -1,17 +1,21 @@
 import { ClientEncryption, MongoClient } from 'mongodb';
-import { getKMSProviderCredentials, getCustomerMasterKeyCredentials, getAutoEncryptionOptions } from './helper.ts';
-import type { ClientEncryptionOptions, Collection, CreateCollectionOptions, Db, Document, UUID } from 'mongodb';
+
+import type {
+  ClientEncryptionOptions, Collection, CreateCollectionOptions, Db, Document, UUID,
+} from 'mongodb';
 import type { KMSProviderName } from './helper.ts';
+
+import { getAutoEncryptionOptions, getCustomerMasterKeyCredentials, getKMSProviderCredentials } from './helper.ts';
 import { env } from '../../env.ts';
 
 export type CreateEncryptedCollectionFunction = <TSchema extends Document = Document>(
   encryptedCollectionName: string,
   encryptedFieldsMap: CreateCollectionOptions,
-) => Promise<{ collection: Collection<TSchema>; encryptedFields: Document; }>;
+) => Promise<{ collection: Collection<TSchema>, encryptedFields: Document }>;
 
 async function getClient(userCertFile?: string): Promise<{
-  client: MongoClient;
-  db: Db;
+  client: MongoClient
+  db: Db
 }> {
   const uri = env.MONGODB_URI;
   if (!uri) throw new Error('Sem URL do MongoDB');
@@ -28,21 +32,21 @@ async function getClient(userCertFile?: string): Promise<{
     console.log(`\nReceived ${signal}. Closing MongoDB...`);
     try {
       await normalClient.close();
-      console.log("MongoDB disconnected cleanly");
+      console.log('MongoDB disconnected cleanly');
     } catch (err) {
-      console.error("Error closing MongoDB:", err);
+      console.error('Error closing MongoDB:', err);
     } finally {
       process.exit(0);
     }
   }
 
   // Eventos padrão de desligamento no Node.js
-  ["SIGINT", "SIGTERM"].forEach((signal) => {
+  ['SIGINT', 'SIGTERM'].forEach((signal) => {
     process.on(signal, () => gracefulShutdown(signal));
   });
 
   // Garantir fechamento antes de sair naturalmente
-  process.on("beforeExit", async () => {
+  process.on('beforeExit', async () => {
     if (normalClient) await normalClient.close();
   });
 
@@ -50,11 +54,12 @@ async function getClient(userCertFile?: string): Promise<{
 }
 
 async function getSecureClient(userCertFile?: string): Promise<{
-  client: MongoClient;
-  clientEncryption: ClientEncryption;
-  db: Db;
-  createEncryptedCollection: CreateEncryptedCollectionFunction;
-  createDek: (keyAltNames?: string[]) => Promise<UUID>;
+  client: MongoClient
+  clientEncryption: ClientEncryption
+  createEncryptedCollection: CreateEncryptedCollectionFunction
+  db: Db
+
+  createDek: (keyAltNames?: string[]) => Promise<UUID>
 }> {
   const uri = env.MONGODB_URI;
   const kmsProviderName = (env.MONGODB_KMS_PROVIDER_NAME || 'gcp') as KMSProviderName;
@@ -68,7 +73,7 @@ async function getSecureClient(userCertFile?: string): Promise<{
   const autoEncryptionOptions = getAutoEncryptionOptions(
     kmsProviderName,
     keyVaultNamespace,
-    kmsProviderCredentials
+    kmsProviderCredentials,
   );
 
   const encryptedClient = new MongoClient(uri, {
@@ -88,7 +93,7 @@ async function getSecureClient(userCertFile?: string): Promise<{
   async function createEncryptedCollection<TSchema extends Document = Document>(
     encryptedCollectionName: string,
     createCollectionOptions: CreateCollectionOptions,
-  ): Promise<{ collection: Collection<TSchema>; encryptedFields: Document; }> {
+  ): Promise<{ collection: Collection<TSchema>, encryptedFields: Document }> {
     try {
       return await clientEncryption.createEncryptedCollection<TSchema>(
         db,
@@ -101,7 +106,7 @@ async function getSecureClient(userCertFile?: string): Promise<{
       );
     } catch (err) {
       throw new Error(
-        `Unable to create encrypted collection due to the following error: ${err}`
+        `Unable to create encrypted collection due to the following error: ${err}`,
       );
     }
   }
@@ -117,7 +122,7 @@ async function getSecureClient(userCertFile?: string): Promise<{
       );
     } catch (err) {
       throw new Error(
-        `Unable to create DEK due to the following error: ${err}`
+        `Unable to create DEK due to the following error: ${err}`,
       );
     }
   }
@@ -126,25 +131,27 @@ async function getSecureClient(userCertFile?: string): Promise<{
     console.log(`\nReceived ${signal}. Closing MongoDB...`);
     try {
       await encryptedClient.close();
-      console.log("MongoDB disconnected cleanly");
+      console.log('MongoDB disconnected cleanly');
     } catch (err) {
-      console.error("Error closing MongoDB:", err);
+      console.error('Error closing MongoDB:', err);
     } finally {
       process.exit(0);
     }
   }
 
   // Eventos padrão de desligamento no Node.js
-  ["SIGINT", "SIGTERM"].forEach((signal) => {
+  ['SIGINT', 'SIGTERM'].forEach((signal) => {
     process.on(signal, () => gracefulShutdown(signal));
   });
 
   // Garantir fechamento antes de sair naturalmente
-  process.on("beforeExit", async () => {
+  process.on('beforeExit', async () => {
     if (encryptedClient) await encryptedClient.close();
   });
 
-  return { client: encryptedClient, clientEncryption, db, createEncryptedCollection, createDek };
+  return {
+    client: encryptedClient, clientEncryption, db, createEncryptedCollection, createDek,
+  };
 }
 
 export { getClient, getSecureClient };

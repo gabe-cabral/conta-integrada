@@ -1,31 +1,32 @@
+import TransactionsRepo from '~~/server/repositories/TransactionsRepo';
 import { ObjectId } from 'mongodb';
 import { z } from 'zod';
-import TransactionsRepo from '~~/server/repositories/TransactionsRepo';
-import type { Transaction } from "~~/shared/types/transactions";
+
+import type { Transaction } from '~~/shared/types/transactions';
 
 const postSchema = z.strictObject({
   _id: z.nullish(z.string().length(24)),
-  date: z.string().refine((date) => !isNaN(Date.parse(date)), { message: 'Invalid date format' }).transform((date) => new Date(date)),
+  date: z.string().refine(date => !isNaN(Date.parse(date)), { message: 'Invalid date format' }).transform(date => new Date(date)),
   datePrecision: z.enum(['DATE', 'DATETIME']),
   description: z.string().min(1),
   amount: z.strictObject({
     amountInCents: z.int().positive(),
     currency: z.string().length(3),
   }),
-  type: z.enum(['EXPENSE', 'INCOME', 'TRANSFER', 'INVESTMENT', 'DIVIDEND', 'INTEREST', 'TAX', 'REFUND', 'ADJUSTMENT']),
-  status: z.enum(['PENDING', 'CONFIRMED', 'CANCELED']),
+  type: z.enum(['ADJUSTMENT', 'DIVIDEND', 'EXPENSE', 'INCOME', 'INTEREST', 'INVESTMENT', 'REFUND', 'TAX', 'TRANSFER']),
+  status: z.enum(['CANCELED', 'CONFIRMED', 'PENDING']),
   categoryId: z.nullish(z.string().length(24)),
   sourceId: z.string().length(24),
-  sourceType: z.enum(['CHECKING', 'SAVINGS', 'CREDIT_CARD', 'INVESTMENT', 'LOAN', 'WALLET', 'OTHER']),
+  sourceType: z.enum(['CHECKING', 'CREDIT_CARD', 'INVESTMENT', 'LOAN', 'OTHER', 'SAVINGS', 'WALLET']),
   destinationId: z.nullish(z.string().length(24)),
-  destinationType: z.enum(['CHECKING', 'SAVINGS', 'CREDIT_CARD', 'INVESTMENT', 'LOAN', 'WALLET', 'OTHER']).optional(),
+  destinationType: z.enum(['CHECKING', 'CREDIT_CARD', 'INVESTMENT', 'LOAN', 'OTHER', 'SAVINGS', 'WALLET']).optional(),
   tags: z.array(z.string()).optional(),
   attachmentsCount: z.number().min(0).optional(),
   recurrence: z.strictObject({
     id: z.string(),
-    frequency: z.enum(['DAILY', 'WEEKLY', 'MONTHLY', 'YEARLY']),
+    frequency: z.enum(['DAILY', 'MONTHLY', 'WEEKLY', 'YEARLY']),
     interval: z.number().min(1),
-    endDate: z.string().refine((date) => !isNaN(Date.parse(date)), { message: 'Invalid date format' }).transform((date) => new Date(date)).optional(),
+    endDate: z.string().refine(date => !isNaN(Date.parse(date)), { message: 'Invalid date format' }).transform(date => new Date(date)).optional(),
     occurrences: z.number().min(1).optional(),
     totalOccurrences: z.number().min(1).optional(),
   }).optional(),

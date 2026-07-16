@@ -1,25 +1,17 @@
-import type { Collection, DeleteResult, Filter, UpdateResult } from 'mongodb';
-import { MongoServerError } from 'mongodb';
 import { useDatabase } from '~~/server/utils/mongo';
-import type { CurrencyDetail, CurrencyCode, CurrencyCreate, CurrencyUpdate } from '~~/shared/schemas/currency';
+import { MongoServerError } from 'mongodb';
+
+import type { CurrencyCode, CurrencyCreate, CurrencyDetail, CurrencyUpdate } from '~~/shared/schemas/currency';
+import type { Collection, DeleteResult, Filter, UpdateResult } from 'mongodb';
 
 export type CurrencyOption = Pick<CurrencyDetail, '_id' | 'names' | 'symbol'>;
 
 class CurrencyRepo {
   readonly #collectionName = 'currency';
 
-  async #getCollection(): Promise<Collection<CurrencyDetail>> {
-    const db = await useDatabase();
-    return db.collection(this.#collectionName) as Collection<CurrencyDetail>;
-  }
-
-  async getCurrenciesByIds(ids: CurrencyCode[], active?: boolean): Promise<CurrencyDetail[]> {
+  async deleteCurrency(id: CurrencyCode): Promise<DeleteResult> {
     const collection = await this.#getCollection();
-    const filter: Filter<CurrencyDetail> = { _id: { $in: ids } };
-
-    if (active !== undefined) filter.active = active;
-
-    return collection.find(filter).sort({ _id: 1 }).toArray();
+    return collection.deleteOne({ _id: id });
   }
 
   async getCurrenciesByCountry(countryCode: string, active?: boolean): Promise<CurrencyDetail[]> {
@@ -31,19 +23,13 @@ class CurrencyRepo {
     return collection.find(filter).sort({ _id: 1 }).toArray();
   }
 
-  async listCurrencies(filter: Pick<CurrencyDetail, 'active'> | Filter<CurrencyDetail> = {}): Promise<CurrencyDetail[]> {
+  async getCurrenciesByIds(ids: CurrencyCode[], active?: boolean): Promise<CurrencyDetail[]> {
     const collection = await this.#getCollection();
+    const filter: Filter<CurrencyDetail> = { _id: { $in: ids } };
+
+    if (active !== undefined) filter.active = active;
+
     return collection.find(filter).sort({ _id: 1 }).toArray();
-  }
-
-  async listActiveCurrencyOptions(): Promise<CurrencyOption[]> {
-    const collection = await this.#getCollection();
-
-    return collection.aggregate<CurrencyOption>([
-      { $match: { active: true } },
-      { $project: { _id: 1, names: 1, symbol: 1 } },
-      { $sort: { _id: 1 } },
-    ]).toArray();
   }
 
   async getCurrencyById(id: CurrencyCode): Promise<CurrencyDetail | null> {
@@ -66,6 +52,21 @@ class CurrencyRepo {
     }
   }
 
+  async listActiveCurrencyOptions(): Promise<CurrencyOption[]> {
+    const collection = await this.#getCollection();
+
+    return collection.aggregate<CurrencyOption>([
+      { $match: { active: true } },
+      { $project: { _id: 1, names: 1, symbol: 1 } },
+      { $sort: { _id: 1 } },
+    ]).toArray();
+  }
+
+  async listCurrencies(filter: Pick<CurrencyDetail, 'active'> | Filter<CurrencyDetail> = {}): Promise<CurrencyDetail[]> {
+    const collection = await this.#getCollection();
+    return collection.find(filter).sort({ _id: 1 }).toArray();
+  }
+
   async updateCurrency(id: CurrencyCode, changes: CurrencyUpdate): Promise<UpdateResult<CurrencyDetail>> {
     const collection = await this.#getCollection();
 
@@ -75,9 +76,9 @@ class CurrencyRepo {
     );
   }
 
-  async deleteCurrency(id: CurrencyCode): Promise<DeleteResult> {
-    const collection = await this.#getCollection();
-    return collection.deleteOne({ _id: id });
+  async #getCollection(): Promise<Collection<CurrencyDetail>> {
+    const db = await useDatabase();
+    return db.collection(this.#collectionName) as Collection<CurrencyDetail>;
   }
 }
 

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 // Doc: https://tom-select.js.org/
 import TomSelect from 'tom-select';
+
 import type { TomSettings } from 'tom-select/dist/esm/types/settings.js';
 
 interface MultiSelectOption {
@@ -10,29 +11,29 @@ interface MultiSelectOption {
 
 const props = withDefaults(
   defineProps<{
+    disabled?: boolean
     modelValue: string[]
+    multiple?: boolean
     options: MultiSelectOption[]
     placeholder?: string
-    disabled?: boolean
-    multiple?: boolean
   }>(),
   {
     placeholder: 'Selecione as opções',
     disabled: false,
     multiple: false,
   },
-)
+);
 
 const emit = defineEmits<{
   'update:modelValue': [value: string[]]
-}>()
+}>();
 
-const selectElement = ref<HTMLSelectElement>()
-let tomSelect: TomSelect | undefined
+const selectElement = ref<HTMLSelectElement>();
+let tomSelect: TomSelect | undefined;
 
 onMounted(() => {
   if (!selectElement.value) {
-    return
+    return;
   }
 
   const settings: TomSettings = {
@@ -52,11 +53,11 @@ onMounted(() => {
         ? value
         : value
           ? [value]
-          : []
+          : [];
 
-      emit('update:modelValue', selectedValues)
+      emit('update:modelValue', selectedValues);
     },
-  }
+  };
 
   tomSelect = new TomSelect(selectElement.value, settings);
 });
@@ -79,7 +80,7 @@ watch(
       tomSelect.setValue(value, true);
     }
   },
-)
+);
 
 watch(
   () => props.disabled,
@@ -90,11 +91,11 @@ watch(
 
     disabled ? tomSelect.disable() : tomSelect.enable();
   },
-)
+);
 
 onBeforeUnmount(() => {
   tomSelect?.destroy();
-})
+});
 </script>
 
 <template>

@@ -1,12 +1,12 @@
-import { z } from 'zod';
-import { ObjectId } from 'mongodb';
 import TransactionsRepo from '~~/server/repositories/TransactionsRepo';
+import { ObjectId } from 'mongodb';
+import { z } from 'zod';
 
 const repository = new TransactionsRepo();
 
 const querySchema = z.strictObject({
-  dateStart: z.string().refine((date) => !isNaN(Date.parse(date)), { message: 'Invalid date format' }).transform((date) => new Date(date)),
-  dateEnd: z.string().refine((date) => !isNaN(Date.parse(date)), { message: 'Invalid date format' }).transform((date) => new Date(date)).optional(),
+  dateStart: z.string().refine(date => !isNaN(Date.parse(date)), { message: 'Invalid date format' }).transform(date => new Date(date)),
+  dateEnd: z.string().refine(date => !isNaN(Date.parse(date)), { message: 'Invalid date format' }).transform(date => new Date(date)).optional(),
 });
 
 export default defineEventHandler(async (event) => {

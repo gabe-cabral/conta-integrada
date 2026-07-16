@@ -1,8 +1,10 @@
-import type { Collection } from "mongodb";
-import { MongoServerError } from "mongodb";
+import { MongoServerError } from 'mongodb';
+
 import type { TransactionCategory } from '../../../shared/types/transactions.ts';
+import type { Collection } from 'mongodb';
+
 import { categorySchema } from '../../../server/repositories/CategoriesRepo.ts';
-import { getClient } from "../client.ts";
+import { getClient } from '../client.ts';
 import { env } from '../../../env.ts';
 
 async function setup(): Promise<Collection<TransactionCategory> | null> {
@@ -14,15 +16,15 @@ async function setup(): Promise<Collection<TransactionCategory> | null> {
       validator: {
         $jsonSchema: categorySchema,
       },
-      validationLevel: "strict",
-      validationAction: "error",
+      validationLevel: 'strict',
+      validationAction: 'error',
     });
 
     console.log('Collection "categories" successfully created!');
 
     await coll.createIndexes([
-      { key: { userId: 1 }, name: 'user-id' },
       { key: { userId: 1 }, name: 'user-actives', partialFilterExpression: { active: true } },
+      { key: { userId: 1 }, name: 'user-id' },
     ]);
 
     return coll;
@@ -34,19 +36,19 @@ async function setup(): Promise<Collection<TransactionCategory> | null> {
         await db.command({
           collMod: collectionName,
           validator: { $jsonSchema: categorySchema },
-          validationLevel: "strict",
-          validationAction: "error",
+          validationLevel: 'strict',
+          validationAction: 'error',
         });
 
         console.log(`Schema da coleção '${collectionName}' atualizado!`);
       } catch (error) {
         if (error instanceof MongoServerError) {
-          console.error("Erro do MongoDB ao atualizar schema:", error.message);
+          console.error('Erro do MongoDB ao atualizar schema:', error.message);
         }
         throw error;
       }
     } else {
-      console.error("Erro ao criar coleção:", error);
+      console.error('Erro ao criar coleção:', error);
     }
 
     return null;

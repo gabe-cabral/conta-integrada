@@ -1,6 +1,7 @@
-import { Collection } from 'mongodb';
 import type { User } from '../../../shared/types/user.ts';
-import { getSecureClient } from "../client.ts";
+import type { Collection } from 'mongodb';
+
+import { getSecureClient } from '../client.ts';
 
 async function setup(): Promise<Collection<User> | null> {
   const { createEncryptedCollection } = await getSecureClient();
@@ -10,13 +11,13 @@ async function setup(): Promise<Collection<User> | null> {
     encryptedFields: {
       fields: [
         {
-          path: "email",
-          bsonType: "string",
-          queries: [{ queryType: "equality" }],
+          path: 'email',
+          bsonType: 'string',
+          queries: [{ queryType: 'equality' }],
         },
         {
-          path: "name",
-          bsonType: "string",
+          path: 'name',
+          bsonType: 'string',
         },
       ],
     },
