@@ -4,6 +4,7 @@ import type { TransactionCategory } from '#shared/types/transactions.ts';
 import type { Collection } from 'mongodb';
 
 import { categorySchema } from '#server/repositories/CategoriesRepo.ts';
+
 import { getClient } from '../client.ts';
 import { env } from '../../../env.ts';
 

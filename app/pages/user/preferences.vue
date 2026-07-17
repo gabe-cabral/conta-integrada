@@ -20,19 +20,23 @@ const loading = ref(true);
 const saving = ref(false);
 
 const availableCurrencies = ref<Currency[]>([]);
-const userSelectedCurrencies = ref<string[]>(appStore.currencies.map(currency => currency.code));
+const userSelectedCurrencies = ref<string[]>(appStore.currencies.map((currency) => currency.code));
 const defaultCurrency = ref<string | null>(systemStore.defaultCurrency);
 
-const userCurrencies = computed(
-  () => availableCurrencies.value.filter(
-    currency => userSelectedCurrencies.value.includes(currency.code),
+const userCurrencies = computed(() =>
+  availableCurrencies.value.filter((currency) =>
+    userSelectedCurrencies.value.includes(currency.code),
   ),
 );
 
-watch(userSelectedCurrencies, (selectedCurrencies) => {
-  if (!defaultCurrency.value || selectedCurrencies.includes(defaultCurrency.value)) return;
-  defaultCurrency.value = selectedCurrencies[0] ?? null;
-}, { immediate: true });
+watch(
+  userSelectedCurrencies,
+  (selectedCurrencies) => {
+    if (!defaultCurrency.value || selectedCurrencies.includes(defaultCurrency.value)) return;
+    defaultCurrency.value = selectedCurrencies[0] ?? null;
+  },
+  { immediate: true },
+);
 
 async function load() {
   loading.value = true;
@@ -40,7 +44,7 @@ async function load() {
   try {
     const currencies = await $fetch<CurrencyOption[]>('/api/currencies');
 
-    availableCurrencies.value = currencies.map(currency => isoCodeToCurrency(currency._id));
+    availableCurrencies.value = currencies.map((currency) => isoCodeToCurrency(currency._id));
   } finally {
     loading.value = false;
   }
@@ -61,7 +65,13 @@ async function save() {
     });
 
     await appStore.getUserPreferences();
-    systemStore.addMessage('Preferências atualizadas com sucesso.', 'Preferências', 'success', 'bi-check-circle', 3);
+    systemStore.addMessage(
+      'Preferências atualizadas com sucesso.',
+      'Preferências',
+      'success',
+      'bi-check-circle',
+      3,
+    );
   } finally {
     saving.value = false;
   }
@@ -81,18 +91,27 @@ onMounted(load);
 
         <div class="mb-3">
           <label for="currencies" class="form-label">Moedas utilizadas por mim</label>
-          <MultiSelectField id="currencies"
-                            v-model="userSelectedCurrencies"
-                            :options="availableCurrencies.map(c => ({ value: c.code, label: `${c.label} (${c.code})` }))" class="form-select"
-                            placeholder="Selecione as moedas utilizadas por você"
-                            aria-label="Define as moedas disponíveis para uso"
-                            :multiple="true" />
+          <MultiSelectField
+            id="currencies"
+            v-model="userSelectedCurrencies"
+            :options="
+              availableCurrencies.map((c) => ({ value: c.code, label: `${c.label} (${c.code})` }))
+            "
+            class="form-select"
+            placeholder="Selecione as moedas utilizadas por você"
+            aria-label="Define as moedas disponíveis para uso"
+            :multiple="true"
+          />
         </div>
 
         <div class="mb-3">
           <label for="defaultCurrency" class="form-label">Moeda padrão</label>
-          <select id="defaultCurrency" v-model="defaultCurrency" class="form-select"
-                  aria-label="Define a moeda padrão para exibição de valores">
+          <select
+            id="defaultCurrency"
+            v-model="defaultCurrency"
+            class="form-select"
+            aria-label="Define a moeda padrão para exibição de valores"
+          >
             <option v-for="currency in userCurrencies" :key="currency.code" :value="currency.code">
               {{ currency.label }} ({{ currency.code }})
             </option>

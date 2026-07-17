@@ -11,8 +11,13 @@ const props = defineProps({
   <div v-if="props.account" class="card">
     <div class="card-body">
       <div class="d-flex align-items-center mb-3">
-        <LazyNuxtImg :src="`/icons/banks/${props.account.brand}.png`" height="32" width="32" :alt="props.account.brand"
-                      class="text-capitalize me-2 rounded-circle" />
+        <LazyNuxtImg
+          :src="`/icons/banks/${props.account.brand}.png`"
+          height="32"
+          width="32"
+          :alt="props.account.brand"
+          class="text-capitalize me-2 rounded-circle"
+        />
         <div>
           <small class="text-uppercase text-muted font-monospace">{{ props.account.brand }}</small>
           <p class="card-title mb-0">{{ props.account.number }}</p>

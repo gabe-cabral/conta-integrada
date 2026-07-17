@@ -6,11 +6,13 @@ const props = defineProps({
   },
 });
 
-const currencyFormatter = computed(() =>
-  new Intl.NumberFormat(undefined, {
-    style: 'currency',
-    currency: props.money.currency,
-  }));
+const currencyFormatter = computed(
+  () =>
+    new Intl.NumberFormat(undefined, {
+      style: 'currency',
+      currency: props.money.currency,
+    }),
+);
 
 const amount = computed(() => props.money.amountInCents / 100);
 </script>

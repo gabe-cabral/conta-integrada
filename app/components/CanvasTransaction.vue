@@ -9,10 +9,13 @@ import { useAppStore } from '~/stores/appStore';
 let offcanvasElement: HTMLElement | null;
 let offcanvas: Offcanvas | undefined;
 
-interface TransactionForm extends Omit<Transaction, '_id' | 'date' | 'sourceId' | 'createdAt' | 'userId'> {
-  _id: string | null
-  date: Date | null
-  sourceId: string | null
+interface TransactionForm extends Omit<
+  Transaction,
+  '_id' | 'date' | 'sourceId' | 'createdAt' | 'userId'
+> {
+  _id: string | null;
+  date: Date | null;
+  sourceId: string | null;
 }
 
 const { $userApi } = useNuxtApp();
@@ -54,16 +57,18 @@ const typeGroups = computed(() => {
 });
 
 function getCurrencySymbol(code: string) {
-  const currency = appStore.currencies.find(c => c.code === code);
+  const currency = appStore.currencies.find((c) => c.code === code);
   return currency ? currency.symbol : code;
 }
 
 const categories = computed(() => {
-  return appStore.categories.filter(c => !c.parentId && c.kind === transaction.value?.type);
+  return appStore.categories.filter((c) => !c.parentId && c.kind === transaction.value?.type);
 });
 
 function getSubcategories(parentId: string) {
-  return appStore.categories.filter(c => c.parentId === parentId && c.kind === transaction.value?.type);
+  return appStore.categories.filter(
+    (c) => c.parentId === parentId && c.kind === transaction.value?.type,
+  );
 }
 
 function setTransactionType(type: string, idx: number) {
@@ -122,14 +127,20 @@ async function submit() {
           currency: transaction.value.amount.currency,
         },
         sourceId: formSource.value ? formSource.value._id || null : null,
-        sourceType: formSource.value ? formSource.value.type as Account['type'] : undefined,
+        sourceType: formSource.value ? (formSource.value.type as Account['type']) : undefined,
         destinationId: formDestination.value ? formDestination.value._id || null : null,
-        destinationType: formDestination.value ? formDestination.value.type as Account['type'] : undefined,
+        destinationType: formDestination.value
+          ? (formDestination.value.type as Account['type'])
+          : undefined,
       } as Transaction,
     });
 
     systemStore.addMessage(
-      `Transação ${result.description} ${verbPrefix}da com sucesso!`, 'Sucesso', 'success', 'bi-check2-circle', 3,
+      `Transação ${result.description} ${verbPrefix}da com sucesso!`,
+      'Sucesso',
+      'success',
+      'bi-check2-circle',
+      3,
     );
 
     // Volta para a lista
@@ -140,16 +151,19 @@ async function submit() {
   }
 }
 
-watch(() => props.id, (newValue) => {
-  if (!offcanvas) return;
+watch(
+  () => props.id,
+  (newValue) => {
+    if (!offcanvas) return;
 
-  if (newValue) {
-    offcanvas.show();
-    getTransaction(newValue);
-  } else {
-    closePanel();
-  }
-});
+    if (newValue) {
+      offcanvas.show();
+      getTransaction(newValue);
+    } else {
+      closePanel();
+    }
+  },
+);
 
 onMounted(async () => {
   const { Offcanvas } = await import('bootstrap');
@@ -191,7 +205,12 @@ onUnmounted(() => {
 
 <template>
   <Teleport to="body">
-    <div id="transactionForm" class="offcanvas offcanvas-end" tabindex="-1" aria-labelledby="transactionFormLabel">
+    <div
+      id="transactionForm"
+      class="offcanvas offcanvas-end"
+      tabindex="-1"
+      aria-labelledby="transactionFormLabel"
+    >
       <div class="offcanvas-header">
         <h5 id="transactionFormLabel" class="offcanvas-title text-capitalize">
           {{ props.id === 'new' ? 'Novo' : props.id.split('.').at(-1) }}
@@ -204,11 +223,17 @@ onUnmounted(() => {
           <strong role="status">Obtendo transação...</strong>
         </div>
 
-        <form v-if="transaction" class="needs-validation" :class="{ 'was-validated': validated }" novalidate
-              data-testid="tx-expense-form" @submit.prevent="submit">
+        <form
+          v-if="transaction"
+          class="needs-validation"
+          :class="{ 'was-validated': validated }"
+          novalidate
+          data-testid="tx-expense-form"
+          @submit.prevent="submit"
+        >
           <p v-if="transaction.updatedAt">
             <small class="text-muted fst-italic">
-              Alterado última vez {{ relativeTimeHelper(transaction.updatedAt) }}<br>
+              Alterado última vez {{ relativeTimeHelper(transaction.updatedAt) }}<br />
               <RouterLink :to="{ name: 'parameter-history', params: { id: props.id } }">
                 <i class="bi bi-clock-history" /> ver histórico
               </RouterLink>
@@ -217,18 +242,37 @@ onUnmounted(() => {
 
           <div class="btn-group w-100 mb-3" role="group" aria-label="Tipo da transação">
             <template v-for="txType in typeGroups.main" :key="txType.code">
-              <input :id="`type_${txType.code}`" v-model="transaction.type" :value="txType.code" type="radio"
-                     class="btn-check" name="tx_type" autocomplete="off" :readonly="!canEdit">
-              <label class="btn btn-outline-primary" :for="`type_${txType.code}`">{{ txType.label }}</label>
+              <input
+                :id="`type_${txType.code}`"
+                v-model="transaction.type"
+                :value="txType.code"
+                type="radio"
+                class="btn-check"
+                name="tx_type"
+                autocomplete="off"
+                :readonly="!canEdit"
+              />
+              <label class="btn btn-outline-primary" :for="`type_${txType.code}`">{{
+                txType.label
+              }}</label>
             </template>
 
             <div v-if="txTypes.length > 3" class="btn-group" role="group">
-              <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown"
-                      aria-expanded="false" />
+              <button
+                type="button"
+                class="btn btn-outline-primary dropdown-toggle"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              />
               <ul class="dropdown-menu">
                 <li>
-                  <button v-for="(txType, idx) in typeGroups.other" :key="txType.code" type="button" class="dropdown-item"
-                          @click="setTransactionType(txType.code, idx + 3)">
+                  <button
+                    v-for="(txType, idx) in typeGroups.other"
+                    :key="txType.code"
+                    type="button"
+                    class="dropdown-item"
+                    @click="setTransactionType(txType.code, idx + 3)"
+                  >
                     {{ txType.label }}
                   </button>
                 </li>
@@ -237,36 +281,68 @@ onUnmounted(() => {
           </div>
 
           <div class="form-check form-switch mb-3">
-            <input id="status" v-model="transaction.status" class="form-check-input" type="checkbox"
-                   true-value="CONFIRMED" false-value="PENDING" switch :readonly="!canEdit">
-            <label class="form-check-label" for="status">
-              Efetivado
-            </label>
+            <input
+              id="status"
+              v-model="transaction.status"
+              class="form-check-input"
+              type="checkbox"
+              true-value="CONFIRMED"
+              false-value="PENDING"
+              switch
+              :readonly="!canEdit"
+            />
+            <label class="form-check-label" for="status"> Efetivado </label>
           </div>
 
           <div class="mb-3">
             <label for="tx_desc" class="form-label">Descrição</label>
-            <input id="tx_desc" v-model="transaction.description" type="text" class="form-control" :readonly="!canEdit"
-                   :required="canEdit">
+            <input
+              id="tx_desc"
+              v-model="transaction.description"
+              type="text"
+              class="form-control"
+              :readonly="!canEdit"
+              :required="canEdit"
+            />
           </div>
 
           <div class="mb-3">
             <label for="tx_date" class="form-label">Data</label>
-            <input id="tx_date" v-model="transaction.date" type="date" class="form-control" :readonly="!canEdit"
-                   :required="canEdit">
+            <input
+              id="tx_date"
+              v-model="transaction.date"
+              type="date"
+              class="form-control"
+              :readonly="!canEdit"
+              :required="canEdit"
+            />
           </div>
 
           <div class="mb-3">
             <label for="tx_amount" class="form-label">Valor</label>
             <div class="input-group mb-3">
-              <input type="hidden" name="tx_currency" :value="transaction.amount.currency">
-              <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                      aria-expanded="false">{{ getCurrencySymbol(transaction.amount.currency) }}</button>
-              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="width: max-content;">
+              <input type="hidden" name="tx_currency" :value="transaction.amount.currency" />
+              <button
+                class="btn btn-outline-secondary dropdown-toggle"
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                {{ getCurrencySymbol(transaction.amount.currency) }}
+              </button>
+              <div
+                class="dropdown-menu"
+                aria-labelledby="dropdownMenuButton"
+                style="width: max-content"
+              >
                 <table class="table table-sm table-hover table-borderless mb-0">
                   <tbody>
-                    <tr v-for="currency in appStore.currencies" :key="currency.code"
-                        style="cursor: pointer;" @click="transaction.amount.currency = currency.code">
+                    <tr
+                      v-for="currency in appStore.currencies"
+                      :key="currency.code"
+                      style="cursor: pointer"
+                      @click="transaction.amount.currency = currency.code"
+                    >
                       <th class="px-3">{{ currency.symbol }}</th>
                       <td>{{ currency.label }}</td>
                       <td class="px-3">{{ currency.code }}</td>
@@ -275,18 +351,36 @@ onUnmounted(() => {
                 </table>
                 <!-- Table ends here -->
               </div>
-              <input id="tx_amount" v-model="formAmount" type="number" class="form-control" min="0" step="0.01"
-                     :readonly="!canEdit" :required="canEdit">
+              <input
+                id="tx_amount"
+                v-model="formAmount"
+                type="number"
+                class="form-control"
+                min="0"
+                step="0.01"
+                :readonly="!canEdit"
+                :required="canEdit"
+              />
             </div>
           </div>
 
           <div v-if="transaction.type !== 'TRANSFER'" class="mb-3">
             <label for="tx_category" class="form-label">Categoria</label>
-            <select id="tx_category" v-model="transaction.categoryId" class="form-select" aria-label="Categoria"
-                    :disabled="!canEdit" :required="canEdit">
+            <select
+              id="tx_category"
+              v-model="transaction.categoryId"
+              class="form-select"
+              aria-label="Categoria"
+              :disabled="!canEdit"
+              :required="canEdit"
+            >
               <option value="">Selecione...</option>
               <optgroup v-for="group in categories" :key="group._id" :label="group.name">
-                <option v-for="subcategory in getSubcategories(group._id)" :key="subcategory._id" :value="subcategory._id">
+                <option
+                  v-for="subcategory in getSubcategories(group._id)"
+                  :key="subcategory._id"
+                  :value="subcategory._id"
+                >
                   {{ subcategory.name }}
                 </option>
               </optgroup>
@@ -297,11 +391,20 @@ onUnmounted(() => {
             <label for="tx_source" class="form-label">
               {{ transaction.type === 'TRANSFER' ? 'Conta de origem' : 'Conta ou cartão' }}
             </label>
-            <select id="tx_source" v-model="formSource" class="form-select" aria-label="Conta ou cartão"
-                    :disabled="!canEdit" :required="canEdit">
+            <select
+              id="tx_source"
+              v-model="formSource"
+              class="form-select"
+              aria-label="Conta ou cartão"
+              :disabled="!canEdit"
+              :required="canEdit"
+            >
               <option value="">Selecione...</option>
-              <optgroup v-for="account in accounts.filter(a => a.type === 'CHECKING')" :key="account._id"
-                        label="Conta Corrente">
+              <optgroup
+                v-for="account in accounts.filter((a) => a.type === 'CHECKING')"
+                :key="account._id"
+                label="Conta Corrente"
+              >
                 <option :value="account">{{ account.name }}</option>
               </optgroup>
             </select>
@@ -309,28 +412,46 @@ onUnmounted(() => {
 
           <div v-if="transaction.type === 'TRANSFER'" class="mb-3">
             <label for="tx_source" class="form-label">Conta destino</label>
-            <select id="tx_source" v-model="formDestination" class="form-select" aria-label="Conta destino"
-                    :disabled="!canEdit" :required="canEdit">
+            <select
+              id="tx_source"
+              v-model="formDestination"
+              class="form-select"
+              aria-label="Conta destino"
+              :disabled="!canEdit"
+              :required="canEdit"
+            >
               <option value="">Selecione...</option>
-              <optgroup v-for="account in accounts.filter(a => a.type === 'CHECKING')" :key="account._id"
-                        label="Conta Corrente">
+              <optgroup
+                v-for="account in accounts.filter((a) => a.type === 'CHECKING')"
+                :key="account._id"
+                label="Conta Corrente"
+              >
                 <option :value="account">{{ account.name }}</option>
               </optgroup>
             </select>
           </div>
 
           <div class="form-check mb-3">
-            <input id="tx_recurrence" v-model="transaction.recurrence" class="form-check-input" type="checkbox"
-                   :disabled="!canEdit">
+            <input
+              id="tx_recurrence"
+              v-model="transaction.recurrence"
+              class="form-check-input"
+              type="checkbox"
+              :disabled="!canEdit"
+            />
             <label class="form-check-label" for="tx_recurrence">
               Recorrente
-              <i class="bi bi-info-circle ms-1"
-                 title="Se marcado, essa transação será repetida automaticamente conforme a periodicidade definida." />
+              <i
+                class="bi bi-info-circle ms-1"
+                title="Se marcado, essa transação será repetida automaticamente conforme a periodicidade definida."
+              />
             </label>
           </div>
 
           <button type="submit" class="btn btn-primary mt-4" :disabled="sending">
-            <i class="bi bi-floppy2-fill me-2" />{{ props.id === 'new' ? 'Criar débito' : 'Salvar alterações' }}
+            <i class="bi bi-floppy2-fill me-2" />{{
+              props.id === 'new' ? 'Criar débito' : 'Salvar alterações'
+            }}
           </button>
         </form>
 

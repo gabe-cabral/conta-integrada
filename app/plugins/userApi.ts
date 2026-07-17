@@ -6,12 +6,12 @@ export default defineNuxtPlugin((nuxtApp) => {
   const userApi = $fetch.create({
     baseURL: 'http://localhost:3000/api',
 
-    onRequest({ request, options, error }) {
+    onRequest({ options, error }) {
       if (!session.value?.user) throw new Error('User not found in session');
 
       options.headers.set('X-Correlation-ID', crypto.randomUUID());
       options.headers.set('X-User-ID', session.value.user.id);
-      options.baseURL += '/users/' + (session.value.user.id);
+      options.baseURL += '/users/' + session.value.user.id;
 
       if (error) console.error('API Request Error:', error);
     },
@@ -45,7 +45,7 @@ export default defineNuxtPlugin((nuxtApp) => {
       }
     },
 
-    async onResponse({ request, response, options }) {
+    async onResponse({ request, response }) {
       console.log('[fetch response]', request, response.status);
     },
   });

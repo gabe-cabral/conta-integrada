@@ -14,11 +14,15 @@ export default defineEventHandler(async (event) => {
   const repository = new UserPreferencesRepo();
   const currentPreference = await repository.getByUserId(userId);
 
-  if (!currentPreference) throw createError({ statusCode: 404, message: 'User preferences not found' });
+  if (!currentPreference)
+    throw createError({ statusCode: 404, message: 'User preferences not found' });
 
   const nextPreference = { ...currentPreference, ...changes };
   if (!nextPreference.currencies.includes(nextPreference.defaultCurrency)) {
-    throw createError({ statusCode: 422, message: 'Default currency must be included in currencies' });
+    throw createError({
+      statusCode: 422,
+      message: 'Default currency must be included in currencies',
+    });
   }
 
   await repository.updateByUserId(userId, changes);

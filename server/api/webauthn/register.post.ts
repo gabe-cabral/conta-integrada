@@ -13,10 +13,12 @@ export default defineWebAuthnRegisterEventHandler({
     }
 
     // If he registers a new account with credentials
-    return z.object({
-      // we want the userName to be a valid email
-      userName: z.string().email(),
-    }).parse(userBody);
+    return z
+      .object({
+        // we want the userName to be a valid email
+        userName: z.string().email(),
+      })
+      .parse(userBody);
   },
 
   async onSuccess(event, { credential, user }) {

@@ -11,11 +11,26 @@ export const FINANCIAL_SPACE_ICON_GROUPS = [
   },
   {
     name: 'Outros',
-    icons: ['book-fill', 'bullseye', 'controller', 'gift-fill', 'safe-fill', 'star-fill', 'trophy-fill'],
+    icons: [
+      'book-fill',
+      'bullseye',
+      'controller',
+      'gift-fill',
+      'safe-fill',
+      'star-fill',
+      'trophy-fill',
+    ],
   },
   {
     name: 'Pessoal',
-    icons: ['bag-fill', 'car-front-fill', 'cup-hot-fill', 'heart-pulse-fill', 'house-fill', 'people-fill'],
+    icons: [
+      'bag-fill',
+      'car-front-fill',
+      'cup-hot-fill',
+      'heart-pulse-fill',
+      'house-fill',
+      'people-fill',
+    ],
   },
   {
     name: 'Trabalho',
@@ -59,14 +74,27 @@ export function countTextCharacters(value: string): number {
 }
 
 const financialSpaceFieldsSchema = z.strictObject({
-  name: z.string().trim()
-    .refine(value => countTextCharacters(value) >= 2, { message: 'Name must have at least 2 characters' })
-    .refine(value => countTextCharacters(value) <= 20, { message: 'Name must have at most 20 characters' }),
-  description: z.string().trim()
-    .refine(value => countTextCharacters(value) <= 150, { message: 'Description must have at most 150 characters' })
+  name: z
+    .string()
+    .trim()
+    .refine((value) => countTextCharacters(value) >= 2, {
+      message: 'Name must have at least 2 characters',
+    })
+    .refine((value) => countTextCharacters(value) <= 20, {
+      message: 'Name must have at most 20 characters',
+    }),
+  description: z
+    .string()
+    .trim()
+    .refine((value) => countTextCharacters(value) <= 150, {
+      message: 'Description must have at most 150 characters',
+    })
     .optional(),
   icon: financialSpaceIconSchema.optional(),
-  color: z.string().regex(/^#[0-9a-f]{6}$/i).optional(),
+  color: z
+    .string()
+    .regex(/^#[0-9a-f]{6}$/i)
+    .optional(),
   categoryMode: financialSpaceCategoryModeSchema,
   categoryIds: z.array(zodObjectId),
   currencies: z.array(currencyCodeSchema).min(1).optional(),
@@ -74,7 +102,10 @@ const financialSpaceFieldsSchema = z.strictObject({
 });
 
 function validateFinancialSpaceCollections(
-  space: Pick<z.infer<typeof financialSpaceFieldsSchema>, 'categoryMode' | 'categoryIds' | 'currencies'>,
+  space: Pick<
+    z.infer<typeof financialSpaceFieldsSchema>,
+    'categoryMode' | 'categoryIds' | 'currencies'
+  >,
   context: z.RefinementCtx,
 ) {
   if (space.categoryMode === 'all' && space.categoryIds.length > 0) {
@@ -106,12 +137,13 @@ export const financialSpaceSchema = userAuditableRecordWithIdSchema
   .extend(financialSpaceFieldsSchema.shape)
   .superRefine(validateFinancialSpaceCollections);
 
-export const financialSpaceCreateSchema = financialSpaceFieldsSchema
-  .superRefine(validateFinancialSpaceCollections);
+export const financialSpaceCreateSchema = financialSpaceFieldsSchema.superRefine(
+  validateFinancialSpaceCollections,
+);
 
 export const financialSpaceUpdateSchema = financialSpaceFieldsSchema
   .partial()
-  .refine(changes => Object.keys(changes).length > 0, {
+  .refine((changes) => Object.keys(changes).length > 0, {
     message: 'At least one financial space field must be provided',
   });
 

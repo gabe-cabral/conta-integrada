@@ -5,9 +5,16 @@ import { z } from 'zod';
 const querySchema = z.strictObject({
   ids: z.preprocess((value) => {
     if (typeof value !== 'string') return value;
-    return value.split(',').map(item => item.trim()).filter(Boolean);
+    return value
+      .split(',')
+      .map((item) => item.trim())
+      .filter(Boolean);
   }, z.array(currencyCodeSchema).optional()),
-  countryCode: z.string().trim().regex(/^[A-Z]{3}$/).optional(),
+  countryCode: z
+    .string()
+    .trim()
+    .regex(/^[A-Z]{3}$/)
+    .optional(),
   active: z.preprocess((value) => {
     if (value === 'true') return true;
     if (value === 'false') return false;

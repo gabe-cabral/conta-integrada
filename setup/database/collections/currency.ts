@@ -11,13 +11,7 @@ const collectionName = 'currency';
 const currencyCollectionSchema = {
   title: 'Currency',
   bsonType: 'object',
-  required: [
-    '_id',
-    'active',
-    'countryUsage',
-    'minorUnit',
-    'names',
-  ],
+  required: ['_id', 'active', 'countryUsage', 'minorUnit', 'names'],
   properties: {
     _id: {
       bsonType: 'string',
@@ -126,7 +120,7 @@ async function setup(): Promise<Collection<Currency> | null> {
 
 async function createIndexes(coll: Collection<Currency>) {
   await coll.createIndexes([
-    { key: { 'countryUsage.countryCode': 1, 'active': 1 }, name: 'country-usage-active' },
+    { key: { 'countryUsage.countryCode': 1, active: 1 }, name: 'country-usage-active' },
   ]);
 }
 

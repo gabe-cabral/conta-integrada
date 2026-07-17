@@ -8,12 +8,10 @@ import type {
   FinancialInstitutionListQuery,
   FinancialInstitutionUpdate,
 } from '~~/shared/schemas/financialInstitutions';
-import type {
-  Collection, Filter, OptionalUnlessRequiredId, UpdateResult, WithId,
-} from 'mongodb';
+import type { Collection, Filter, OptionalUnlessRequiredId, UpdateResult, WithId } from 'mongodb';
 
 type FinancialInstitutionDocument = Omit<FinancialInstitution, '_id'> & {
-  _id?: ObjectId
+  _id?: ObjectId;
 };
 
 type FinancialInstitutionRecord = WithId<FinancialInstitutionDocument>;
@@ -52,7 +50,7 @@ class FinancialInstitutionsRepo {
       return result.insertedId.toHexString();
     } catch (error) {
       if (error instanceof MongoServerError && error.code === 11000) {
-        throw new Error('Financial institution id already exists');
+        throw new Error('Financial institution id already exists', { cause: error });
       }
 
       throw error;
@@ -121,16 +119,15 @@ class FinancialInstitutionsRepo {
           $elemMatch: {
             scheme: identifier.scheme,
             value: identifier.value,
-            $or: [
-              { countryCode: { $exists: false } },
-              { countryCode: identifierCountryCode },
-            ],
+            $or: [{ countryCode: { $exists: false } }, { countryCode: identifierCountryCode }],
           },
         },
       });
 
       if (conflict) {
-        throw new Error(`Financial institution identifier already exists: ${this.#identifierKey(identifierCountryCode, identifier.scheme, identifier.value)}`);
+        throw new Error(
+          `Financial institution identifier already exists: ${this.#identifierKey(identifierCountryCode, identifier.scheme, identifier.value)}`,
+        );
       }
     }
   }

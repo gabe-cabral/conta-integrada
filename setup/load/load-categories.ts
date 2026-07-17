@@ -3,15 +3,19 @@ import { ObjectId } from 'mongodb';
 import type { TransactionCategory } from '#shared/types/transactions.ts';
 import type { Binary } from 'mongodb';
 
-import data from './conta-integrada-dev.categories.json' with { type: 'json' };
 import { getKeyAltName } from '#server/utils/key-alt-name.ts';
+
+import data from './conta-integrada-dev.categories.json' with { type: 'json' };
 import { getSecureClient } from '../database/client.ts';
 
-interface TransactionCategoryDb extends Omit<TransactionCategory, 'name' | '_id' | 'parentId' | 'userId'> {
-  name: Binary
-  _id: ObjectId
-  parentId: ObjectId | null
-  userId: ObjectId
+interface TransactionCategoryDb extends Omit<
+  TransactionCategory,
+  'name' | '_id' | 'parentId' | 'userId'
+> {
+  name: Binary;
+  _id: ObjectId;
+  parentId: ObjectId | null;
+  userId: ObjectId;
 }
 
 async function load(userId: string) {

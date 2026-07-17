@@ -4,6 +4,7 @@ import type { FinancialSpace } from '#shared/schemas/financialSpaces.ts';
 import type { Collection, Document } from 'mongodb';
 
 import { FINANCIAL_SPACE_ICONS } from '#shared/schemas/financialSpaces.ts';
+
 import { getClient } from '../client.ts';
 import { env } from '../../../env.ts';
 

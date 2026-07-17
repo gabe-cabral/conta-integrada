@@ -12,7 +12,10 @@ export default defineEventHandler(async (event) => {
     const record = await repository.getRecordById(id);
 
     if (!record) {
-      throw createError({ statusCode: 500, message: 'Failed to load created financial institution' });
+      throw createError({
+        statusCode: 500,
+        message: 'Failed to load created financial institution',
+      });
     }
 
     return record;

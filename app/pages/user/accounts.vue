@@ -19,7 +19,7 @@ const selectedAccount = ref<string | null>(getRouteAccountId());
 const accountBasePath = '/user/accounts';
 const selectedAccountData = computed(() => {
   if (!selectedAccount.value || selectedAccount.value === 'new') return null;
-  return accounts.value.find(account => account._id === selectedAccount.value) ?? null;
+  return accounts.value.find((account) => account._id === selectedAccount.value) ?? null;
 });
 
 function getRouteAccountId() {
@@ -49,10 +49,10 @@ function saveAccount(account: BankAccountData) {
     return;
   }
 
-  const index = accounts.value.findIndex(item => item._id === parsed.data._id);
+  const index = accounts.value.findIndex((item) => item._id === parsed.data._id);
 
   if (index >= 0) {
-    accounts.value[index] = parsed.data;
+    accounts.value.splice(index, 1, parsed.data);
   } else {
     accounts.value.push(parsed.data);
   }
@@ -77,9 +77,12 @@ async function load() {
   }
 }
 
-watch(() => route.params.id, () => {
-  selectedAccount.value = getRouteAccountId();
-});
+watch(
+  () => route.params.id,
+  () => {
+    selectedAccount.value = getRouteAccountId();
+  },
+);
 
 watch(selectedAccount, async (id) => {
   const targetPath = getAccountPath(id);
@@ -107,9 +110,13 @@ load();
     <PageLoading v-if="loading">Carregando contas...</PageLoading>
 
     <div v-else class="list-group bg-white shadow-sm mt-3">
-      <button v-for="account in accounts" :key="account._id ?? account.name" type="button"
-              class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-              @click="account._id && selectAccount(account._id)">
+      <button
+        v-for="account in accounts"
+        :key="account._id ?? account.name"
+        type="button"
+        class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+        @click="account._id && selectAccount(account._id)"
+      >
         <span>
           <strong>{{ account.name }}</strong>
           <small class="text-muted d-block">{{ account.brand }}</small>
@@ -118,6 +125,11 @@ load();
       </button>
     </div>
 
-    <CanvasAccount :id="selectedAccount" :account="selectedAccountData" @close="clearSelection" @saved="saveAccount" />
+    <CanvasAccount
+      :id="selectedAccount"
+      :account="selectedAccountData"
+      @close="clearSelection"
+      @saved="saveAccount"
+    />
   </LayoutPage>
 </template>

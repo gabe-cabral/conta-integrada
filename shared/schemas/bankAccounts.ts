@@ -4,7 +4,13 @@ import { userAuditableRecordSchema } from '../zod/zodBase.js';
 import { MoneySchema } from '../zod/zodFinance.js';
 
 export const accountTypeSchema = z.enum([
-  'CHECKING', 'CREDIT_CARD', 'INVESTMENT', 'LOAN', 'OTHER', 'SAVINGS', 'WALLET',
+  'CHECKING',
+  'CREDIT_CARD',
+  'INVESTMENT',
+  'LOAN',
+  'OTHER',
+  'SAVINGS',
+  'WALLET',
 ]);
 
 export const ACCOUNT_TYPES = accountTypeSchema.options;

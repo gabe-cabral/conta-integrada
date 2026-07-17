@@ -1,7 +1,12 @@
 import { useDatabase } from '~~/server/utils/mongo';
 import { MongoServerError } from 'mongodb';
 
-import type { CurrencyCode, CurrencyCreate, CurrencyDetail, CurrencyUpdate } from '~~/shared/schemas/currency';
+import type {
+  CurrencyCode,
+  CurrencyCreate,
+  CurrencyDetail,
+  CurrencyUpdate,
+} from '~~/shared/schemas/currency';
 import type { Collection, DeleteResult, Filter, UpdateResult } from 'mongodb';
 
 export type CurrencyOption = Pick<CurrencyDetail, '_id' | 'names' | 'symbol'>;
@@ -45,7 +50,7 @@ class CurrencyRepo {
       return result.insertedId;
     } catch (error) {
       if (error instanceof MongoServerError && error.code === 11000) {
-        throw new Error('Currency already exists');
+        throw new Error('Currency already exists', { cause: error });
       }
 
       throw error;
@@ -55,25 +60,29 @@ class CurrencyRepo {
   async listActiveCurrencyOptions(): Promise<CurrencyOption[]> {
     const collection = await this.#getCollection();
 
-    return collection.aggregate<CurrencyOption>([
-      { $match: { active: true } },
-      { $project: { _id: 1, names: 1, symbol: 1 } },
-      { $sort: { _id: 1 } },
-    ]).toArray();
+    return collection
+      .aggregate<CurrencyOption>([
+        { $match: { active: true } },
+        { $project: { _id: 1, names: 1, symbol: 1 } },
+        { $sort: { _id: 1 } },
+      ])
+      .toArray();
   }
 
-  async listCurrencies(filter: Pick<CurrencyDetail, 'active'> | Filter<CurrencyDetail> = {}): Promise<CurrencyDetail[]> {
+  async listCurrencies(
+    filter: Pick<CurrencyDetail, 'active'> | Filter<CurrencyDetail> = {},
+  ): Promise<CurrencyDetail[]> {
     const collection = await this.#getCollection();
     return collection.find(filter).sort({ _id: 1 }).toArray();
   }
 
-  async updateCurrency(id: CurrencyCode, changes: CurrencyUpdate): Promise<UpdateResult<CurrencyDetail>> {
+  async updateCurrency(
+    id: CurrencyCode,
+    changes: CurrencyUpdate,
+  ): Promise<UpdateResult<CurrencyDetail>> {
     const collection = await this.#getCollection();
 
-    return collection.updateOne(
-      { _id: id },
-      { $set: changes },
-    );
+    return collection.updateOne({ _id: id }, { $set: changes });
   }
 
   async #getCollection(): Promise<Collection<CurrencyDetail>> {

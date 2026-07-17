@@ -1,4 +1,7 @@
-import { financialSpaceCreateSchema, financialSpaceUpdateSchema } from '~~/shared/schemas/financialSpaces';
+import {
+  financialSpaceCreateSchema,
+  financialSpaceUpdateSchema,
+} from '~~/shared/schemas/financialSpaces';
 import { assertFinancialSpaceCategoriesBelongToUser } from '~~/server/utils/financialSpaces';
 import FinancialSpacesRepo from '~~/server/repositories/FinancialSpacesRepo';
 import { zodObjectId } from '~~/shared/zod/mongodb';
@@ -21,10 +24,9 @@ export default defineEventHandler(async (event) => {
 
   if (!current) throw createError({ statusCode: 404, message: 'Financial space not found' });
 
-  const currentCategoryIds = current.categoryIds.map(categoryId => categoryId.toString());
-  const categoryIds = changes.categoryMode === 'all'
-    ? []
-    : changes.categoryIds ?? currentCategoryIds;
+  const currentCategoryIds = current.categoryIds.map((categoryId) => categoryId.toString());
+  const categoryIds =
+    changes.categoryMode === 'all' ? [] : (changes.categoryIds ?? currentCategoryIds);
 
   const nextFinancialSpace = financialSpaceCreateSchema.parse({
     name: changes.name ?? current.name,
@@ -40,7 +42,8 @@ export default defineEventHandler(async (event) => {
   await assertFinancialSpaceCategoriesBelongToUser(userId, nextFinancialSpace.categoryIds);
 
   const result = await repository.updateRecord(spaceId, nextFinancialSpace);
-  if (result.matchedCount === 0) throw createError({ statusCode: 404, message: 'Financial space not found' });
+  if (result.matchedCount === 0)
+    throw createError({ statusCode: 404, message: 'Financial space not found' });
 
   return repository.getRecordById(spaceId);
 });

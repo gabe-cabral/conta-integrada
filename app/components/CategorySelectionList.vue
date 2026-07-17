@@ -2,30 +2,33 @@
 import type { TransactionCategory } from '~~/shared/types/transactions';
 
 interface CategoryListItem {
-  category: TransactionCategory
-  depth: number
-  hasChildren: boolean
+  category: TransactionCategory;
+  depth: number;
+  hasChildren: boolean;
 }
 
-const props = withDefaults(defineProps<{
-  categories: TransactionCategory[]
-  disabled?: boolean
-  emptyLabel?: string
-  modelValue: string[]
-}>(), {
-  disabled: false,
-  emptyLabel: 'Nenhuma categoria disponível.',
-});
+const props = withDefaults(
+  defineProps<{
+    categories: TransactionCategory[];
+    disabled?: boolean;
+    emptyLabel?: string;
+    modelValue: string[];
+  }>(),
+  {
+    disabled: false,
+    emptyLabel: 'Nenhuma categoria disponível.',
+  },
+);
 
 const emit = defineEmits<{
-  'update:modelValue': [categoryIds: string[]]
+  'update:modelValue': [categoryIds: string[]];
 }>();
 
 const componentId = useId();
 const selectedIds = computed(() => new Set(props.modelValue));
-const categoriesById = computed(() => new Map(
-  props.categories.map(category => [category, category._id]),
-));
+const categoriesById = computed(
+  () => new Map(props.categories.map((category) => [category, category._id])),
+);
 const childrenByParent = computed(() => {
   const children = new Map<string, TransactionCategory[]>();
 
@@ -41,7 +44,7 @@ const childrenByParent = computed(() => {
 });
 
 const categoryItems = computed<CategoryListItem[]>(() => {
-  const categoryIds = new Set(props.categories.map(category => category._id));
+  const categoryIds = new Set(props.categories.map((category) => category._id));
   const roots: TransactionCategory[] = [];
 
   for (const category of props.categories) {
@@ -71,21 +74,30 @@ const categoryItems = computed<CategoryListItem[]>(() => {
   return items;
 });
 
-const selectedCount = computed(() => categoryItems.value.reduce(
-  (count, item) => count + Number(selectedIds.value.has(item.category._id)),
-  0,
-));
+const selectedCount = computed(() =>
+  categoryItems.value.reduce(
+    (count, item) => count + Number(selectedIds.value.has(item.category._id)),
+    0,
+  ),
+);
 
-const allCategoriesSelected = computed(() => categoryItems.value.length > 0
-  && categoryItems.value.every(item => selectedIds.value.has(item.category._id))
-  && props.modelValue.length === categoryItems.value.length);
+const allCategoriesSelected = computed(
+  () =>
+    categoryItems.value.length > 0 &&
+    categoryItems.value.every((item) => selectedIds.value.has(item.category._id)) &&
+    props.modelValue.length === categoryItems.value.length,
+);
 
 function toggleCategory(categoryId: string, selected: boolean) {
   const nextIds = new Set(props.modelValue);
   const affectedIds = getCategoryTreeIds(categoryId);
 
   for (const affectedId of affectedIds) {
-    selected ? nextIds.add(affectedId) : nextIds.delete(affectedId);
+    if (selected) {
+      nextIds.add(affectedId);
+    } else {
+      nextIds.delete(affectedId);
+    }
   }
 
   syncParentSelection(categoryId, nextIds);
@@ -120,7 +132,8 @@ function syncParentSelection(categoryId: string, nextIds: Set<string>) {
     visited.add(parentId);
     const children = childrenByParent.value.get(parentId) ?? [];
 
-    if (children.length > 0 && children.every(child => nextIds.has(child._id))) nextIds.add(parentId);
+    if (children.length > 0 && children.every((child) => nextIds.has(child._id)))
+      nextIds.add(parentId);
     else nextIds.delete(parentId);
 
     parentId = categoriesById.value.get(parentId)?.parentId;
@@ -130,8 +143,9 @@ function syncParentSelection(categoryId: string, nextIds: Set<string>) {
 function isCategoryIndeterminate(categoryId: string): boolean {
   if (selectedIds.value.has(categoryId)) return false;
 
-  return getCategoryTreeIds(categoryId)
-    .some(descendantId => descendantId !== categoryId && selectedIds.value.has(descendantId));
+  return getCategoryTreeIds(categoryId).some(
+    (descendantId) => descendantId !== categoryId && selectedIds.value.has(descendantId),
+  );
 }
 
 function handleCategoryChange(categoryId: string, event: Event) {
@@ -139,7 +153,10 @@ function handleCategoryChange(categoryId: string, event: Event) {
 }
 
 function selectAll() {
-  emit('update:modelValue', categoryItems.value.map(item => item.category._id));
+  emit(
+    'update:modelValue',
+    categoryItems.value.map((item) => item.category._id),
+  );
 }
 
 function clearSelection() {
@@ -151,35 +168,63 @@ function clearSelection() {
   <fieldset class="category-selection-list border rounded" :disabled="props.disabled">
     <legend class="visually-hidden">Categorias disponíveis</legend>
 
-    <div class="d-flex align-items-center justify-content-between gap-2 border-bottom bg-body-tertiary px-3 py-2">
+    <div
+      class="d-flex align-items-center justify-content-between gap-2 border-bottom bg-body-tertiary px-3 py-2"
+    >
       <small class="text-body-secondary">
         {{ selectedCount }} de {{ categoryItems.length }} selecionadas
       </small>
       <div class="btn-group btn-group-sm" role="group" aria-label="Ações da seleção de categorias">
-        <button type="button" class="btn btn-outline-secondary" :disabled="allCategoriesSelected"
-                @click="selectAll">
+        <button
+          type="button"
+          class="btn btn-outline-secondary"
+          :disabled="allCategoriesSelected"
+          @click="selectAll"
+        >
           Selecionar todas
         </button>
-        <button type="button" class="btn btn-outline-secondary" :disabled="props.modelValue.length === 0"
-                @click="clearSelection">
+        <button
+          type="button"
+          class="btn btn-outline-secondary"
+          :disabled="props.modelValue.length === 0"
+          @click="clearSelection"
+        >
           Limpar
         </button>
       </div>
     </div>
 
     <ul v-if="categoryItems.length" class="list-group list-group-flush">
-      <li v-for="item in categoryItems" :key="item.category._id" class="list-group-item category-selection-item"
-          :style="{ '--category-depth': item.depth }">
+      <li
+        v-for="item in categoryItems"
+        :key="item.category._id"
+        class="list-group-item category-selection-item"
+        :style="{ '--category-depth': item.depth }"
+      >
         <div class="form-check mb-0">
-          <input :id="`${componentId}_${item.category._id}`" type="checkbox" class="form-check-input"
-                 :checked="selectedIds.has(item.category._id)"
-                 :indeterminate="isCategoryIndeterminate(item.category._id)"
-                 @change="handleCategoryChange(item.category._id, $event)">
-          <label class="form-check-label d-flex align-items-center gap-2 w-100"
-                 :class="{ 'fw-semibold': item.hasChildren }"
-                 :for="`${componentId}_${item.category._id}`">
-            <i v-if="item.depth > 0" class="bi bi-arrow-return-right text-body-tertiary" aria-hidden="true" />
-            <span class="category-color" :style="{ backgroundColor: item.category.color }" aria-hidden="true" />
+          <input
+            :id="`${componentId}_${item.category._id}`"
+            type="checkbox"
+            class="form-check-input"
+            :checked="selectedIds.has(item.category._id)"
+            :indeterminate="isCategoryIndeterminate(item.category._id)"
+            @change="handleCategoryChange(item.category._id, $event)"
+          />
+          <label
+            class="form-check-label d-flex align-items-center gap-2 w-100"
+            :class="{ 'fw-semibold': item.hasChildren }"
+            :for="`${componentId}_${item.category._id}`"
+          >
+            <i
+              v-if="item.depth > 0"
+              class="bi bi-arrow-return-right text-body-tertiary"
+              aria-hidden="true"
+            />
+            <span
+              class="category-color"
+              :style="{ backgroundColor: item.category.color }"
+              aria-hidden="true"
+            />
             <span>{{ item.category.name }}</span>
           </label>
         </div>
@@ -203,14 +248,14 @@ function clearSelection() {
 }
 
 .category-selection-item {
-  padding-inline-start: calc(.75rem + (var(--category-depth) * 1.5rem));
+  padding-inline-start: calc(0.75rem + (var(--category-depth) * 1.5rem));
 }
 
 .category-color {
-  width: .75rem;
-  height: .75rem;
+  width: 0.75rem;
+  height: 0.75rem;
   flex: 0 0 auto;
-  border: 1px solid rgba(0, 0, 0, .15);
+  border: 1px solid rgba(0, 0, 0, 0.15);
   border-radius: 50%;
 }
 

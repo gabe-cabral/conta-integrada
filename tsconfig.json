@@ -1,4 +1,16 @@
 {
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "~/*": ["app/*"],
+      "@/*": ["app/*"],
+      "~~/*": ["*"],
+      "@@/*": ["*"],
+      "#shared/*": ["shared/*"],
+      "#server/*": ["server/*"],
+      "#setup/*": ["setup/*"]
+    }
+  },
   // https://nuxt.com/docs/guide/concepts/typescript
   "files": [],
   "references": [

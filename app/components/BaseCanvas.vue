@@ -5,32 +5,35 @@ let offcanvas: Offcanvas | undefined;
 const offcanvasElement = ref<HTMLElement | null>(null);
 
 const emits = defineEmits<{
-  close: []
-  submit: []
+  close: [];
+  submit: [];
 }>();
 
-const props = withDefaults(defineProps<{
-  id?: string | null
-  kind: string
-  loading?: boolean
-  loadingLabel?: string
-  sending?: boolean
-  submitLabel?: string
-  title: string
-  validated?: boolean
-}>(), {
-  id: null,
-  loading: false,
-  sending: false,
-  validated: false,
-  loadingLabel: 'Carregando...',
-  submitLabel: '',
-});
+const props = withDefaults(
+  defineProps<{
+    id?: string | null;
+    kind: string;
+    loading?: boolean;
+    loadingLabel?: string;
+    sending?: boolean;
+    submitLabel?: string;
+    title: string;
+    validated?: boolean;
+  }>(),
+  {
+    id: null,
+    loading: false,
+    sending: false,
+    validated: false,
+    loadingLabel: 'Carregando...',
+    submitLabel: '',
+  },
+);
 
 const panelId = computed(() => `${props.kind}_form`);
 const labelId = computed(() => `${props.kind}_form_label`);
 const isOpen = computed(() => Boolean(props.id));
-const heading = computed(() => props.id === 'new' ? `Novo ${props.title}` : props.title);
+const heading = computed(() => (props.id === 'new' ? `Novo ${props.title}` : props.title));
 const submitText = computed(() => {
   if (props.submitLabel) return props.submitLabel;
   return props.id === 'new' ? `Criar ${props.title}` : 'Salvar alteracoes';
@@ -54,9 +57,12 @@ function emitClose() {
   emits('close');
 }
 
-watch(() => props.id, () => {
-  syncPanel();
-});
+watch(
+  () => props.id,
+  () => {
+    syncPanel();
+  },
+);
 
 onMounted(async () => {
   const { Offcanvas } = await import('bootstrap');
@@ -77,8 +83,13 @@ onUnmounted(() => {
 
 <template>
   <Teleport to="body">
-    <div :id="panelId" ref="offcanvasElement" class="offcanvas offcanvas-end ci-offcanvas" tabindex="-1"
-         :aria-labelledby="labelId">
+    <div
+      :id="panelId"
+      ref="offcanvasElement"
+      class="offcanvas offcanvas-end ci-offcanvas"
+      tabindex="-1"
+      :aria-labelledby="labelId"
+    >
       <div class="offcanvas-header">
         <h5 :id="labelId" class="offcanvas-title text-capitalize">
           {{ heading }}
@@ -91,8 +102,13 @@ onUnmounted(() => {
           <strong role="status">{{ props.loadingLabel }}</strong>
         </div>
 
-        <form v-else class="needs-validation" :class="{ 'was-validated': props.validated }"
-              novalidate @submit.prevent="emits('submit')">
+        <form
+          v-else
+          class="needs-validation"
+          :class="{ 'was-validated': props.validated }"
+          novalidate
+          @submit.prevent="emits('submit')"
+        >
           <slot v-bind="$attrs" />
 
           <button type="submit" class="btn btn-primary mt-4" :disabled="props.sending">

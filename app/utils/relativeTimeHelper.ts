@@ -8,7 +8,7 @@ function relativeTimeHelper(date: Date): string {
     { unit: 'month', ms: 1000 * 60 * 60 * 24 * 30 },
     { unit: 'second', ms: 1000 },
     { unit: 'year', ms: 1000 * 60 * 60 * 24 * 365 },
-  ] as { ms: number, unit: Intl.RelativeTimeFormatUnit }[];
+  ] as { ms: number; unit: Intl.RelativeTimeFormatUnit }[];
 
   const rtf = new Intl.RelativeTimeFormat('pt-BR', { numeric: 'auto' });
 

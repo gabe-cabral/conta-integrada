@@ -26,11 +26,15 @@ const selectedFinancialSpace = ref<string | null>(getRouteFinancialSpaceId());
 const basePath = '/user/financial-spaces';
 const visibleAccounts = computed(() => financeStore.accounts.slice(0, 3));
 const visibleCards = computed(() => financeStore.cards.slice(0, 2));
-const additionalAccounts = computed(() => Math.max(0, financeStore.accounts.length - visibleAccounts.value.length));
-const additionalCards = computed(() => Math.max(0, financeStore.cards.length - visibleCards.value.length));
+const additionalAccounts = computed(() =>
+  Math.max(0, financeStore.accounts.length - visibleAccounts.value.length),
+);
+const additionalCards = computed(() =>
+  Math.max(0, financeStore.cards.length - visibleCards.value.length),
+);
 const selectedFinancialSpaceData = computed(() => {
   if (!selectedFinancialSpace.value || selectedFinancialSpace.value === 'new') return null;
-  return financialSpaces.value.find(space => space._id === selectedFinancialSpace.value) ?? null;
+  return financialSpaces.value.find((space) => space._id === selectedFinancialSpace.value) ?? null;
 });
 
 function getRouteFinancialSpaceId() {
@@ -59,21 +63,21 @@ function saveFinancialSpace(financialSpace: FinancialSpaceData) {
     return;
   }
 
-  const index = financialSpaces.value.findIndex(space => space._id === parsed.data._id);
-  if (index >= 0) financialSpaces.value[index] = parsed.data;
+  const index = financialSpaces.value.findIndex((space) => space._id === parsed.data._id);
+  if (index >= 0) financialSpaces.value.splice(index, 1, parsed.data);
   else financialSpaces.value.push(parsed.data);
 }
 
 function getCurrencies(financialSpace: FinancialSpace) {
   return financialSpace.currencies?.length
     ? financialSpace.currencies
-    : appStore.currencies.map(currency => currency.code);
+    : appStore.currencies.map((currency) => currency.code);
 }
 
 function getCategories(financialSpace: FinancialSpace) {
   if (financialSpace.categoryMode === 'all') return appStore.categories;
   const selectedIds = new Set(financialSpace.categoryIds);
-  return appStore.categories.filter(category => selectedIds.has(category._id));
+  return appStore.categories.filter((category) => selectedIds.has(category._id));
 }
 
 async function load() {
@@ -95,9 +99,12 @@ async function load() {
   }
 }
 
-watch(() => route.params.id, () => {
-  selectedFinancialSpace.value = getRouteFinancialSpaceId();
-});
+watch(
+  () => route.params.id,
+  () => {
+    selectedFinancialSpace.value = getRouteFinancialSpaceId();
+  },
+);
 
 watch(selectedFinancialSpace, async (id) => {
   const targetPath = getFinancialSpacePath(id);
@@ -124,16 +131,24 @@ load();
     <PageLoading v-if="loading">Carregando espaços...</PageLoading>
 
     <div v-else-if="financialSpaces.length" class="d-grid gap-3 mt-3">
-      <article v-for="financialSpace in financialSpaces" :key="financialSpace._id"
-               class="card financial-space-card shadow-sm" role="button" tabindex="0"
-               :aria-label="`Editar espaço ${financialSpace.name}`"
-               @click="selectFinancialSpace(financialSpace._id)"
-               @keydown.enter.prevent="selectFinancialSpace(financialSpace._id)">
+      <article
+        v-for="financialSpace in financialSpaces"
+        :key="financialSpace._id"
+        class="card financial-space-card shadow-sm"
+        role="button"
+        tabindex="0"
+        :aria-label="`Editar espaço ${financialSpace.name}`"
+        @click="selectFinancialSpace(financialSpace._id)"
+        @keydown.enter.prevent="selectFinancialSpace(financialSpace._id)"
+      >
         <div class="card-body">
           <div class="d-flex flex-wrap align-items-center gap-2">
             <i class="bi bi-grip-vertical text-body-tertiary" aria-hidden="true" />
-            <i :class="`bi bi-${financialSpace.icon ?? 'house-fill'} fs-4`"
-               :style="{ color: financialSpace.color }" aria-hidden="true" />
+            <i
+              :class="`bi bi-${financialSpace.icon ?? 'house-fill'} fs-4`"
+              :style="{ color: financialSpace.color }"
+              aria-hidden="true"
+            />
             <h5 class="card-title mb-0 me-auto" :style="{ color: financialSpace.color }">
               {{ financialSpace.name }}
             </h5>
@@ -156,9 +171,12 @@ load();
             <section class="col-12 col-xl-6" aria-label="Contas do espaço">
               <h6 class="text-uppercase font-monospace text-body-secondary">Contas</h6>
               <div v-if="visibleAccounts.length" class="space-resource-list">
-                <AccountWidget v-for="(account, index) in visibleAccounts"
-                               :key="account._id ?? `${account.brand}-${index}`"
-                               :account="account" class="space-resource-widget" />
+                <AccountWidget
+                  v-for="(account, index) in visibleAccounts"
+                  :key="account._id ?? `${account.brand}-${index}`"
+                  :account="account"
+                  class="space-resource-widget"
+                />
                 <span v-if="additionalAccounts" class="additional-count badge text-bg-light border">
                   +{{ additionalAccounts }}
                 </span>
@@ -169,8 +187,12 @@ load();
             <section class="col-12 col-xl-6" aria-label="Cartões do espaço">
               <h6 class="text-uppercase font-monospace text-body-secondary">Cartões</h6>
               <div v-if="visibleCards.length" class="space-resource-list">
-                <CardWidget v-for="(card, index) in visibleCards" :key="`${card.brand}-${card.number}-${index}`"
-                            :card="card" class="space-resource-widget" />
+                <CardWidget
+                  v-for="(card, index) in visibleCards"
+                  :key="`${card.brand}-${card.number}-${index}`"
+                  :card="card"
+                  class="space-resource-widget"
+                />
                 <span v-if="additionalCards" class="additional-count badge text-bg-light border">
                   +{{ additionalCards }}
                 </span>
@@ -180,8 +202,11 @@ load();
           </div>
 
           <div class="category-line border-top mt-4 pt-3" aria-label="Categorias disponíveis">
-            <span v-for="category in getCategories(financialSpace)" :key="category._id"
-                  class="badge rounded-pill text-bg-light border me-1">
+            <span
+              v-for="category in getCategories(financialSpace)"
+              :key="category._id"
+              class="badge rounded-pill text-bg-light border me-1"
+            >
               {{ category.name }}
             </span>
             <span v-if="getCategories(financialSpace).length === 0" class="text-muted small">
@@ -200,8 +225,12 @@ load();
       </div>
     </div>
 
-    <CanvasFinancialSpace :id="selectedFinancialSpace" :financial-space="selectedFinancialSpaceData"
-                         @close="clearSelection" @saved="saveFinancialSpace" />
+    <CanvasFinancialSpace
+      :id="selectedFinancialSpace"
+      :financial-space="selectedFinancialSpaceData"
+      @close="clearSelection"
+      @saved="saveFinancialSpace"
+    />
   </LayoutPage>
 </template>
 
@@ -211,14 +240,14 @@ load();
 }
 
 .financial-space-card:focus-visible {
-  outline: .2rem solid rgba(var(--bs-primary-rgb), .35);
-  outline-offset: .15rem;
+  outline: 0.2rem solid rgba(var(--bs-primary-rgb), 0.35);
+  outline-offset: 0.15rem;
 }
 
 .space-resource-list {
   display: flex;
   align-items: stretch;
-  gap: .75rem;
+  gap: 0.75rem;
 }
 
 .space-resource-list :deep(.space-resource-widget.card) {
@@ -229,7 +258,7 @@ load();
 
 .space-resource-list :deep(.card-body) {
   min-width: 0;
-  padding: .85rem;
+  padding: 0.85rem;
 }
 
 .additional-count {

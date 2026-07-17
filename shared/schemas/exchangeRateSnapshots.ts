@@ -8,65 +8,84 @@ export const exchangeRateSnapshotStatusSchema = z.enum(['complete', 'partial']);
 export type ExchangeRateSnapshotStatus = z.infer<typeof exchangeRateSnapshotStatusSchema>;
 
 export interface ExchangeRateSnapshotProvider {
-  name: string
-  referenceDate?: Date
-  timestamp?: Date
-  retrievedAt: Date
+  name: string;
+  referenceDate?: Date;
+  timestamp?: Date;
+  retrievedAt: Date;
 }
 
 export interface ExchangeRateSnapshotDto {
-  _id: string
-  valuationDate: Date
-  baseCurrency: CurrencyCode
-  rates: Record<CurrencyCode, string>
-  provider: ExchangeRateSnapshotProvider
-  carriedForward: boolean
-  status: ExchangeRateSnapshotStatus
-  expectedCurrencies?: CurrencyCode[]
-  missingCurrencies?: CurrencyCode[]
-  createdAt: Date
-  updatedAt: Date
+  _id: string;
+  valuationDate: Date;
+  baseCurrency: CurrencyCode;
+  rates: Record<CurrencyCode, string>;
+  provider: ExchangeRateSnapshotProvider;
+  carriedForward: boolean;
+  status: ExchangeRateSnapshotStatus;
+  expectedCurrencies?: CurrencyCode[];
+  missingCurrencies?: CurrencyCode[];
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-export type ExchangeRateSnapshotCreate = Omit<ExchangeRateSnapshotDto, '_id' | 'createdAt' | 'updatedAt'>;
+export type ExchangeRateSnapshotCreate = Omit<
+  ExchangeRateSnapshotDto,
+  '_id' | 'createdAt' | 'updatedAt'
+>;
 export type ExchangeRateSnapshotReplace = ExchangeRateSnapshotCreate;
 export type ExchangeRateSnapshotUpdate = Partial<ExchangeRateSnapshotCreate>;
 
-const utcDayStringSchema = z.string()
-  .regex(/^\d{4}-\d{2}-\d{2}$/);
+const utcDayStringSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 
-const dateToUtcDayStartSchema = z.union([
-  z.date(),
-  z.string().refine(value => !Number.isNaN(Date.parse(value)), { message: 'Invalid date format' }),
-]).transform(value => normalizeUtcDayStart(value));
+const dateToUtcDayStartSchema = z
+  .union([
+    z.date(),
+    z
+      .string()
+      .refine((value) => !Number.isNaN(Date.parse(value)), { message: 'Invalid date format' }),
+  ])
+  .transform((value) => normalizeUtcDayStart(value));
 
-export const exchangeRateSnapshotIdSchema = z.string()
+export const exchangeRateSnapshotIdSchema = z
+  .string()
   .trim()
   .regex(/^[A-Z]{3}_\d{4}-\d{2}-\d{2}$/);
 
-export const decimalRateStringSchema = z.string()
+export const decimalRateStringSchema = z
+  .string()
   .trim()
-  .refine((value) => {
-    try {
-      const decimal = new Decimal(value);
-      return decimal.isFinite() && decimal.isPositive();
-    } catch {
-      return false;
-    }
-  }, { message: 'Rate must be a positive finite decimal string' });
+  .refine(
+    (value) => {
+      try {
+        const decimal = new Decimal(value);
+        return decimal.isFinite() && decimal.isPositive();
+      } catch {
+        return false;
+      }
+    },
+    { message: 'Rate must be a positive finite decimal string' },
+  );
 
 const ratesSchema = z.record(currencyCodeSchema, decimalRateStringSchema);
 
 const providerSchema = z.strictObject({
   name: z.string().trim().min(1).max(128),
   referenceDate: dateToUtcDayStartSchema.optional(),
-  timestamp: z.union([
-    z.date(),
-    z.string().refine(value => !Number.isNaN(Date.parse(value)), { message: 'Invalid date format' }).transform(value => new Date(value)),
-  ]).optional(),
+  timestamp: z
+    .union([
+      z.date(),
+      z
+        .string()
+        .refine((value) => !Number.isNaN(Date.parse(value)), { message: 'Invalid date format' })
+        .transform((value) => new Date(value)),
+    ])
+    .optional(),
   retrievedAt: z.union([
     z.date(),
-    z.string().refine(value => !Number.isNaN(Date.parse(value)), { message: 'Invalid date format' }).transform(value => new Date(value)),
+    z
+      .string()
+      .refine((value) => !Number.isNaN(Date.parse(value)), { message: 'Invalid date format' })
+      .transform((value) => new Date(value)),
   ]),
 });
 
@@ -81,12 +100,13 @@ const exchangeRateSnapshotPayloadBaseSchema = z.strictObject({
   missingCurrencies: z.array(currencyCodeSchema).optional(),
 });
 
-const exchangeRateSnapshotPayloadSchema = exchangeRateSnapshotPayloadBaseSchema
-  .superRefine(validateSnapshotPayload);
+const exchangeRateSnapshotPayloadSchema =
+  exchangeRateSnapshotPayloadBaseSchema.superRefine(validateSnapshotPayload);
 
 export const exchangeRateSnapshotCreateSchema = exchangeRateSnapshotPayloadSchema;
 export const exchangeRateSnapshotReplaceSchema = exchangeRateSnapshotPayloadSchema;
-export const exchangeRateSnapshotUpdateSchema = exchangeRateSnapshotPayloadBaseSchema.partial()
+export const exchangeRateSnapshotUpdateSchema = exchangeRateSnapshotPayloadBaseSchema
+  .partial()
   .superRefine((payload, ctx) => {
     if (!payload.baseCurrency || !payload.rates || !payload.status) return;
     validateSnapshotPayload(payload as ExchangeRateSnapshotCreate, ctx);
@@ -114,7 +134,10 @@ export type ExchangeRateSnapshotUpdateData = z.input<typeof exchangeRateSnapshot
 export type ExchangeRateSnapshotListQuery = z.infer<typeof exchangeRateSnapshotListQuerySchema>;
 export type ExchangeRateSnapshotLatestQuery = z.infer<typeof exchangeRateSnapshotLatestQuerySchema>;
 
-export function buildExchangeRateSnapshotId(baseCurrency: CurrencyCode, valuationDate: Date): string {
+export function buildExchangeRateSnapshotId(
+  baseCurrency: CurrencyCode,
+  valuationDate: Date,
+): string {
   return `${baseCurrency}_${formatUtcDay(valuationDate)}`;
 }
 
@@ -123,11 +146,12 @@ export function formatUtcDay(date: Date): string {
 }
 
 export function normalizeUtcDayStart(value: Date | string): Date {
-  const date = value instanceof Date
-    ? value
-    : utcDayStringSchema.safeParse(value).success
-      ? new Date(`${value}T00:00:00.000Z`)
-      : new Date(value);
+  const date =
+    value instanceof Date
+      ? value
+      : utcDayStringSchema.safeParse(value).success
+        ? new Date(`${value}T00:00:00.000Z`)
+        : new Date(value);
 
   return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
 }

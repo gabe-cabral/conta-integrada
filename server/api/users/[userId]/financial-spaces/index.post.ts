@@ -21,7 +21,8 @@ export default defineEventHandler(async (event) => {
   if (!id) throw createError({ statusCode: 500, message: 'Failed to create financial space' });
 
   const financialSpace = await repository.getRecordById(id);
-  if (!financialSpace) throw createError({ statusCode: 500, message: 'Failed to load created financial space' });
+  if (!financialSpace)
+    throw createError({ statusCode: 500, message: 'Failed to load created financial space' });
 
   setResponseStatus(event, 201);
   return financialSpace;

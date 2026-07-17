@@ -9,7 +9,15 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
 
-  modules: ['@nuxt/eslint', '@nuxt/fonts', '@nuxt/hints', '@nuxt/image', '@nuxt/scripts', '@pinia/nuxt', 'nuxt-auth-utils'],
+  modules: [
+    '@nuxt/eslint',
+    '@nuxt/fonts',
+    '@nuxt/hints',
+    '@nuxt/image',
+    '@nuxt/scripts',
+    '@pinia/nuxt',
+    'nuxt-auth-utils',
+  ],
   imports: {
     dirs: ['shared/schemas', 'shared/utils'],
   },
@@ -112,7 +120,12 @@ export default defineNuxtConfig({
     css: {
       preprocessorOptions: {
         scss: {
-          additionalData: '@import "@modules/bootstrap/scss/_functions.scss"; @import "@/assets/styles/variables.scss"; @import "@modules/bootstrap/scss/_variables.scss"; @import "@modules/bootstrap/scss/_mixins.scss";',
+          additionalData: [
+            '@import "@/assets/styles/variables.scss";',
+            '@import "@modules/bootstrap/scss/_functions.scss";',
+            '@import "@modules/bootstrap/scss/_mixins.scss";',
+            '@import "@modules/bootstrap/scss/_variables.scss";',
+          ].join(' '),
           silenceDeprecations: ['color-functions', 'global-builtin', 'if-function', 'import'],
         },
       },
@@ -129,12 +142,7 @@ export default defineNuxtConfig({
       },
     },
     optimizeDeps: {
-      include: [
-        '@vue/devtools-core',
-        '@vue/devtools-kit',
-        'bootstrap',
-        'zod',
-      ],
+      include: ['@vue/devtools-core', '@vue/devtools-kit', 'bootstrap', 'zod'],
     },
   },
 });

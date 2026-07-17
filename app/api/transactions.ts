@@ -1,6 +1,6 @@
 import type { Transaction, UserTransactionsRequestQuery } from '#shared/types/transactions';
 
-export function parseTransaction(tx: any): Transaction {
+export function parseTransaction(tx: Transaction): Transaction {
   return {
     ...tx,
     date: new Date(tx.date),
@@ -15,7 +15,10 @@ export function parseTransaction(tx: any): Transaction {
   } as Transaction;
 }
 
-export async function useUserTransactions(userId: string, query: UserTransactionsRequestQuery): Promise<Transaction[]> {
+export async function useUserTransactions(
+  userId: string,
+  query: UserTransactionsRequestQuery,
+): Promise<Transaction[]> {
   const { $userApi } = useNuxtApp();
 
   const result = await $userApi<Transaction[]>('/transactions', {

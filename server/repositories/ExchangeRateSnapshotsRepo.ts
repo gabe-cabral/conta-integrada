@@ -18,7 +18,12 @@ import type {
   ExchangeRateSnapshotReplace,
 } from '~~/shared/schemas/exchangeRateSnapshots';
 import type {
-  Collection, DeleteResult, Filter, FindOptions, OptionalUnlessRequiredId, UpdateResult,
+  Collection,
+  DeleteResult,
+  Filter,
+  FindOptions,
+  OptionalUnlessRequiredId,
+  UpdateResult,
 } from 'mongodb';
 import type { ExchangeRateSnapshotDocument } from '~~/server/utils/exchangeRateSnapshots';
 
@@ -30,7 +35,9 @@ class ExchangeRateSnapshotsRepo {
     return collection.deleteOne({ _id: id });
   }
 
-  async getLatestSnapshot(query: ExchangeRateSnapshotLatestQuery): Promise<ExchangeRateSnapshotDto | null> {
+  async getLatestSnapshot(
+    query: ExchangeRateSnapshotLatestQuery,
+  ): Promise<ExchangeRateSnapshotDto | null> {
     const collection = await this.#getCollection();
     const at = query.at ? normalizeUtcDayStart(query.at) : normalizeUtcDayStart(new Date());
     const document = await collection.findOne(
@@ -58,11 +65,13 @@ class ExchangeRateSnapshotsRepo {
     const document = mapSnapshotCreateToDocument(record, now, now);
 
     try {
-      const result = await collection.insertOne(document as OptionalUnlessRequiredId<ExchangeRateSnapshotDocument>);
+      const result = await collection.insertOne(
+        document as OptionalUnlessRequiredId<ExchangeRateSnapshotDocument>,
+      );
       return result.insertedId;
     } catch (error) {
       if (error instanceof MongoServerError && error.code === 11000) {
-        throw new Error('Exchange rate snapshot already exists');
+        throw new Error('Exchange rate snapshot already exists', { cause: error });
       }
 
       throw error;
@@ -93,7 +102,10 @@ class ExchangeRateSnapshotsRepo {
     return documents.map(mapSnapshotDocumentToDto);
   }
 
-  async replaceSnapshot(id: string, record: ExchangeRateSnapshotReplace): Promise<UpdateResult<ExchangeRateSnapshotDocument>> {
+  async replaceSnapshot(
+    id: string,
+    record: ExchangeRateSnapshotReplace,
+  ): Promise<UpdateResult<ExchangeRateSnapshotDocument>> {
     const collection = await this.#getCollection();
     const existing = await collection.findOne({ _id: id });
 
@@ -123,11 +135,7 @@ class ExchangeRateSnapshotsRepo {
     const createdAt = existing?.createdAt ?? now;
     const document = mapSnapshotCreateToDocument(record, createdAt, now);
 
-    await collection.replaceOne(
-      { _id: document._id },
-      document,
-      { upsert: true },
-    );
+    await collection.replaceOne({ _id: document._id }, document, { upsert: true });
 
     return document._id;
   }

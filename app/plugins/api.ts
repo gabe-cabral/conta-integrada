@@ -6,7 +6,7 @@ export default defineNuxtPlugin((nuxtApp) => {
   const api = $fetch.create({
     baseURL: 'http://localhost:3000/api',
 
-    onRequest({ request, options, error }) {
+    onRequest({ options, error }) {
       options.headers.set('X-Correlation-ID', crypto.randomUUID());
       options.headers.set('X-User-ID', session.value?.user?.id || 'guest');
 
@@ -42,7 +42,7 @@ export default defineNuxtPlugin((nuxtApp) => {
       }
     },
 
-    async onResponse({ request, response, options }) {
+    async onResponse({ request, response }) {
       console.log('[fetch response]', request, response.status);
     },
   });

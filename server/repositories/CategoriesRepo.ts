@@ -10,7 +10,7 @@ export const categorySchema = {
     },
     name: {
       bsonType: 'binData',
-      description: 'Category\'s name',
+      description: "Category's name",
     },
     active: {
       bsonType: 'bool',
@@ -18,7 +18,7 @@ export const categorySchema = {
     },
     color: {
       bsonType: ['null', 'string'],
-      description: 'Category\'s color',
+      description: "Category's color",
     },
     parentId: {
       bsonType: ['null', 'objectId'],
@@ -26,7 +26,19 @@ export const categorySchema = {
     },
     kind: {
       bsonType: 'string',
-      enum: ['ADJUSTMENT', 'CONTRIBUTION', 'DIVIDEND', 'EXPENSE', 'INCOME', 'INTEREST', 'INVESTMENT', 'REDEMPTION', 'REFUND', 'TAX', 'TRANSFER'],
+      enum: [
+        'ADJUSTMENT',
+        'CONTRIBUTION',
+        'DIVIDEND',
+        'EXPENSE',
+        'INCOME',
+        'INTEREST',
+        'INVESTMENT',
+        'REDEMPTION',
+        'REFUND',
+        'TAX',
+        'TRANSFER',
+      ],
       description: 'TransactionType',
     },
     userId: {
@@ -34,12 +46,6 @@ export const categorySchema = {
       description: 'Owner ID',
     },
   },
-  required: [
-    '_id',
-    'active',
-    'kind',
-    'name',
-    'userId',
-  ],
+  required: ['_id', 'active', 'kind', 'name', 'userId'],
   additionalProperties: true,
 } as Document;

@@ -10,20 +10,17 @@ definePageMeta({
 const { user } = useUserSession();
 const financeStore = useFinanceStore();
 
-const essentialExpenses = computed(
-  () => financeStore.balances.filter(balance => balance.essentialExpenses?.amountInCents),
-).value
-  .map(balance => balance.essentialExpenses as Money);
+const essentialExpenses = computed(() =>
+  financeStore.balances.filter((balance) => balance.essentialExpenses?.amountInCents),
+).value.map((balance) => balance.essentialExpenses as Money);
 
-const otherExpenses = computed(
-  () => financeStore.balances.filter(balance => balance.otherExpenses?.amountInCents),
-).value
-  .map(balance => balance.otherExpenses as Money);
+const otherExpenses = computed(() =>
+  financeStore.balances.filter((balance) => balance.otherExpenses?.amountInCents),
+).value.map((balance) => balance.otherExpenses as Money);
 
-const investments = computed(
-  () => financeStore.balances.filter(balance => balance.investments?.amountInCents),
-).value
-  .map(balance => balance.investments as Money);
+const investments = computed(() =>
+  financeStore.balances.filter((balance) => balance.investments?.amountInCents),
+).value.map((balance) => balance.investments as Money);
 
 const analyticalData = ref([
   { id: 'essential-expenses', label: 'Gastos essenciais', pct: 0.26, data: essentialExpenses },
@@ -35,7 +32,9 @@ const analyticalData = ref([
 <template>
   <LayoutPage>
     <div class="d-flex justify-content-between align-items-center">
-      <h5 class="card-title text-alternative">Boa tarde <b>{{ user?.name }}</b></h5>
+      <h5 class="card-title text-alternative">
+        Boa tarde <b>{{ user?.name }}</b>
+      </h5>
       <PeriodPicker />
     </div>
 
@@ -56,8 +55,10 @@ const analyticalData = ref([
               <small>{{ data.pct * 100 }}%</small>
             </div>
             <div class="d-flex align-items-top justify-content-between gap-2">
-              <div v-if="data.id === 'investments'"><i class="bi bi-graph-up-arrow me-1" /><br>R$
-                +5,00<br> +3,09%</div>
+              <div v-if="data.id === 'investments'">
+                <i class="bi bi-graph-up-arrow me-1" /><br />R$ +5,00<br />
+                +3,09%
+              </div>
               <small class="d-flex gap-1 flex-column">
                 <span v-for="expense in data.data" :key="expense?.currency">
                   <MoneyDisplay :money="expense" />
@@ -79,7 +80,7 @@ const analyticalData = ref([
           <h5 class="m-0">
             <i class="bi bi-exclamation-triangle-fill" />
           </h5>
-          <small style="font-size: 70%;">108%</small>
+          <small style="font-size: 70%">108%</small>
         </div>
       </div>
     </div>

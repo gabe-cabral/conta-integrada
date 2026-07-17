@@ -14,13 +14,15 @@ async function load(userId: string): Promise<void> {
     currencies: ['BRL', 'COP', 'EUR', 'USD'],
   };
 
-  const result = await db.collection<UserPreference>('user_preferences').updateOne(
-    { userId: preference.userId },
-    { $setOnInsert: preference },
-    { upsert: true },
-  );
+  const result = await db
+    .collection<UserPreference>('user_preferences')
+    .updateOne({ userId: preference.userId }, { $setOnInsert: preference }, { upsert: true });
 
-  console.log(result.upsertedCount ? 'Preferências do usuário inseridas.' : 'Preferências do usuário já existem.');
+  console.log(
+    result.upsertedCount
+      ? 'Preferências do usuário inseridas.'
+      : 'Preferências do usuário já existem.',
+  );
 }
 
 export { load };

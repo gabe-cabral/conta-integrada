@@ -11,11 +11,17 @@ class UserPreferencesRepo {
     return collection.findOne({ userId: ObjectId.createFromHexString(userId) });
   }
 
-  async updateByUserId(userId: string, changes: UserPreferenceUpdate): Promise<UpdateResult<UserPreference>> {
+  async updateByUserId(
+    userId: string,
+    changes: UserPreferenceUpdate,
+  ): Promise<UpdateResult<UserPreference>> {
     const collection = await this.#getCollection();
-    return collection.updateOne({ userId: ObjectId.createFromHexString(userId) }, {
-      $set: { ...changes, updatedAt: new Date() },
-    });
+    return collection.updateOne(
+      { userId: ObjectId.createFromHexString(userId) },
+      {
+        $set: { ...changes, updatedAt: new Date() },
+      },
+    );
   }
 
   async #getCollection(): Promise<Collection<UserPreference>> {

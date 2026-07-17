@@ -7,12 +7,12 @@ import isoCodeToCurrency from '~/utils/isoCodeToCurrency';
 import useSystemStore from './systemStore';
 
 export interface AppState {
-  currencies: Currency[]
-  categories: TransactionCategory[]
-  transactionTypes: TransactionTypeDisplay[]
-  lastInputDate: Date | null
-  lastInputCategoryId: string | null
-  lastInputSourceId: string | null
+  currencies: Currency[];
+  categories: TransactionCategory[];
+  transactionTypes: TransactionTypeDisplay[];
+  lastInputDate: Date | null;
+  lastInputCategoryId: string | null;
+  lastInputSourceId: string | null;
 }
 
 export const useAppStore = defineStore('appStore', () => {
@@ -41,7 +41,9 @@ export const useAppStore = defineStore('appStore', () => {
     if (!user?.value?.id) throw new Error('User not logged in');
 
     const requestFetch = import.meta.server ? useRequestFetch() : $fetch;
-    const preference = await requestFetch<UserPreference>(`/api/users/${user.value.id}/user_preferences`);
+    const preference = await requestFetch<UserPreference>(
+      `/api/users/${user.value.id}/user_preferences`,
+    );
     currencies.value = preference.currencies.map(isoCodeToCurrency);
     systemStore.setDefaultCurrency(preference.defaultCurrency);
   }
@@ -64,7 +66,9 @@ export const useAppStore = defineStore('appStore', () => {
     loading.value = true;
 
     try {
-      const { data } = await useFetch<TransactionCategory[]>(`/api/users/${user.value.id}/categories`);
+      const { data } = await useFetch<TransactionCategory[]>(
+        `/api/users/${user.value.id}/categories`,
+      );
 
       if (Array.isArray(data.value)) {
         categories.value = data.value;
@@ -72,7 +76,11 @@ export const useAppStore = defineStore('appStore', () => {
     } catch (error) {
       console.error('Error fetching categories:', error);
       systemStore.addMessage(
-        'Erro ao carregar categorias de transações.', 'Falha', 'danger', 'bi-exclamation-diamond', 3,
+        'Erro ao carregar categorias de transações.',
+        'Falha',
+        'danger',
+        'bi-exclamation-diamond',
+        3,
       );
     } finally {
       loading.value = false;

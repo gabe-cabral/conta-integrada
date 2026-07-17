@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
-import { dateStringToDate } from '../zod/zodDate.js';
-import { zodObjectId } from '../zod/mongodb.js';
+import { dateStringToDate } from './zodDate.js';
+import { zodObjectId } from './mongodb.js';
 
 export const auditableRecordSchema = z.strictObject({
   createdAt: dateStringToDate,

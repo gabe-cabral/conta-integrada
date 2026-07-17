@@ -11,8 +11,8 @@ async function main() {
 
   if (userId) {
     await loadUserPreferences(userId);
-  //   // await loadCategories(userId);
-  //   await loadTransactions(userId);
+    //   // await loadCategories(userId);
+    //   await loadTransactions(userId);
   }
 }
 

@@ -14,7 +14,8 @@ export default defineEventHandler(async (event) => {
   if (user.id !== userId) throw createError({ statusCode: 403, message: 'Forbidden' });
 
   const result = await new FinancialSpacesRepo(userId).deleteRecord(spaceId);
-  if (result.deletedCount === 0) throw createError({ statusCode: 404, message: 'Financial space not found' });
+  if (result.deletedCount === 0)
+    throw createError({ statusCode: 404, message: 'Financial space not found' });
 
   setResponseStatus(event, 204);
   return null;

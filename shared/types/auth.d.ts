@@ -1,7 +1,7 @@
 declare module '#auth-utils' {
   interface User {
-    id: string
-    name: string
+    id: string;
+    name: string;
   }
 
   // interface UserSession {
@@ -13,4 +13,4 @@ declare module '#auth-utils' {
   // }
 }
 
-export { };
+export {};

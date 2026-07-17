@@ -9,7 +9,7 @@ export async function assertFinancialSpaceCategoriesBelongToUser(
   const { db } = await useSecureClient();
   const categories = db.collection('categories');
   const existingCategories = await categories.countDocuments({
-    _id: { $in: categoryIds.map(categoryId => ObjectId.createFromHexString(categoryId)) },
+    _id: { $in: categoryIds.map((categoryId) => ObjectId.createFromHexString(categoryId)) },
     userId: ObjectId.createFromHexString(userId),
   });
 

@@ -1,9 +1,20 @@
 import type {
-  AutoEncryptionOptions, AWSEncryptionKeyOptions, AzureEncryptionKeyOptions, ClientEncryption, Db,
-  GCPEncryptionKeyOptions, KMIPEncryptionKeyOptions, KMSProviders,
+  AutoEncryptionOptions,
+  AWSEncryptionKeyOptions,
+  AzureEncryptionKeyOptions,
+  ClientEncryption,
+  Db,
+  GCPEncryptionKeyOptions,
+  KMIPEncryptionKeyOptions,
+  KMSProviders,
 } from 'mongodb';
 
 export type KMSProviderName = 'aws' | 'azure' | 'gcp' | 'kmip' | 'local';
+type CustomerMasterKeyCredentials =
+  | AWSEncryptionKeyOptions
+  | AzureEncryptionKeyOptions
+  | GCPEncryptionKeyOptions
+  | KMIPEncryptionKeyOptions;
 
 function getKmipTlsOptions() {
   const tlsOptions = {
@@ -16,9 +27,7 @@ function getKmipTlsOptions() {
   return tlsOptions;
 }
 
-export function getKMSProviderCredentials(
-  kmsProviderName: KMSProviderName,
-): KMSProviders {
+export function getKMSProviderCredentials(kmsProviderName: KMSProviderName): KMSProviders {
   let kmsProviders;
 
   switch (kmsProviderName) {
@@ -67,7 +76,11 @@ export function getKMSProviderCredentials(
 
 export function getCustomerMasterKeyCredentials(
   kmsProviderName: KMSProviderName,
-): AWSEncryptionKeyOptions | AzureEncryptionKeyOptions | GCPEncryptionKeyOptions | KMIPEncryptionKeyOptions {
+):
+  | AWSEncryptionKeyOptions
+  | AzureEncryptionKeyOptions
+  | GCPEncryptionKeyOptions
+  | KMIPEncryptionKeyOptions {
   let customerMasterKeyCredentials;
 
   switch (kmsProviderName) {
@@ -127,21 +140,17 @@ export async function createEncryptedCollection(
   encryptedCollectionName: string,
   kmsProviderName: KMSProviderName,
   encryptedFieldsMap: Document,
-  customerMasterKeyCredentials: any,
+  customerMasterKeyCredentials: CustomerMasterKeyCredentials,
 ) {
   try {
-    await clientEncryption.createEncryptedCollection(
-      encryptedDatabase,
-      encryptedCollectionName,
-      {
-        provider: kmsProviderName,
-        createCollectionOptions: encryptedFieldsMap,
-        masterKey: customerMasterKeyCredentials,
-      },
-    );
+    await clientEncryption.createEncryptedCollection(encryptedDatabase, encryptedCollectionName, {
+      provider: kmsProviderName,
+      createCollectionOptions: encryptedFieldsMap,
+      masterKey: customerMasterKeyCredentials,
+    });
   } catch (err) {
-    throw new Error(
-      `Unable to create encrypted collection due to the following error: ${err}`,
-    );
+    throw new Error(`Unable to create encrypted collection due to the following error: ${err}`, {
+      cause: err,
+    });
   }
 }

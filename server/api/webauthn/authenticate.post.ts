@@ -12,11 +12,13 @@ export default defineWebAuthnAuthenticateEventHandler({
       throw createError({ statusCode: 404, message: 'User not found' });
     }
 
-    const credentials = await db.collection<WithId<WebAuthnCredential>>('auth_credentials').find({ userId: user._id }).toArray();
+    const credentials = await db
+      .collection<WithId<WebAuthnCredential>>('auth_credentials')
+      .find({ userId: user._id })
+      .toArray();
 
     // If no credentials are found, the authentication cannot be completed
-    if (!credentials.length)
-      throw createError({ statusCode: 400, message: 'User not found' });
+    if (!credentials.length) throw createError({ statusCode: 400, message: 'User not found' });
 
     // If user is found, only allow credentials that are registered
     // The browser will automatically try to use the credential that it knows about
@@ -28,11 +30,12 @@ export default defineWebAuthnAuthenticateEventHandler({
   async getCredential(event, credentialId) {
     // Look for the credential in our database
     const db = await useDatabase();
-    const credential = await db.collection<WithId<WebAuthnCredential>>('auth_credentials').findOne({ id: credentialId });
+    const credential = await db
+      .collection<WithId<WebAuthnCredential>>('auth_credentials')
+      .findOne({ id: credentialId });
 
     // If the credential is not found, there is no account to log in to
-    if (!credential)
-      throw createError({ statusCode: 400, message: 'Credential not found' });
+    if (!credential) throw createError({ statusCode: 400, message: 'Credential not found' });
 
     return credential;
   },
@@ -66,7 +69,8 @@ export default defineWebAuthnAuthenticateEventHandler({
     // The credential authentication has been successful
     // We can look it up in our database and get the corresponding user
     const { db } = await useSecureClient();
-    const user = await db.collection<WithId<Omit<User, '_id'>>>('users')
+    const user = await db
+      .collection<WithId<Omit<User, '_id'>>>('users')
       .findOne({ _id: credential.userId! });
 
     if (!user) {
@@ -74,10 +78,9 @@ export default defineWebAuthnAuthenticateEventHandler({
     }
 
     // Update the counter in the database (authenticationInfo.newCounter)
-    await db.collection('auth_credentials').updateOne(
-      { id: credential.id },
-      { $set: { counter: authenticationInfo.newCounter } },
-    );
+    await db
+      .collection('auth_credentials')
+      .updateOne({ id: credential.id }, { $set: { counter: authenticationInfo.newCounter } });
 
     // Set the user session
     await setUserSession(event, {

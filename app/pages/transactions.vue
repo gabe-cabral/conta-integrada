@@ -26,16 +26,17 @@ async function load() {
 }
 
 const groupedTransactions = computed(() => {
-  const map = transactions.value.reduce((acc: Record<string, Transaction[]>, tx) => {
+  const map = transactions.value.reduce((acc: Map<string, Transaction[]>, tx) => {
     const d = tx.date.toISOString().slice(0, 10);
-    if (!acc[d]) acc[d] = [];
-    acc[d].push(tx);
+    const items = acc.get(d) ?? [];
+    items.push(tx);
+    acc.set(d, items);
     return acc;
-  }, {} as Record<string, Transaction[]>);
+  }, new Map<string, Transaction[]>());
 
-  return Object.keys(map)
+  return [...map.keys()]
     .sort((a, b) => new Date(a).getTime() - new Date(b).getTime())
-    .map(date => ({ date, items: map[date] }));
+    .map((date) => ({ date, items: map.get(date) ?? [] }));
 });
 
 load();
@@ -78,21 +79,35 @@ load();
 
     <div v-for="tx in groupedTransactions" :key="tx.date" class="mt-4">
       <h5 class="mb-3">
-        {{ new Date(tx.date).toLocaleDateString(undefined, { day: '2-digit', month: 'long' }) }}</h5>
+        {{ new Date(tx.date).toLocaleDateString(undefined, { day: '2-digit', month: 'long' }) }}
+      </h5>
       <div class="list-group bg-white shadow-sm">
-        <div v-for="item in tx.items" :key="item._id"
-             class="list-group-item d-flex justify-content-between align-items-center bg-transparent border border-2 border-top-0 border-end-0 border-bottom-0"
-             :class="{
-               'border-danger': item.status !== 'CONFIRMED' && item.date.getTime() < Date.now() && item.amount.amountInCents < 0,
-               'border-warning': item.status !== 'CONFIRMED' && item.date.getTime() < Date.now() && item.amount.amountInCents > 0,
-               'border-success': item.status === 'CONFIRMED',
-             }">
+        <div
+          v-for="item in tx.items"
+          :key="item._id"
+          class="list-group-item d-flex justify-content-between align-items-center bg-transparent border border-2 border-top-0 border-end-0 border-bottom-0"
+          :class="{
+            'border-danger':
+              item.status !== 'CONFIRMED' &&
+              item.date.getTime() < Date.now() &&
+              item.amount.amountInCents < 0,
+            'border-warning':
+              item.status !== 'CONFIRMED' &&
+              item.date.getTime() < Date.now() &&
+              item.amount.amountInCents > 0,
+            'border-success': item.status === 'CONFIRMED',
+          }"
+        >
           <div>
             <h6 class="mb-1">{{ item.description }}</h6>
             <small class="text-muted">{{ relativeTimeHelper(item.date) }}</small>
           </div>
           <span :class="item.amount.amountInCents < 0 ? 'text-danger' : 'text-success'">
-            {{ new Intl.NumberFormat(undefined, { style: 'currency', currency: 'BRL' }).format(item.amount.amountInCents / 100) }}
+            {{
+              new Intl.NumberFormat(undefined, { style: 'currency', currency: 'BRL' }).format(
+                item.amount.amountInCents / 100,
+              )
+            }}
           </span>
         </div>
       </div>

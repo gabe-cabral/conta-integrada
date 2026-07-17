@@ -9,7 +9,7 @@ import { env } from '../../../env.ts';
 const collectionName = 'financial_institutions';
 
 type FinancialInstitutionDocument = Omit<FinancialInstitution, '_id'> & {
-  _id?: ObjectId
+  _id?: ObjectId;
 };
 
 const financialInstitutionCollectionSchema = {
@@ -68,7 +68,15 @@ const financialInstitutionCollectionSchema = {
       description: 'Operational status of the institution',
     },
     institutionType: {
-      enum: ['bank', 'brokerage', 'central_bank', 'credit_union', 'digital_wallet', 'other', 'payment_institution'],
+      enum: [
+        'bank',
+        'brokerage',
+        'central_bank',
+        'credit_union',
+        'digital_wallet',
+        'other',
+        'payment_institution',
+      ],
       description: 'Business classification used by the application',
     },
     defaultCurrencies: {

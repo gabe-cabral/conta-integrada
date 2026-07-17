@@ -21,7 +21,9 @@ export const useFinanceStore = defineStore('financeStore', {
             essentialExpenses: null,
             otherExpenses: null,
             investments: {
-              amountInCents: 400, currency: 'EUR', percentage: 0.4,
+              amountInCents: 400,
+              currency: 'EUR',
+              percentage: 0.4,
             },
           },
           {
@@ -31,13 +33,19 @@ export const useFinanceStore = defineStore('financeStore', {
             projectedBalance: { amountInCents: 1712800, currency: 'BRL' },
             currency: 'BRL',
             essentialExpenses: {
-              amountInCents: 850000, currency: 'BRL', percentage: 0.26,
+              amountInCents: 850000,
+              currency: 'BRL',
+              percentage: 0.26,
             },
             otherExpenses: {
-              amountInCents: 100000, currency: 'BRL', percentage: 0.3,
+              amountInCents: 100000,
+              currency: 'BRL',
+              percentage: 0.3,
             },
             investments: {
-              amountInCents: 50000, currency: 'BRL', percentage: 0.3,
+              amountInCents: 50000,
+              currency: 'BRL',
+              percentage: 0.3,
             },
           },
           {
@@ -49,7 +57,9 @@ export const useFinanceStore = defineStore('financeStore', {
             essentialExpenses: null,
             otherExpenses: null,
             investments: {
-              amountInCents: -309, currency: 'USD', percentage: -0.05,
+              amountInCents: -309,
+              currency: 'USD',
+              percentage: -0.05,
             },
           },
         ];

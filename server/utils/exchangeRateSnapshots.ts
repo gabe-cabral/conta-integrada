@@ -12,7 +12,7 @@ import type {
 import type { CurrencyCode } from '~~/shared/schemas/currency';
 
 export type ExchangeRateSnapshotDocument = Omit<ExchangeRateSnapshotDto, 'rates'> & {
-  rates: Record<CurrencyCode, Decimal128>
+  rates: Record<CurrencyCode, Decimal128>;
 };
 
 export function decimalStringToDecimal128(value: string): Decimal128 {
@@ -30,13 +30,17 @@ export function decimal128ToString(value: Decimal128): string {
   return value.toString();
 }
 
-export function mapRatesToDecimal128(rates: Record<CurrencyCode, string>): Record<CurrencyCode, Decimal128> {
+export function mapRatesToDecimal128(
+  rates: Record<CurrencyCode, string>,
+): Record<CurrencyCode, Decimal128> {
   return Object.fromEntries(
     Object.entries(rates).map(([currency, rate]) => [currency, decimalStringToDecimal128(rate)]),
   ) as Record<CurrencyCode, Decimal128>;
 }
 
-export function mapRatesToDto(rates: Record<CurrencyCode, Decimal128>): Record<CurrencyCode, string> {
+export function mapRatesToDto(
+  rates: Record<CurrencyCode, Decimal128>,
+): Record<CurrencyCode, string> {
   return Object.fromEntries(
     Object.entries(rates).map(([currency, rate]) => [currency, decimal128ToString(rate)]),
   ) as Record<CurrencyCode, string>;
@@ -74,7 +78,9 @@ export function mapSnapshotCreateToDocument(
   };
 }
 
-export function mapSnapshotDocumentToDto(document: ExchangeRateSnapshotDocument): ExchangeRateSnapshotDto {
+export function mapSnapshotDocumentToDto(
+  document: ExchangeRateSnapshotDocument,
+): ExchangeRateSnapshotDto {
   return {
     ...document,
     rates: mapRatesToDto(document.rates),

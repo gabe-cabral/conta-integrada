@@ -5,17 +5,17 @@ import TomSelect from 'tom-select';
 import type { TomSettings } from 'tom-select/dist/esm/types/settings.js';
 
 interface MultiSelectOption {
-  value: string
-  label: string
+  value: string;
+  label: string;
 }
 
 const props = withDefaults(
   defineProps<{
-    disabled?: boolean
-    modelValue: string[]
-    multiple?: boolean
-    options: MultiSelectOption[]
-    placeholder?: string
+    disabled?: boolean;
+    modelValue: string[];
+    multiple?: boolean;
+    options: MultiSelectOption[];
+    placeholder?: string;
   }>(),
   {
     placeholder: 'Selecione as opções',
@@ -25,7 +25,7 @@ const props = withDefaults(
 );
 
 const emit = defineEmits<{
-  'update:modelValue': [value: string[]]
+  'update:modelValue': [value: string[]];
 }>();
 
 const selectElement = ref<HTMLSelectElement>();
@@ -49,11 +49,7 @@ onMounted(() => {
     create: false,
     persist: false,
     onChange(value) {
-      const selectedValues = Array.isArray(value)
-        ? value
-        : value
-          ? [value]
-          : [];
+      const selectedValues = Array.isArray(value) ? value : value ? [value] : [];
 
       emit('update:modelValue', selectedValues);
     },
@@ -89,7 +85,11 @@ watch(
       return;
     }
 
-    disabled ? tomSelect.disable() : tomSelect.enable();
+    if (disabled) {
+      tomSelect.disable();
+    } else {
+      tomSelect.enable();
+    }
   },
 );
 
@@ -100,8 +100,12 @@ onBeforeUnmount(() => {
 
 <template>
   <select ref="selectElement" :multiple="props.multiple" :disabled="disabled" autocomplete="off">
-    <option v-for="option in options" :key="option.value" :value="option.value"
-            :selected="modelValue.includes(option.value)">
+    <option
+      v-for="option in options"
+      :key="option.value"
+      :value="option.value"
+      :selected="modelValue.includes(option.value)"
+    >
       {{ option.label }}
     </option>
   </select>
