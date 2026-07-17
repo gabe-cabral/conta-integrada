@@ -7,8 +7,8 @@ import {
   mapSnapshotCreateToDocument,
   mapSnapshotDocumentToDto,
 } from '~~/server/utils/exchangeRateSnapshots';
-import { useDatabase } from '~~/server/utils/mongo';
 import { MongoServerError } from 'mongodb';
+import BaseSecureRepo from './BaseSecureRepo.js';
 
 import type {
   ExchangeRateSnapshotCreate,
@@ -18,7 +18,6 @@ import type {
   ExchangeRateSnapshotReplace,
 } from '~~/shared/schemas/exchangeRateSnapshots';
 import type {
-  Collection,
   DeleteResult,
   Filter,
   FindOptions,
@@ -27,19 +26,28 @@ import type {
 } from 'mongodb';
 import type { ExchangeRateSnapshotDocument } from '~~/server/utils/exchangeRateSnapshots';
 
-class ExchangeRateSnapshotsRepo {
-  readonly #collectionName = 'exchange_rate_snapshots';
+class ExchangeRateSnapshotsRepo extends BaseSecureRepo<
+  ExchangeRateSnapshotDocument,
+  ExchangeRateSnapshotDocument,
+  ExchangeRateSnapshotCreate,
+  ExchangeRateSnapshotReplace,
+  string
+> {
+  constructor() {
+    super('exchange_rate_snapshots');
+  }
 
   async deleteSnapshot(id: string): Promise<DeleteResult> {
-    const collection = await this.#getCollection();
-    return collection.deleteOne({ _id: id });
+    return this.deleteRecord(id);
   }
 
   async getLatestSnapshot(
     query: ExchangeRateSnapshotLatestQuery,
   ): Promise<ExchangeRateSnapshotDto | null> {
-    const collection = await this.#getCollection();
-    const at = query.at ? normalizeUtcDayStart(query.at) : normalizeUtcDayStart(new Date());
+    const collection = await this.getCollection();
+    const at = query.at
+      ? normalizeUtcDayStart(query.at)
+      : normalizeUtcDayStart(new Date());
     const document = await collection.findOne(
       {
         baseCurrency: query.baseCurrency,
@@ -53,33 +61,32 @@ class ExchangeRateSnapshotsRepo {
   }
 
   async getSnapshotById(id: string): Promise<ExchangeRateSnapshotDto | null> {
-    const collection = await this.#getCollection();
-    const document = await collection.findOne({ _id: id });
+    const document = await this.getRecordById(id);
 
     return document ? mapSnapshotDocumentToDto(document) : null;
   }
 
   async insertSnapshot(record: ExchangeRateSnapshotCreate): Promise<string> {
-    const collection = await this.#getCollection();
-    const now = new Date();
-    const document = mapSnapshotCreateToDocument(record, now, now);
-
     try {
-      const result = await collection.insertOne(
-        document as OptionalUnlessRequiredId<ExchangeRateSnapshotDocument>,
-      );
-      return result.insertedId;
+      const insertedId = await this.insertRecord(record);
+      if (!insertedId)
+        throw new Error('Failed to insert exchange rate snapshot');
+      return insertedId;
     } catch (error) {
       if (error instanceof MongoServerError && error.code === 11000) {
-        throw new Error('Exchange rate snapshot already exists', { cause: error });
+        throw new Error('Exchange rate snapshot already exists', {
+          cause: error,
+        });
       }
 
       throw error;
     }
   }
 
-  async listSnapshots(query: ExchangeRateSnapshotListQuery): Promise<ExchangeRateSnapshotDto[]> {
-    const collection = await this.#getCollection();
+  async listSnapshots(
+    query: ExchangeRateSnapshotListQuery,
+  ): Promise<ExchangeRateSnapshotDto[]> {
+    const collection = await this.getCollection();
     const filter: Filter<ExchangeRateSnapshotDocument> = {};
 
     if (query.baseCurrency) filter.baseCurrency = query.baseCurrency;
@@ -92,7 +99,7 @@ class ExchangeRateSnapshotsRepo {
       if (query.to) filter.valuationDate.$lte = query.to;
     }
 
-    const options: FindOptions<ExchangeRateSnapshotDocument> = {
+    const options: FindOptions = {
       sort: { valuationDate: -1, baseCurrency: 1 },
       skip: query.offset,
       limit: query.limit,
@@ -106,7 +113,7 @@ class ExchangeRateSnapshotsRepo {
     id: string,
     record: ExchangeRateSnapshotReplace,
   ): Promise<UpdateResult<ExchangeRateSnapshotDocument>> {
-    const collection = await this.#getCollection();
+    const collection = await this.getCollection();
     const existing = await collection.findOne({ _id: id });
 
     if (!existing) {
@@ -114,19 +121,28 @@ class ExchangeRateSnapshotsRepo {
     }
 
     const parsed = exchangeRateSnapshotReplaceSchema.parse(record);
-    const expectedId = buildExchangeRateSnapshotId(parsed.baseCurrency, parsed.valuationDate);
+    const expectedId = buildExchangeRateSnapshotId(
+      parsed.baseCurrency,
+      parsed.valuationDate,
+    );
 
     if (expectedId !== id) {
-      throw new Error('Snapshot id, baseCurrency and valuationDate are inconsistent');
+      throw new Error(
+        'Snapshot id, baseCurrency and valuationDate are inconsistent',
+      );
     }
 
-    const document = mapSnapshotCreateToDocument(parsed, existing.createdAt, new Date());
+    const document = mapSnapshotCreateToDocument(
+      parsed,
+      existing.createdAt,
+      new Date(),
+    );
 
     return collection.replaceOne({ _id: id }, document);
   }
 
   async upsertSnapshot(record: ExchangeRateSnapshotCreate): Promise<string> {
-    const collection = await this.#getCollection();
+    const collection = await this.getCollection();
     const existing = await collection.findOne({
       baseCurrency: record.baseCurrency,
       valuationDate: normalizeUtcDayStart(record.valuationDate),
@@ -135,14 +151,18 @@ class ExchangeRateSnapshotsRepo {
     const createdAt = existing?.createdAt ?? now;
     const document = mapSnapshotCreateToDocument(record, createdAt, now);
 
-    await collection.replaceOne({ _id: document._id }, document, { upsert: true });
+    await collection.replaceOne({ _id: document._id }, document, {
+      upsert: true,
+    });
 
     return document._id;
   }
 
-  async #getCollection(): Promise<Collection<ExchangeRateSnapshotDocument>> {
-    const db = await useDatabase();
-    return db.collection(this.#collectionName) as Collection<ExchangeRateSnapshotDocument>;
+  protected override async mapDocument(
+    record: ExchangeRateSnapshotCreate,
+  ): Promise<OptionalUnlessRequiredId<ExchangeRateSnapshotDocument>> {
+    const now = new Date();
+    return mapSnapshotCreateToDocument(record, now, now);
   }
 }
 

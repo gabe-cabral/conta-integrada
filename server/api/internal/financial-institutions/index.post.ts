@@ -4,11 +4,21 @@ import FinancialInstitutionsRepo from '~~/server/repositories/FinancialInstituti
 export default defineEventHandler(async (event) => {
   requireInternalApiAccess(event);
 
-  const body = await readValidatedBody(event, financialInstitutionCreateSchema.parse);
+  const body = await readValidatedBody(
+    event,
+    financialInstitutionCreateSchema.parse,
+  );
   const repository = new FinancialInstitutionsRepo();
 
   try {
     const id = await repository.insertRecord(body);
+    if (!id) {
+      throw createError({
+        statusCode: 500,
+        message: 'Failed to insert financial institution',
+      });
+    }
+
     const record = await repository.getRecordById(id);
 
     if (!record) {

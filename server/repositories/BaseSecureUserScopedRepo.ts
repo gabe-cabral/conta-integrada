@@ -3,26 +3,18 @@ import assert from 'node:assert';
 import { ObjectId } from 'mongodb';
 
 import type {
-  Binary,
-  ClientEncryption,
-  ClientEncryptionEncryptOptions,
-  Collection,
-  DeleteResult,
   Document,
   Filter,
   FindOptions,
   OptionalUnlessRequiredId,
-  UpdateFilter,
-  UpdateResult,
-  WithId,
 } from 'mongodb';
 import type { UserAuditableRecord } from '../../shared/zod/zodBase.js';
 
 import { getKeyAltName } from '../utils/key-alt-name.js';
-import { useSecureClient } from '../utils/mongo.js';
+import BaseSecureRepo from './BaseSecureRepo.js';
 
 type UserScopedModel = UserAuditableRecord & {
-  _id?: string | null;
+  _id?: unknown;
 };
 
 export type CreateUserScopedRecord<TModel extends UserScopedModel> = Omit<
@@ -34,24 +26,29 @@ export type UpdateUserScopedRecord<TModel extends UserScopedModel> = Partial<
   CreateUserScopedRecord<TModel>
 >;
 
-type CreateRecordWithAudit<TModel extends UserScopedModel> = Omit<TModel, '_id'>;
+type CreateRecordWithAudit<TModel extends UserScopedModel> = Omit<
+  TModel,
+  '_id'
+>;
 
-class BaseSecureUserScopedRepo<TModel extends UserScopedModel, TDocument extends Document> {
-  #clientEncryption: ClientEncryption | null = null;
-
-  #collection: Collection<OptionalUnlessRequiredId<TDocument>> | null = null;
-
-  #collectionName: string;
-
-  #userId: ObjectId;
+class BaseSecureUserScopedRepo<
+  TModel extends UserScopedModel,
+  TDocument extends Document,
+> extends BaseSecureRepo<
+  TModel,
+  TDocument,
+  CreateUserScopedRecord<TModel>,
+  UpdateUserScopedRecord<TModel>,
+  string | ObjectId
+> {
+  readonly #userId: ObjectId;
 
   constructor(collectionName: string, userId: string | ObjectId) {
+    super(collectionName);
+
     assert(
-      typeof collectionName === 'string' && collectionName.length > 0,
-      'Collection name must be a non-empty string',
-    );
-    assert(
-      (typeof userId === 'string' && userId.length === 24) || userId instanceof ObjectId,
+      (typeof userId === 'string' && userId.length === 24) ||
+        userId instanceof ObjectId,
       'User ID must be a 24-character string or an ObjectId',
     );
     assert(
@@ -59,131 +56,29 @@ class BaseSecureUserScopedRepo<TModel extends UserScopedModel, TDocument extends
       'User ID must be a valid ObjectId',
     );
 
-    this.#collectionName = collectionName;
-    this.#userId = userId instanceof ObjectId ? userId : ObjectId.createFromHexString(userId);
-  }
-
-  async deleteRecord(recordId: string | ObjectId): Promise<DeleteResult> {
-    try {
-      const collection = await this.getCollection();
-
-      return collection.deleteOne({
-        $and: [{ _id: this.toObjectId(recordId) }, { userId: this.#userId }],
-      } as Filter<OptionalUnlessRequiredId<TDocument>>);
-    } catch (error) {
-      throw this.#interceptError(error);
-    }
-  }
-
-  async encryptDeterministic(value: unknown): Promise<Binary> {
-    return this.encryptField(value, 'AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic');
-  }
-
-  async encryptField(
-    value: unknown,
-    algorithm: ClientEncryptionEncryptOptions['algorithm'],
-  ): Promise<Binary> {
-    assert(this.#userId, 'User ID must be set');
-
-    if (!this.#clientEncryption) await this.getCollection();
-
-    assert(this.#clientEncryption, 'ClientEncryption must be initialized');
-
-    const keyAltName = getKeyAltName(this.#userId.toHexString());
-
-    return this.#clientEncryption!.encrypt(value, {
-      algorithm,
-      keyAltName,
-    });
-  }
-
-  async encryptRandom(value: unknown): Promise<Binary> {
-    return this.encryptField(value, 'AEAD_AES_256_CBC_HMAC_SHA_512-Random');
-  }
-
-  async getRecordById(recordId: string | ObjectId): Promise<WithId<TModel> | null> {
-    const collection = await this.getCollection();
-    const result = await collection.findOne({
-      $and: [{ _id: this.toObjectId(recordId) }, { userId: this.#userId }],
-    } as Filter<OptionalUnlessRequiredId<TDocument>>);
-
-    return result as WithId<TModel> | null;
+    this.#userId =
+      userId instanceof ObjectId
+        ? userId
+        : ObjectId.createFromHexString(userId);
   }
 
   async getUserRecords(
     filter: Filter<TDocument> = {},
     options?: FindOptions,
-  ): Promise<WithId<TModel>[]> {
-    const collection = await this.getCollection();
-    const results = await collection
-      .find(
-        {
-          $and: [{ userId: this.#userId }, filter],
-        } as Filter<OptionalUnlessRequiredId<TDocument>>,
-        options,
-      )
-      .toArray();
-
-    return results as unknown as WithId<TModel>[];
+  ): Promise<TModel[]> {
+    return this.getRecords(filter, options);
   }
 
-  async insertManyRecords(records: CreateUserScopedRecord<TModel>[]): Promise<string[]> {
-    try {
-      const documents: OptionalUnlessRequiredId<TDocument>[] = [];
-      const collection = await this.getCollection();
-
-      for (const item of records) {
-        const data = await this.mapDocument(this.buildCreateRecord(item));
-        documents.push(data);
-      }
-
-      const result = await collection.insertMany(
-        documents as unknown as OptionalUnlessRequiredId<OptionalUnlessRequiredId<TDocument>>[],
-      );
-      return Object.values(result.insertedIds).flatMap((id) => (id ? [id.toString()] : []));
-    } catch (error) {
-      throw this.#interceptError(error);
-    }
-  }
-
-  async insertRecord(record: CreateUserScopedRecord<TModel>): Promise<ObjectId | null> {
-    try {
-      const collection = await this.getCollection();
-      const data = await this.mapDocument(this.buildCreateRecord(record));
-      const result = await collection.insertOne(
-        data as unknown as OptionalUnlessRequiredId<OptionalUnlessRequiredId<TDocument>>,
-      );
-
-      return result.acknowledged ? (result.insertedId ?? null) : null;
-    } catch (error) {
-      throw this.#interceptError(error);
-    }
-  }
-
-  async updateRecord(
-    recordId: string | ObjectId,
-    changes: UpdateUserScopedRecord<TModel>,
-  ): Promise<UpdateResult> {
-    try {
-      const collection = await this.getCollection();
-      const data = await this.mapUpdateDocument(changes);
-
-      const update: UpdateFilter<OptionalUnlessRequiredId<TDocument>> = {
-        $set: {
-          ...data,
-          updatedAt: new Date(),
-        } as Partial<OptionalUnlessRequiredId<TDocument>>,
-      };
-
-      return collection.updateOne(
-        {
-          $and: [{ _id: this.toObjectId(recordId) }, { userId: this.#userId }],
-        } as Filter<OptionalUnlessRequiredId<TDocument>>,
-        update,
-      );
-    } catch (error) {
-      throw this.#interceptError(error);
-    }
+  override async getRecords(
+    filter: Filter<TDocument> = {},
+    options?: FindOptions,
+  ): Promise<TModel[]> {
+    return super.getRecords(
+      {
+        $and: [{ userId: this.#userId }, filter],
+      } as Filter<TDocument>,
+      options,
+    );
   }
 
   protected get userId(): string {
@@ -205,40 +100,52 @@ class BaseSecureUserScopedRepo<TModel extends UserScopedModel, TDocument extends
     } as CreateRecordWithAudit<TModel>;
   }
 
-  protected getCollection = async (): Promise<Collection<OptionalUnlessRequiredId<TDocument>>> => {
-    if (this.#collection) return this.#collection;
-
-    const { db, clientEncryption } = await useSecureClient();
-
-    this.#clientEncryption = clientEncryption;
-    this.#collection = db.collection(this.#collectionName) as Collection<
-      OptionalUnlessRequiredId<TDocument>
-    >;
-
-    return this.#collection;
-  };
-
-  protected mapDocument(
-    _record: CreateRecordWithAudit<TModel>,
-  ): Promise<OptionalUnlessRequiredId<TDocument>> {
-    throw new Error('mapDocument must be implemented by subclass');
+  protected override getEncryptionKeyAltName(): string {
+    return getKeyAltName(this.userId);
   }
 
-  protected async mapUpdateDocument(
+  protected override getRecordFilter(
+    recordId: string | ObjectId,
+  ): Filter<TDocument> {
+    return {
+      $and: [{ _id: this.toObjectId(recordId) }, { userId: this.#userId }],
+    } as Filter<TDocument>;
+  }
+
+  protected override mapDocument(
+    record: CreateUserScopedRecord<TModel>,
+  ): Promise<OptionalUnlessRequiredId<TDocument>> {
+    return this.mapUserDocument(this.buildCreateRecord(record));
+  }
+
+  protected async mapUserDocument(
+    _record: CreateRecordWithAudit<TModel>,
+  ): Promise<OptionalUnlessRequiredId<TDocument>> {
+    throw new Error('mapUserDocument must be implemented by subclass');
+  }
+
+  protected override async mapUpdateDocument(
+    record: UpdateUserScopedRecord<TModel>,
+  ): Promise<Partial<TDocument>> {
+    return {
+      ...(await this.mapUserUpdateDocument(record)),
+      updatedAt: new Date(),
+    } as Partial<TDocument>;
+  }
+
+  protected async mapUserUpdateDocument(
     record: UpdateUserScopedRecord<TModel>,
   ): Promise<Partial<TDocument>> {
     return record as Partial<TDocument>;
   }
 
   protected toObjectId(id: string | ObjectId): ObjectId {
-    assert(id instanceof ObjectId || ObjectId.isValid(id), 'ID must be a valid ObjectId');
+    assert(
+      id instanceof ObjectId || ObjectId.isValid(id),
+      'ID must be a valid ObjectId',
+    );
     return id instanceof ObjectId ? id : ObjectId.createFromHexString(id);
   }
-
-  #interceptError = (error: unknown) => {
-    console.error(error);
-    return error;
-  };
 }
 
 export { BaseSecureUserScopedRepo };

@@ -10,10 +10,13 @@ export default defineEventHandler(async (event) => {
 
   const { id } = await getValidatedRouterParams(event, routeSchema.parse);
   const repository = new FinancialInstitutionsRepo();
-  const deleted = await repository.deleteRecord(id);
+  const result = await repository.deleteRecord(id);
 
-  if (!deleted) {
-    throw createError({ statusCode: 404, message: 'Financial institution not found' });
+  if (result.deletedCount === 0) {
+    throw createError({
+      statusCode: 404,
+      message: 'Financial institution not found',
+    });
   }
 
   return { ok: true };

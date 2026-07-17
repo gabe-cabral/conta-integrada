@@ -1,7 +1,9 @@
 import type { FinancialSpace } from '../../shared/schemas/financialSpaces.js';
 import type { Binary, Document, ObjectId } from 'mongodb';
 
-import BaseSecureUserScopedRepo, { type UpdateUserScopedRecord } from './BaseSecureUserScopedRepo.js';
+import BaseSecureUserScopedRepo, {
+  type UpdateUserScopedRecord,
+} from './BaseSecureUserScopedRepo.js';
 
 type FinancialSpaceDbDocument = Omit<
   FinancialSpace,
@@ -22,7 +24,7 @@ class FinancialSpacesRepo extends BaseSecureUserScopedRepo<
     super('financial_spaces', userId);
   }
 
-  override async mapDocument(
+  override async mapUserDocument(
     record: Omit<FinancialSpace, '_id'>,
   ): Promise<FinancialSpaceDbDocument> {
     const data: FinancialSpaceDbDocument = {
@@ -31,7 +33,9 @@ class FinancialSpacesRepo extends BaseSecureUserScopedRepo<
       updatedAt: record.updatedAt ?? null,
       name: await this.encryptRandom(record.name),
       categoryMode: record.categoryMode,
-      categoryIds: record.categoryIds.map((categoryId) => this.toObjectId(categoryId)),
+      categoryIds: record.categoryIds.map((categoryId) =>
+        this.toObjectId(categoryId),
+      ),
       showOnDashboard: record.showOnDashboard,
     };
 
@@ -44,22 +48,27 @@ class FinancialSpacesRepo extends BaseSecureUserScopedRepo<
     return data;
   }
 
-  override async mapUpdateDocument(
+  override async mapUserUpdateDocument(
     record: UpdateUserScopedRecord<FinancialSpace>,
   ): Promise<Partial<FinancialSpaceDbDocument>> {
     const data: Partial<FinancialSpaceDbDocument> = {};
 
-    if (record.name !== undefined) data.name = await this.encryptRandom(record.name);
+    if (record.name !== undefined)
+      data.name = await this.encryptRandom(record.name);
     if (record.description !== undefined)
       data.description = await this.encryptRandom(record.description);
     if (record.icon !== undefined) data.icon = record.icon;
     if (record.color !== undefined) data.color = record.color;
-    if (record.categoryMode !== undefined) data.categoryMode = record.categoryMode;
+    if (record.categoryMode !== undefined)
+      data.categoryMode = record.categoryMode;
     if (record.categoryIds !== undefined) {
-      data.categoryIds = record.categoryIds.map((categoryId) => this.toObjectId(categoryId));
+      data.categoryIds = record.categoryIds.map((categoryId) =>
+        this.toObjectId(categoryId),
+      );
     }
     if (record.currencies !== undefined) data.currencies = record.currencies;
-    if (record.showOnDashboard !== undefined) data.showOnDashboard = record.showOnDashboard;
+    if (record.showOnDashboard !== undefined)
+      data.showOnDashboard = record.showOnDashboard;
 
     return data;
   }
