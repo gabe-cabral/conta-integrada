@@ -25,9 +25,7 @@ const defaultCurrency = ref<string | null>(systemStore.defaultCurrency);
 
 const userCurrencies = computed(() =>
   availableCurrencies.value.filter((currency) =>
-    userSelectedCurrencies.value.includes(currency.code),
-  ),
-);
+    userSelectedCurrencies.value.includes(currency.code),),);
 
 watch(
   userSelectedCurrencies,

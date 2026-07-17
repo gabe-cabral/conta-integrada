@@ -30,6 +30,7 @@ export interface CurrencyDetail {
 const localeTagSchema = z.string().refine((value) => {
   const [language, ...variants] = value.split('-');
   return (
+    language &&
     language.length >= 2 &&
     language.length <= 3 &&
     /^[A-Za-z]+$/.test(language) &&

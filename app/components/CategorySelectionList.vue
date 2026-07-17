@@ -78,8 +78,7 @@ const selectedCount = computed(() =>
   categoryItems.value.reduce(
     (count, item) => count + Number(selectedIds.value.has(item.category._id)),
     0,
-  ),
-);
+  ),);
 
 const allCategoriesSelected = computed(
   () =>

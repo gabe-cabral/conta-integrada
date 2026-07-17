@@ -2,6 +2,7 @@ import Decimal from 'decimal.js';
 import { z } from 'zod';
 
 import { type CurrencyCode, currencyCodeSchema } from './currency.js';
+import type { AuditableRecord } from '#shared/zod/zodBase.ts';
 
 export const exchangeRateSnapshotStatusSchema = z.enum(['complete', 'partial']);
 
@@ -14,7 +15,7 @@ export interface ExchangeRateSnapshotProvider {
   retrievedAt: Date;
 }
 
-export interface ExchangeRateSnapshotDto {
+export interface ExchangeRateSnapshotDto extends AuditableRecord {
   _id: string;
   valuationDate: Date;
   baseCurrency: CurrencyCode;
@@ -24,8 +25,6 @@ export interface ExchangeRateSnapshotDto {
   status: ExchangeRateSnapshotStatus;
   expectedCurrencies?: CurrencyCode[];
   missingCurrencies?: CurrencyCode[];
-  createdAt: Date;
-  updatedAt: Date;
 }
 
 export type ExchangeRateSnapshotCreate = Omit<

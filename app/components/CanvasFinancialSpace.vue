@@ -73,8 +73,7 @@ const currencyOptions = computed(() =>
   appStore.currencies.map((currency) => ({
     value: currency.code,
     label: `${currency.label} (${currency.code})`,
-  })),
-);
+  })),);
 
 const filteredIcons = computed(() => {
   const query = iconSearch.value.trim().toLocaleLowerCase();
@@ -83,8 +82,7 @@ const filteredIcons = computed(() => {
     group.icons.map((icon) => ({
       icon,
       searchIndex: `${group.name} ${icon}`.toLocaleLowerCase(),
-    })),
-  ).filter((option) => !query || option.searchIndex.includes(query));
+    })),).filter(option => !query || option.searchIndex.includes(query));
 });
 
 function closePanel() {

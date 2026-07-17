@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 import { type CurrencyCode, currencyCodeSchema } from './currency.js';
 import { auditableRecordSchema } from '../zod/zodBase.js';
+import type { AuditableRecord } from '#shared/zod/zodBase.ts';
 
 /**
  * ISO 3166-1 alpha-2 country code.
@@ -209,7 +210,7 @@ export interface FinancialInstitutionBranding {
 /**
  * Financial institution available for account identification and selection.
  */
-export interface FinancialInstitution {
+export interface FinancialInstitution extends AuditableRecord {
   /** Stable internal identifier, for example `fi_br_ispb_00000000`. */
   _id: string;
   /** Schema.org-compatible top-level type. */
@@ -240,10 +241,6 @@ export interface FinancialInstitution {
   branding?: FinancialInstitutionBranding;
   /** Source references that explain where the data came from. */
   sources: DataSourceReference[];
-  /** Record creation timestamp. */
-  createdAt: Date;
-  /** Last application update timestamp. */
-  updatedAt: Date | null;
   /** Last automated synchronization timestamp. */
   lastSyncedAt?: Date | null;
 }

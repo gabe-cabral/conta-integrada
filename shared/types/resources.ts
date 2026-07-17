@@ -1,4 +1,4 @@
-import type { AuditableRecord } from './base';
+import type { AuditableRecord } from '../zod/zodBase.js';
 import type { Money } from './finances';
 
 export interface Card extends AuditableRecord {

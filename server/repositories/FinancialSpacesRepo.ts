@@ -1,7 +1,7 @@
 import type { FinancialSpace } from '../../shared/schemas/financialSpaces.js';
 import type { Binary, Document, ObjectId } from 'mongodb';
 
-import BaseSecureUserScopedRepo, { type UpdateUserScopedRecord } from './BaseSecureRepo.js';
+import BaseSecureUserScopedRepo, { type UpdateUserScopedRecord } from './BaseSecureUserScopedRepo.js';
 
 type FinancialSpaceDbDocument = Omit<
   FinancialSpace,

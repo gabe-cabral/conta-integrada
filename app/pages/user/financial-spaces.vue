@@ -27,11 +27,9 @@ const basePath = '/user/financial-spaces';
 const visibleAccounts = computed(() => financeStore.accounts.slice(0, 3));
 const visibleCards = computed(() => financeStore.cards.slice(0, 2));
 const additionalAccounts = computed(() =>
-  Math.max(0, financeStore.accounts.length - visibleAccounts.value.length),
-);
+  Math.max(0, financeStore.accounts.length - visibleAccounts.value.length),);
 const additionalCards = computed(() =>
-  Math.max(0, financeStore.cards.length - visibleCards.value.length),
-);
+  Math.max(0, financeStore.cards.length - visibleCards.value.length),);
 const selectedFinancialSpaceData = computed(() => {
   if (!selectedFinancialSpace.value || selectedFinancialSpace.value === 'new') return null;
   return financialSpaces.value.find((space) => space._id === selectedFinancialSpace.value) ?? null;

@@ -1,4 +1,4 @@
-import type { AuditableRecord } from './base';
+import type { AuditableRecord } from '../zod/zodBase.js';
 
 export interface IdentityDocument {
   country: string;

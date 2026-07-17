@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import FinancialSpacesPage from '../financial-spaces.vue';
+import FinancialSpacesPage from '../financial-spaces';
 
 definePageMeta({
   middleware: ['authenticated'],

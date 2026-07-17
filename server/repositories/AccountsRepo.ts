@@ -6,7 +6,7 @@ import {
   accountTypeSchema,
   type BankAccount,
 } from '../../shared/schemas/bankAccounts.js';
-import BaseSecureUserScopedRepo, { type UpdateUserScopedRecord } from './BaseSecureRepo.js';
+import BaseSecureUserScopedRepo, { type UpdateUserScopedRecord } from './BaseSecureUserScopedRepo.js';
 import { userAuditableRecordWithIdSchema } from '../../shared/zod/zodBase.js';
 import { zodBsonEncrypt } from '../../shared/zod/mongodb.js';
 

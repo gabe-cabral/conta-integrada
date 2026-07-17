@@ -1,6 +1,7 @@
 import type { AccountType } from './resources';
 import type { DocumentOwner } from './user';
 import type { Money } from './finances';
+import type { AuditableRecord } from '../zod/zodBase.js';
 
 export type TransactionType =
   | 'EXPENSE' // Gasto
@@ -39,7 +40,7 @@ export interface TransactionCategory {
   userId: string;
 }
 
-export interface Transaction extends DocumentOwner {
+export interface Transaction extends DocumentOwner, AuditableRecord {
   _id: string;
   date: Date;
   datePrecision: 'DATE' | 'DATETIME';
@@ -56,8 +57,6 @@ export interface Transaction extends DocumentOwner {
   attachmentsCount: number;
   hasRecurrence: boolean;
   recurrence?: TransactionRecurrence;
-  createdAt: Date;
-  updatedAt?: Date;
   conciliationId?: string | null;
 }
 

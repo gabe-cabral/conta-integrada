@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import AccountsPage from '../accounts.vue';
+import AccountsPage from '../accounts';
 
 definePageMeta({
   middleware: ['authenticated'],
