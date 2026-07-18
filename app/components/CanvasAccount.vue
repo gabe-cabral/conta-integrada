@@ -46,12 +46,12 @@ const formExpensesAmount = ref(0);
 
 const accountTypes = [
   { value: 'CHECKING', label: 'Conta corrente' },
+  { value: 'SAVINGS', label: 'Poupanca' },
   { value: 'CREDIT_CARD', label: 'Cartao de credito' },
   { value: 'INVESTMENT', label: 'Investimento' },
   { value: 'LOAN', label: 'Emprestimo' },
-  { value: 'OTHER', label: 'Outro' },
-  { value: 'SAVINGS', label: 'Poupanca' },
   { value: 'WALLET', label: 'Carteira' },
+  { value: 'OTHER', label: 'Outro' },
 ] as const;
 
 const submitLabel = computed(() => (props.id === 'new' ? 'Criar conta' : 'Salvar alteracoes'));

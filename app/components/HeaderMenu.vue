@@ -1,18 +1,18 @@
 <script setup lang="ts">
 const menuItems = [
   { name: 'Início', link: '/' },
+  { name: 'Transações', link: '/transactions' },
   { name: 'Investimentos', link: '/investments' },
   { name: 'Orçamento', link: '/budget' },
-  { name: 'Transações', link: '/transactions' },
 ];
 
 const userMenuItens = [
-  { name: 'Cartões', link: '/', icon: 'credit-card' },
-  { name: 'Categorias', link: '/', icon: 'bookmarks' },
   { name: 'Contas', link: '/user/accounts', icon: 'bank' },
   { name: 'Espaços', link: '/user/financial-spaces', icon: 'boxes' },
-  { name: 'Preferências', link: '/user/preferences', icon: 'toggles2' },
+  { name: 'Cartões', link: '/', icon: 'credit-card' },
+  { name: 'Categorias', link: '/', icon: 'bookmarks' },
   { separator: true },
+  { name: 'Preferências', link: '/user/preferences', icon: 'toggles2' },
 ];
 
 const { loggedIn: userIsLogged } = useUserSession();
@@ -92,7 +92,12 @@ onMounted(async () => {
                 <li>
                   <hr class="dropdown-divider" />
                 </li>
-                <li><a class="dropdown-item" href="#">Profile</a></li>
+                <li>
+                  <NuxtLink class="dropdown-item" to="/">
+                    <i class="bi bi-person me-2" />
+                    Conta
+                  </NuxtLink>
+                </li>
                 <li>
                   <button type="button" class="dropdown-item text-danger fw-bold" @click="clear">
                     <i class="bi bi-box-arrow-right me-2" /> Sair

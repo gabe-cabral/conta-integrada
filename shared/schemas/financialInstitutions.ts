@@ -91,22 +91,22 @@ export type FinancialInstitutionSchemaType = z.infer<typeof financialInstitution
  * country prefix, for example `BR_ISPB` or `US_ROUTING_NUMBER`.
  */
 export const FINANCIAL_INSTITUTION_IDENTIFIER_SCHEMES = [
-  'AU_BSB',
   'BIC',
-  'BR_CNPJ',
-  'BR_COMPE',
-  'BR_ISPB',
-  'BR_PIX_PARTICIPANT',
-  'CA_TRANSIT_NUMBER',
-  'CO_BANK_CODE',
-  'CO_NIT',
-  'EU_NATIONAL_BANK_CODE',
-  'GB_SORT_CODE',
-  'IBAN_REGISTRY',
-  'IN_IFSC',
   'LEI',
-  'MX_CLABE_BANK_CODE',
+  'IBAN_REGISTRY',
+  'BR_ISPB',
+  'BR_COMPE',
+  'BR_CNPJ',
+  'BR_PIX_PARTICIPANT',
   'US_ROUTING_NUMBER',
+  'GB_SORT_CODE',
+  'CA_TRANSIT_NUMBER',
+  'AU_BSB',
+  'IN_IFSC',
+  'MX_CLABE_BANK_CODE',
+  'CO_NIT',
+  'CO_BANK_CODE',
+  'EU_NATIONAL_BANK_CODE',
 ] as const;
 
 export type FinancialInstitutionIdentifierScheme =

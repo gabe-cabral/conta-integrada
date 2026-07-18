@@ -23,11 +23,11 @@ export const useAppStore = defineStore('appStore', () => {
   const currencies = ref<Currency[]>([]);
   const categories = ref<TransactionCategory[]>([]);
   const transactionTypes = ref<TransactionTypeDisplay[]>([
-    { code: 'CONTRIBUTION', label: 'Aporte' },
     { code: 'EXPENSE', label: 'Despesa' },
     { code: 'INCOME', label: 'Receita' },
-    { code: 'REDEMPTION', label: 'Resgate' },
     { code: 'TRANSFER', label: 'Transferência' },
+    { code: 'CONTRIBUTION', label: 'Aporte' },
+    { code: 'REDEMPTION', label: 'Resgate' },
   ]);
   const lastInputDate = ref<Date | null>(null);
   const lastInputCategoryId = ref<string | null>(null);

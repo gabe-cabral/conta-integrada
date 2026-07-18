@@ -236,8 +236,8 @@ describe('systemStore', () => {
       const result = {
         ok: false,
         errors: [
-          { title: 'Erro de permissão', detail: 'Acesso negado', status: 401 },
           { title: 'Erro de validação', detail: 'Dados inválidos', status: 400 },
+          { title: 'Erro de permissão', detail: 'Acesso negado', status: 401 },
         ],
       };
 

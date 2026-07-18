@@ -9,10 +9,10 @@ interface CategoryListItem {
 
 const props = withDefaults(
   defineProps<{
-    categories: TransactionCategory[];
-    disabled?: boolean;
-    emptyLabel?: string;
-    modelValue: string[];
+    categories: TransactionCategory[]
+    disabled?: boolean
+    emptyLabel?: string
+    modelValue: string[]
   }>(),
   {
     disabled: false,
@@ -27,7 +27,7 @@ const emit = defineEmits<{
 const componentId = useId();
 const selectedIds = computed(() => new Set(props.modelValue));
 const categoriesById = computed(
-  () => new Map(props.categories.map((category) => [category, category._id])),
+  () => new Map(props.categories.map((category) => [category._id, category])),
 );
 const childrenByParent = computed(() => {
   const children = new Map<string, TransactionCategory[]>();
@@ -82,9 +82,9 @@ const selectedCount = computed(() =>
 
 const allCategoriesSelected = computed(
   () =>
-    categoryItems.value.length > 0 &&
-    categoryItems.value.every((item) => selectedIds.value.has(item.category._id)) &&
-    props.modelValue.length === categoryItems.value.length,
+    categoryItems.value.length > 0
+    && categoryItems.value.every((item) => selectedIds.value.has(item.category._id))
+    && props.modelValue.length === categoryItems.value.length,
 );
 
 function toggleCategory(categoryId: string, selected: boolean) {
@@ -92,11 +92,7 @@ function toggleCategory(categoryId: string, selected: boolean) {
   const affectedIds = getCategoryTreeIds(categoryId);
 
   for (const affectedId of affectedIds) {
-    if (selected) {
-      nextIds.add(affectedId);
-    } else {
-      nextIds.delete(affectedId);
-    }
+    selected ? nextIds.add(affectedId) : nextIds.delete(affectedId);
   }
 
   syncParentSelection(categoryId, nextIds);
