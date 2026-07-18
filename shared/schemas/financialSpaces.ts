@@ -7,7 +7,9 @@ import { zodObjectId } from '../zod/mongodb.js';
 export const FINANCIAL_SPACE_ICON_GROUPS = [
   {
     name: 'Pessoal',
-    icons: ['house-fill', 'people-fill', 'heart-pulse-fill', 'cup-hot-fill', 'car-front-fill', 'bag-fill'],
+    icons: [
+      'house-fill', 'people-fill', 'heart-pulse-fill', 'cup-hot-fill', 'car-front-fill', 'bag-fill',
+    ],
   },
   {
     name: 'Trabalho',
@@ -19,7 +21,9 @@ export const FINANCIAL_SPACE_ICON_GROUPS = [
   },
   {
     name: 'Outros',
-    icons: ['bullseye', 'safe-fill', 'gift-fill', 'book-fill', 'controller', 'star-fill', 'trophy-fill'],
+    icons: [
+      'bullseye', 'safe-fill', 'gift-fill', 'book-fill', 'controller', 'star-fill', 'trophy-fill',
+    ],
   },
 ] as const;
 

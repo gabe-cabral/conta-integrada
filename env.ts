@@ -84,9 +84,9 @@ export const env = createEnv({
       .refine((value) => {
         const parts = value.split('-');
         return (
-          parts.length > 1 &&
-          parts.every((part) => part.length > 0 && /^[a-z0-9]+$/.test(part)) &&
-          /^[a-z]+$/.test(parts[0])
+          parts.length > 1
+          && parts.every((part) => part.length > 0 && /^[a-z0-9]+$/.test(part))
+          && /^[a-z]+$/.test(parts[0])
         );
       }, 'Must be a lowercase hyphen-separated location'),
     MONGODB_CMK_KEY_RING: z

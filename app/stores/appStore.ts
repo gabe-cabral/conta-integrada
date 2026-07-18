@@ -7,12 +7,12 @@ import isoCodeToCurrency from '~/utils/isoCodeToCurrency';
 import useSystemStore from './systemStore';
 
 export interface AppState {
-  currencies: Currency[];
-  categories: TransactionCategory[];
-  transactionTypes: TransactionTypeDisplay[];
-  lastInputDate: Date | null;
-  lastInputCategoryId: string | null;
-  lastInputSourceId: string | null;
+  currencies: Currency[]
+  categories: TransactionCategory[]
+  transactionTypes: TransactionTypeDisplay[]
+  lastInputDate: Date | null
+  lastInputCategoryId: string | null
+  lastInputSourceId: string | null
 }
 
 export const useAppStore = defineStore('appStore', () => {

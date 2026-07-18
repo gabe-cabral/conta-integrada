@@ -10,11 +10,11 @@ import type {
 } from 'mongodb';
 
 export type KMSProviderName = 'aws' | 'azure' | 'gcp' | 'kmip' | 'local';
-type CustomerMasterKeyCredentials =
-  | AWSEncryptionKeyOptions
-  | AzureEncryptionKeyOptions
-  | GCPEncryptionKeyOptions
-  | KMIPEncryptionKeyOptions;
+type CustomerMasterKeyCredentials
+  = | AWSEncryptionKeyOptions
+    | AzureEncryptionKeyOptions
+    | GCPEncryptionKeyOptions
+    | KMIPEncryptionKeyOptions;
 
 function getKmipTlsOptions() {
   const tlsOptions = {
@@ -69,7 +69,8 @@ export function getKMSProviderCredentials(kmsProviderName: KMSProviderName): KMS
 
     default:
       throw new Error(
-        `Unrecognized value for KMS provider name "${kmsProviderName}" encountered while retrieving KMS credentials.`,
+        `Unrecognized value for KMS provider name "${kmsProviderName}"
+         encountered while retrieving KMS credentials.`,
       );
   }
 }
@@ -109,7 +110,8 @@ export function getCustomerMasterKeyCredentials(
       return customerMasterKeyCredentials as KMIPEncryptionKeyOptions;
     default:
       throw new Error(
-        `Unrecognized value for KMS provider name "${kmsProviderName}" encountered while retrieving Customer Master Key credentials.`,
+        `Unrecognized value for KMS provider name "${kmsProviderName}"
+         encountered while retrieving Customer Master Key credentials.`,
       );
   }
 }

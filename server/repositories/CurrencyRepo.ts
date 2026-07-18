@@ -1,5 +1,4 @@
 import { MongoServerError } from 'mongodb';
-import BaseSecureRepo from './BaseSecureRepo.js';
 
 import type {
   CurrencyCode,
@@ -8,6 +7,8 @@ import type {
   CurrencyUpdate,
 } from '~~/shared/schemas/currency';
 import type { DeleteResult, Filter, UpdateResult } from 'mongodb';
+
+import BaseSecureRepo from './BaseSecureRepo.js';
 
 export type CurrencyOption = Pick<CurrencyDetail, '_id' | 'names' | 'symbol'>;
 

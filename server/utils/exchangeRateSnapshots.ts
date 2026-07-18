@@ -12,7 +12,7 @@ import type {
 import type { CurrencyCode } from '~~/shared/schemas/currency';
 
 export type ExchangeRateSnapshotDocument = Omit<ExchangeRateSnapshotDto, 'rates'> & {
-  rates: Record<CurrencyCode, Decimal128>;
+  rates: Record<CurrencyCode, Decimal128>
 };
 
 export function decimalStringToDecimal128(value: string): Decimal128 {

@@ -25,8 +25,8 @@ export default defineEventHandler(async (event) => {
   if (!current) throw createError({ statusCode: 404, message: 'Financial space not found' });
 
   const currentCategoryIds = current.categoryIds.map((categoryId) => categoryId.toString());
-  const categoryIds =
-    changes.categoryMode === 'all' ? [] : (changes.categoryIds ?? currentCategoryIds);
+  const categoryIds
+    = changes.categoryMode === 'all' ? [] : (changes.categoryIds ?? currentCategoryIds);
 
   const nextFinancialSpace = financialSpaceCreateSchema.parse({
     name: changes.name ?? current.name,

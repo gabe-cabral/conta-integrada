@@ -1,6 +1,6 @@
 declare module '#app' {
   interface PageMeta {
-    title?: string;
-    requiresAuth?: boolean;
+    title?: string
+    requiresAuth?: boolean
   }
 }

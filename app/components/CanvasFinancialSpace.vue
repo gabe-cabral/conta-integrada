@@ -16,27 +16,27 @@ import { useAppStore } from '~/stores/appStore';
 type FinancialSpaceIcon = NonNullable<FinancialSpace['icon']>;
 
 interface FinancialSpaceForm {
-  _id: string | null;
-  name: string;
-  description: string;
-  icon: FinancialSpaceIcon;
-  color: string;
-  categoryMode: FinancialSpace['categoryMode'];
-  categoryIds: string[];
-  currencies: string[];
-  showOnDashboard: boolean;
-  updatedAt: Date | null;
+  _id: string | null
+  name: string
+  description: string
+  icon: FinancialSpaceIcon
+  color: string
+  categoryMode: FinancialSpace['categoryMode']
+  categoryIds: string[]
+  currencies: string[]
+  showOnDashboard: boolean
+  updatedAt: Date | null
 }
 
 const emits = defineEmits<{
-  close: [];
-  saved: [financialSpace: FinancialSpaceData];
+  close: []
+  saved: [financialSpace: FinancialSpaceData]
 }>();
 
 const props = withDefaults(
   defineProps<{
-    financialSpace?: FinancialSpace | null;
-    id?: string | null;
+    financialSpace?: FinancialSpace | null
+    id?: string | null
   }>(),
   {
     id: null,
@@ -66,14 +66,13 @@ const allCategories = computed({
 });
 
 const availableCategories = computed(() =>
-  appStore.categories.filter((category) => category.active),
-);
+  appStore.categories.filter((category) => category.active));
 
 const currencyOptions = computed(() =>
   appStore.currencies.map((currency) => ({
     value: currency.code,
     label: `${currency.label} (${currency.code})`,
-  })),);
+  })));
 
 const filteredIcons = computed(() => {
   const query = iconSearch.value.trim().toLocaleLowerCase();
@@ -82,7 +81,7 @@ const filteredIcons = computed(() => {
     group.icons.map((icon) => ({
       icon,
       searchIndex: `${group.name} ${icon}`.toLocaleLowerCase(),
-    })),).filter(option => !query || option.searchIndex.includes(query));
+    }))).filter((option) => !query || option.searchIndex.includes(query));
 });
 
 function closePanel() {
@@ -222,9 +221,9 @@ watch(
   () => appStore.currencies.map((currency) => currency.code),
   (currencies) => {
     if (
-      props.id === 'new' &&
-      financialSpaceForm.value &&
-      financialSpaceForm.value.currencies.length === 0
+      props.id === 'new'
+      && financialSpaceForm.value
+      && financialSpaceForm.value.currencies.length === 0
     ) {
       financialSpaceForm.value.currencies = [...currencies];
     }

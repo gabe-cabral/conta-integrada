@@ -1,17 +1,17 @@
-import { type Document, ObjectId, type UpdateResult } from 'mongodb';
-
 import type {
   UserPreference,
   UserPreferenceUpdate,
 } from '~~/shared/schemas/userPreferences';
+import type { Document, ObjectId, UpdateResult } from 'mongodb';
+
 import BaseSecureUserScopedRepo, {
   type CreateUserScopedRecord,
   type UpdateUserScopedRecord,
 } from './BaseSecureUserScopedRepo.js';
 
 type UserPreferenceDocument = Omit<UserPreference, '_id' | 'userId'> & {
-  _id?: ObjectId;
-  userId: ObjectId;
+  _id?: ObjectId
+  userId: ObjectId
 } & Document;
 
 class UserPreferencesRepo extends BaseSecureUserScopedRepo<

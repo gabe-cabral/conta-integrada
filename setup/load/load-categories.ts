@@ -12,10 +12,10 @@ interface TransactionCategoryDb extends Omit<
   TransactionCategory,
   'name' | '_id' | 'parentId' | 'userId'
 > {
-  name: Binary;
-  _id: ObjectId;
-  parentId: ObjectId | null;
-  userId: ObjectId;
+  name: Binary
+  _id: ObjectId
+  parentId: ObjectId | null
+  userId: ObjectId
 }
 
 async function load(userId: string) {

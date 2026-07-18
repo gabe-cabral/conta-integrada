@@ -8,7 +8,6 @@ import {
   mapSnapshotDocumentToDto,
 } from '~~/server/utils/exchangeRateSnapshots';
 import { MongoServerError } from 'mongodb';
-import BaseSecureRepo from './BaseSecureRepo.js';
 
 import type {
   ExchangeRateSnapshotCreate,
@@ -25,6 +24,8 @@ import type {
   UpdateResult,
 } from 'mongodb';
 import type { ExchangeRateSnapshotDocument } from '~~/server/utils/exchangeRateSnapshots';
+
+import BaseSecureRepo from './BaseSecureRepo.js';
 
 class ExchangeRateSnapshotsRepo extends BaseSecureRepo<
   ExchangeRateSnapshotDocument,

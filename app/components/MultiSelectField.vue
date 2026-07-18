@@ -5,17 +5,17 @@ import TomSelect from 'tom-select';
 import type { TomSettings } from 'tom-select/dist/esm/types/settings.js';
 
 interface MultiSelectOption {
-  value: string;
-  label: string;
+  value: string
+  label: string
 }
 
 const props = withDefaults(
   defineProps<{
-    disabled?: boolean;
-    modelValue: string[];
-    multiple?: boolean;
-    options: MultiSelectOption[];
-    placeholder?: string;
+    disabled?: boolean
+    modelValue: string[]
+    multiple?: boolean
+    options: MultiSelectOption[]
+    placeholder?: string
   }>(),
   {
     placeholder: 'Selecione as opções',
@@ -25,7 +25,7 @@ const props = withDefaults(
 );
 
 const emit = defineEmits<{
-  'update:modelValue': [value: string[]];
+  'update:modelValue': [value: string[]]
 }>();
 
 const selectElement = ref<HTMLSelectElement>();

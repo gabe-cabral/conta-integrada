@@ -1,5 +1,4 @@
 import { MongoServerError, ObjectId } from 'mongodb';
-import BaseSecureRepo from './BaseSecureRepo.js';
 
 import type {
   FinancialInstitution,
@@ -17,8 +16,10 @@ import type {
   WithId,
 } from 'mongodb';
 
+import BaseSecureRepo from './BaseSecureRepo.js';
+
 type FinancialInstitutionDocument = Omit<FinancialInstitution, '_id'> & {
-  _id?: ObjectId;
+  _id?: ObjectId
 } & Document;
 
 type FinancialInstitutionRecord = WithId<FinancialInstitutionDocument>;
@@ -100,58 +101,6 @@ class FinancialInstitutionsRepo extends BaseSecureRepo<
     return super.updateRecord(recordId, changes);
   }
 
-  async #assertIdentifiersAvailable(
-    countryCode: string,
-    identifiers: FinancialInstitutionIdentifier[],
-    ignoreId?: string | ObjectId,
-  ): Promise<void> {
-    const collection = await this.getCollection();
-
-    for (const identifier of identifiers) {
-      const identifierCountryCode = identifier.countryCode ?? countryCode;
-      const conflict = await collection.findOne({
-        ...(ignoreId ? { _id: { $ne: this.toObjectId(ignoreId) } } : {}),
-        countryCode,
-        identifiers: {
-          $elemMatch: {
-            scheme: identifier.scheme,
-            value: identifier.value,
-            $or: [
-              { countryCode: { $exists: false } },
-              { countryCode: identifierCountryCode },
-            ],
-          },
-        },
-      });
-
-      if (conflict) {
-        throw new Error(
-          `Financial institution identifier already exists: ${this.#identifierKey(identifierCountryCode, identifier.scheme, identifier.value)}`,
-        );
-      }
-    }
-  }
-
-  #assertNoRepeatedIdentifiers(
-    identifiers: FinancialInstitutionIdentifier[],
-  ): void {
-    const keys = new Set<string>();
-
-    for (const identifier of identifiers) {
-      const key = this.#identifierKey(
-        identifier.countryCode,
-        identifier.scheme,
-        identifier.value,
-      );
-
-      if (keys.has(key)) {
-        throw new Error(`Repeated financial institution identifier: ${key}`);
-      }
-
-      keys.add(key);
-    }
-  }
-
   protected override getRecordFilter(
     id: string | ObjectId,
   ): Filter<FinancialInstitutionDocument> {
@@ -187,6 +136,59 @@ class FinancialInstitutionsRepo extends BaseSecureRepo<
 
   protected toObjectId(id: string | ObjectId): ObjectId {
     return id instanceof ObjectId ? id : ObjectId.createFromHexString(id);
+  }
+
+  async #assertIdentifiersAvailable(
+    countryCode: string,
+    identifiers: FinancialInstitutionIdentifier[],
+    ignoreId?: string | ObjectId,
+  ): Promise<void> {
+    const collection = await this.getCollection();
+
+    for (const identifier of identifiers) {
+      const identifierCountryCode = identifier.countryCode ?? countryCode;
+      const conflict = await collection.findOne({
+        ...(ignoreId ? { _id: { $ne: this.toObjectId(ignoreId) } } : {}),
+        countryCode,
+        identifiers: {
+          $elemMatch: {
+            scheme: identifier.scheme,
+            value: identifier.value,
+            $or: [
+              { countryCode: { $exists: false } },
+              { countryCode: identifierCountryCode },
+            ],
+          },
+        },
+      });
+
+      if (conflict) {
+        throw new Error(
+          `Financial institution identifier already exists:
+           ${this.#identifierKey(identifierCountryCode, identifier.scheme, identifier.value)}`,
+        );
+      }
+    }
+  }
+
+  #assertNoRepeatedIdentifiers(
+    identifiers: FinancialInstitutionIdentifier[],
+  ): void {
+    const keys = new Set<string>();
+
+    for (const identifier of identifiers) {
+      const key = this.#identifierKey(
+        identifier.countryCode,
+        identifier.scheme,
+        identifier.value,
+      );
+
+      if (keys.has(key)) {
+        throw new Error(`Repeated financial institution identifier: ${key}`);
+      }
+
+      keys.add(key);
+    }
   }
 
   #identifierKey(

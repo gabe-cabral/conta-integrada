@@ -33,9 +33,9 @@ export async function useDatabase() {
 }
 
 export async function useSecureClient(): Promise<{
-  client: MongoClient;
-  clientEncryption: ClientEncryption;
-  db: Db;
+  client: MongoClient
+  clientEncryption: ClientEncryption
+  db: Db
 }> {
   const { mongoDb } = useRuntimeConfig();
 

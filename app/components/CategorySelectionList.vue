@@ -2,9 +2,9 @@
 import type { TransactionCategory } from '~~/shared/types/transactions';
 
 interface CategoryListItem {
-  category: TransactionCategory;
-  depth: number;
-  hasChildren: boolean;
+  category: TransactionCategory
+  depth: number
+  hasChildren: boolean
 }
 
 const props = withDefaults(
@@ -21,7 +21,7 @@ const props = withDefaults(
 );
 
 const emit = defineEmits<{
-  'update:modelValue': [categoryIds: string[]];
+  'update:modelValue': [categoryIds: string[]]
 }>();
 
 const componentId = useId();
@@ -78,7 +78,7 @@ const selectedCount = computed(() =>
   categoryItems.value.reduce(
     (count, item) => count + Number(selectedIds.value.has(item.category._id)),
     0,
-  ),);
+  ));
 
 const allCategoriesSelected = computed(
   () =>
@@ -92,7 +92,11 @@ function toggleCategory(categoryId: string, selected: boolean) {
   const affectedIds = getCategoryTreeIds(categoryId);
 
   for (const affectedId of affectedIds) {
-    selected ? nextIds.add(affectedId) : nextIds.delete(affectedId);
+    if (selected) {
+      nextIds.add(affectedId);
+    } else {
+      nextIds.delete(affectedId);
+    }
   }
 
   syncParentSelection(categoryId, nextIds);

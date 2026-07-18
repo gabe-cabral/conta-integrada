@@ -9,11 +9,11 @@ type FinancialSpaceDbDocument = Omit<
   FinancialSpace,
   '_id' | 'userId' | 'name' | 'description' | 'categoryIds'
 > & {
-  _id?: ObjectId;
-  categoryIds: ObjectId[];
-  description?: Binary;
-  name: Binary;
-  userId: ObjectId;
+  _id?: ObjectId
+  categoryIds: ObjectId[]
+  description?: Binary
+  name: Binary
+  userId: ObjectId
 } & Document;
 
 class FinancialSpacesRepo extends BaseSecureUserScopedRepo<
@@ -34,8 +34,7 @@ class FinancialSpacesRepo extends BaseSecureUserScopedRepo<
       name: await this.encryptRandom(record.name),
       categoryMode: record.categoryMode,
       categoryIds: record.categoryIds.map((categoryId) =>
-        this.toObjectId(categoryId),
-      ),
+        this.toObjectId(categoryId)),
       showOnDashboard: record.showOnDashboard,
     };
 
@@ -63,8 +62,7 @@ class FinancialSpacesRepo extends BaseSecureUserScopedRepo<
       data.categoryMode = record.categoryMode;
     if (record.categoryIds !== undefined) {
       data.categoryIds = record.categoryIds.map((categoryId) =>
-        this.toObjectId(categoryId),
-      );
+        this.toObjectId(categoryId));
     }
     if (record.currencies !== undefined) data.currencies = record.currencies;
     if (record.showOnDashboard !== undefined)

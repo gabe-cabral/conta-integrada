@@ -40,15 +40,15 @@ type AccountDbDocument = Omit<
   | 'income'
   | 'expenses'
 > & {
-  _id?: ObjectId;
-  brand: Binary;
-  current: Binary;
-  expenses: Binary;
-  income: Binary;
-  name: Binary;
-  number: Binary | null;
-  type: AccountType;
-  userId: ObjectId;
+  _id?: ObjectId
+  brand: Binary
+  current: Binary
+  expenses: Binary
+  income: Binary
+  name: Binary
+  number: Binary | null
+  type: AccountType
+  userId: ObjectId
 } & Document;
 
 class AccountsRepo extends BaseSecureUserScopedRepo<

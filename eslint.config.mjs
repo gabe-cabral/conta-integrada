@@ -17,21 +17,6 @@ export default withNuxt(
       'import-x/extensions': 'off',
       'n/no-missing-import': 'off',
       '@stylistic/arrow-parens': ['error', 'always'],
-      // Força o ESLint a apontar erros onde o Prettier não está formatado
-      'prettier/prettier': [
-        'error',
-        {
-          trailingComma: 'all',
-          tabWidth: 2,
-          semi: true,
-          singleQuote: true,
-          printWidth: 100,
-          bracketSpacing: true,
-          arrowParens: 'always',
-          endOfLine: 'lf',
-          vueIndentScriptAndStyle: false,
-        },
-      ],
     },
   },
   {
@@ -44,6 +29,18 @@ export default withNuxt(
         },
       ],
       'vue/no-multiple-template-root': 'off',
+      'vue/html-self-closing': [
+        'error',
+        {
+          html: {
+            void: 'always',
+            normal: 'always',
+            component: 'always',
+          },
+          svg: 'always',
+          math: 'always',
+        },
+      ],
     },
     settings: {
       'import-x/resolver-next': [

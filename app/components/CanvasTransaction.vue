@@ -13,9 +13,9 @@ interface TransactionForm extends Omit<
   Transaction,
   '_id' | 'date' | 'sourceId' | 'createdAt' | 'userId'
 > {
-  _id: string | null;
-  date: Date | null;
-  sourceId: string | null;
+  _id: string | null
+  date: Date | null
+  sourceId: string | null
 }
 
 const { $userApi } = useNuxtApp();

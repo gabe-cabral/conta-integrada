@@ -7,7 +7,7 @@ import { getClient } from '../database/client.ts';
 const initialCurrencies = currencyCreateSchema.array().parse([
   {
     _id: 'ARS',
-    names: { en: 'Argentine peso', 'pt-BR': 'Peso argentino', es: 'Peso argentino' },
+    names: { 'en': 'Argentine peso', 'pt-BR': 'Peso argentino', 'es': 'Peso argentino' },
     symbol: '$',
     numericCode: '032',
     minorUnit: 2,
@@ -16,7 +16,7 @@ const initialCurrencies = currencyCreateSchema.array().parse([
   },
   {
     _id: 'BOB',
-    names: { en: 'Boliviano', 'pt-BR': 'Boliviano', es: 'Boliviano' },
+    names: { 'en': 'Boliviano', 'pt-BR': 'Boliviano', 'es': 'Boliviano' },
     symbol: 'Bs.',
     numericCode: '068',
     minorUnit: 2,
@@ -25,7 +25,7 @@ const initialCurrencies = currencyCreateSchema.array().parse([
   },
   {
     _id: 'BRL',
-    names: { en: 'Brazilian real', 'pt-BR': 'Real brasileiro', es: 'Real brasileño' },
+    names: { 'en': 'Brazilian real', 'pt-BR': 'Real brasileiro', 'es': 'Real brasileño' },
     symbol: 'R$',
     numericCode: '986',
     minorUnit: 2,
@@ -34,7 +34,7 @@ const initialCurrencies = currencyCreateSchema.array().parse([
   },
   {
     _id: 'CLP',
-    names: { en: 'Chilean peso', 'pt-BR': 'Peso chileno', es: 'Peso chileno' },
+    names: { 'en': 'Chilean peso', 'pt-BR': 'Peso chileno', 'es': 'Peso chileno' },
     symbol: '$',
     numericCode: '152',
     minorUnit: 0,
@@ -43,7 +43,7 @@ const initialCurrencies = currencyCreateSchema.array().parse([
   },
   {
     _id: 'COP',
-    names: { en: 'Colombian peso', 'pt-BR': 'Peso colombiano', es: 'Peso colombiano' },
+    names: { 'en': 'Colombian peso', 'pt-BR': 'Peso colombiano', 'es': 'Peso colombiano' },
     symbol: '$',
     numericCode: '170',
     minorUnit: 2,
@@ -52,7 +52,7 @@ const initialCurrencies = currencyCreateSchema.array().parse([
   },
   {
     _id: 'EUR',
-    names: { en: 'Euro', 'pt-BR': 'Euro', es: 'Euro' },
+    names: { 'en': 'Euro', 'pt-BR': 'Euro', 'es': 'Euro' },
     symbol: '€',
     numericCode: '978',
     minorUnit: 2,
@@ -88,7 +88,7 @@ const initialCurrencies = currencyCreateSchema.array().parse([
   },
   {
     _id: 'JPY',
-    names: { en: 'Japanese yen', 'pt-BR': 'Iene japonês', es: 'Yen japonés' },
+    names: { 'en': 'Japanese yen', 'pt-BR': 'Iene japonês', 'es': 'Yen japonés' },
     symbol: '¥',
     numericCode: '392',
     minorUnit: 0,
@@ -97,7 +97,7 @@ const initialCurrencies = currencyCreateSchema.array().parse([
   },
   {
     _id: 'PEN',
-    names: { en: 'Peruvian sol', 'pt-BR': 'Sol peruano', es: 'Sol peruano' },
+    names: { 'en': 'Peruvian sol', 'pt-BR': 'Sol peruano', 'es': 'Sol peruano' },
     symbol: 'S/',
     numericCode: '604',
     minorUnit: 2,
@@ -106,7 +106,7 @@ const initialCurrencies = currencyCreateSchema.array().parse([
   },
   {
     _id: 'PYG',
-    names: { en: 'Paraguayan guaraní', 'pt-BR': 'Guarani paraguaio', es: 'Guaraní paraguayo' },
+    names: { 'en': 'Paraguayan guaraní', 'pt-BR': 'Guarani paraguaio', 'es': 'Guaraní paraguayo' },
     symbol: '₲',
     numericCode: '600',
     minorUnit: 0,
@@ -116,9 +116,9 @@ const initialCurrencies = currencyCreateSchema.array().parse([
   {
     _id: 'USD',
     names: {
-      en: 'United States dollar',
+      'en': 'United States dollar',
       'pt-BR': 'Dólar dos Estados Unidos',
-      es: 'Dólar estadounidense',
+      'es': 'Dólar estadounidense',
     },
     symbol: '$',
     numericCode: '840',
@@ -144,7 +144,7 @@ const initialCurrencies = currencyCreateSchema.array().parse([
   },
   {
     _id: 'UYU',
-    names: { en: 'Uruguayan peso', 'pt-BR': 'Peso uruguaio', es: 'Peso uruguayo' },
+    names: { 'en': 'Uruguayan peso', 'pt-BR': 'Peso uruguaio', 'es': 'Peso uruguayo' },
     symbol: '$U',
     numericCode: '858',
     minorUnit: 2,
@@ -154,9 +154,9 @@ const initialCurrencies = currencyCreateSchema.array().parse([
   {
     _id: 'VES',
     names: {
-      en: 'Venezuelan sovereign bolívar',
+      'en': 'Venezuelan sovereign bolívar',
       'pt-BR': 'Bolívar soberano venezuelano',
-      es: 'Bolívar soberano venezolano',
+      'es': 'Bolívar soberano venezolano',
     },
     symbol: 'Bs.',
     numericCode: '928',

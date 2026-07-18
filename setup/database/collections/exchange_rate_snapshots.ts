@@ -133,12 +133,12 @@ async function setup(): Promise<Collection<ExchangeRateSnapshotDocument> | null>
         await createIndexes(coll);
 
         console.log(`Schema da coleção '${collectionName}' atualizado!`);
-      } catch (error) {
-        if (error instanceof MongoServerError) {
-          console.error('Erro do MongoDB ao atualizar schema:', error.message);
+      } catch (errorDbCommand) {
+        if (errorDbCommand instanceof MongoServerError) {
+          console.error('Erro do MongoDB ao atualizar schema:', errorDbCommand.message);
         }
 
-        throw error;
+        throw errorDbCommand;
       }
     } else {
       console.error('Erro ao criar coleção:', error);

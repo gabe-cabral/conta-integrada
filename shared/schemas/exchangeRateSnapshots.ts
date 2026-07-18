@@ -1,30 +1,31 @@
 import Decimal from 'decimal.js';
 import { z } from 'zod';
 
-import { type CurrencyCode, currencyCodeSchema } from './currency.js';
 import type { AuditableRecord } from '#shared/zod/zodBase.ts';
+
+import { type CurrencyCode, currencyCodeSchema } from './currency.js';
 
 export const exchangeRateSnapshotStatusSchema = z.enum(['complete', 'partial']);
 
 export type ExchangeRateSnapshotStatus = z.infer<typeof exchangeRateSnapshotStatusSchema>;
 
 export interface ExchangeRateSnapshotProvider {
-  name: string;
-  referenceDate?: Date;
-  timestamp?: Date;
-  retrievedAt: Date;
+  name: string
+  referenceDate?: Date
+  timestamp?: Date
+  retrievedAt: Date
 }
 
 export interface ExchangeRateSnapshotDto extends AuditableRecord {
-  _id: string;
-  valuationDate: Date;
-  baseCurrency: CurrencyCode;
-  rates: Record<CurrencyCode, string>;
-  provider: ExchangeRateSnapshotProvider;
-  carriedForward: boolean;
-  status: ExchangeRateSnapshotStatus;
-  expectedCurrencies?: CurrencyCode[];
-  missingCurrencies?: CurrencyCode[];
+  _id: string
+  valuationDate: Date
+  baseCurrency: CurrencyCode
+  rates: Record<CurrencyCode, string>
+  provider: ExchangeRateSnapshotProvider
+  carriedForward: boolean
+  status: ExchangeRateSnapshotStatus
+  expectedCurrencies?: CurrencyCode[]
+  missingCurrencies?: CurrencyCode[]
 }
 
 export type ExchangeRateSnapshotCreate = Omit<
@@ -99,8 +100,8 @@ const exchangeRateSnapshotPayloadBaseSchema = z.strictObject({
   missingCurrencies: z.array(currencyCodeSchema).optional(),
 });
 
-const exchangeRateSnapshotPayloadSchema =
-  exchangeRateSnapshotPayloadBaseSchema.superRefine(validateSnapshotPayload);
+const exchangeRateSnapshotPayloadSchema
+  = exchangeRateSnapshotPayloadBaseSchema.superRefine(validateSnapshotPayload);
 
 export const exchangeRateSnapshotCreateSchema = exchangeRateSnapshotPayloadSchema;
 export const exchangeRateSnapshotReplaceSchema = exchangeRateSnapshotPayloadSchema;
@@ -145,8 +146,8 @@ export function formatUtcDay(date: Date): string {
 }
 
 export function normalizeUtcDayStart(value: Date | string): Date {
-  const date =
-    value instanceof Date
+  const date
+    = value instanceof Date
       ? value
       : utcDayStringSchema.safeParse(value).success
         ? new Date(`${value}T00:00:00.000Z`)

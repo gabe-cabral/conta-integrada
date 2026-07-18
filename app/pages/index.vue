@@ -11,16 +11,16 @@ const { user } = useUserSession();
 const financeStore = useFinanceStore();
 
 const essentialExpenses = computed(() =>
-  financeStore.balances.filter((balance) => balance.essentialExpenses?.amountInCents),
-).value.map((balance) => balance.essentialExpenses as Money);
+  financeStore.balances.filter((balance) => balance.essentialExpenses?.amountInCents)).value
+  .map((balance) => balance.essentialExpenses as Money);
 
 const otherExpenses = computed(() =>
-  financeStore.balances.filter((balance) => balance.otherExpenses?.amountInCents),
-).value.map((balance) => balance.otherExpenses as Money);
+  financeStore.balances.filter((balance) => balance.otherExpenses?.amountInCents)).value
+  .map((balance) => balance.otherExpenses as Money);
 
 const investments = computed(() =>
-  financeStore.balances.filter((balance) => balance.investments?.amountInCents),
-).value.map((balance) => balance.investments as Money);
+  financeStore.balances.filter((balance) => balance.investments?.amountInCents)).value
+  .map((balance) => balance.investments as Money);
 
 const analyticalData = ref([
   { id: 'essential-expenses', label: 'Gastos essenciais', pct: 0.26, data: essentialExpenses },

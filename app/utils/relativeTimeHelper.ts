@@ -8,7 +8,7 @@ function relativeTimeHelper(date: Date): string {
     { unit: 'hour', ms: 1000 * 60 * 60 },
     { unit: 'minute', ms: 1000 * 60 },
     { unit: 'second', ms: 1000 },
-  ] as { unit: Intl.RelativeTimeFormatUnit; ms: number }[];
+  ] as { ms: number, unit: Intl.RelativeTimeFormatUnit }[];
 
   const rtf = new Intl.RelativeTimeFormat('pt-BR', { numeric: 'auto' });
 

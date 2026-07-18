@@ -13,28 +13,28 @@ export const CURRENCY_USAGE_TYPES = currencyUsageTypeSchema.options;
 export type CurrencyUsageType = z.infer<typeof currencyUsageTypeSchema>;
 
 export interface CurrencyCountryUsage {
-  countryCode: string;
-  type: CurrencyUsageType;
+  countryCode: string
+  type: CurrencyUsageType
 }
 
 export interface CurrencyDetail {
-  _id: CurrencyCode;
-  names: Record<string, string>;
-  symbol?: string;
-  numericCode?: string;
-  minorUnit: number;
-  countryUsage: CurrencyCountryUsage[];
-  active: boolean;
+  _id: CurrencyCode
+  names: Record<string, string>
+  symbol?: string
+  numericCode?: string
+  minorUnit: number
+  countryUsage: CurrencyCountryUsage[]
+  active: boolean
 }
 
 const localeTagSchema = z.string().refine((value) => {
   const [language, ...variants] = value.split('-');
   return (
-    language &&
-    language.length >= 2 &&
-    language.length <= 3 &&
-    /^[A-Za-z]+$/.test(language) &&
-    variants.every(
+    language
+    && language.length >= 2
+    && language.length <= 3
+    && /^[A-Za-z]+$/.test(language)
+    && variants.every(
       (variant) => variant.length >= 2 && variant.length <= 8 && /^[A-Za-z0-9]+$/.test(variant),
     )
   );

@@ -16,8 +16,8 @@ async function fetchCards() {
             amountInCents: Math.abs(d.current_invoice_value_in_cents),
             currency: d.institution_id === 'visa' ? 'COP' : 'BRL',
             percentage:
-              Math.abs(d.current_invoice_value_in_cents) /
-              (d.amount_available * 100 + Math.abs(d.current_invoice_value_in_cents)),
+              Math.abs(d.current_invoice_value_in_cents)
+              / (d.amount_available * 100 + Math.abs(d.current_invoice_value_in_cents)),
           },
         }) as Card,
     );

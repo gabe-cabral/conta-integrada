@@ -14,7 +14,7 @@ import { getKeyAltName } from '../utils/key-alt-name.js';
 import BaseSecureRepo from './BaseSecureRepo.js';
 
 type UserScopedModel = UserAuditableRecord & {
-  _id?: unknown;
+  _id?: unknown
 };
 
 export type CreateUserScopedRecord<TModel extends UserScopedModel> = Omit<
@@ -35,20 +35,20 @@ class BaseSecureUserScopedRepo<
   TModel extends UserScopedModel,
   TDocument extends Document,
 > extends BaseSecureRepo<
-  TModel,
-  TDocument,
-  CreateUserScopedRecord<TModel>,
-  UpdateUserScopedRecord<TModel>,
+    TModel,
+    TDocument,
+    CreateUserScopedRecord<TModel>,
+    UpdateUserScopedRecord<TModel>,
   string | ObjectId
-> {
+  > {
   readonly #userId: ObjectId;
 
   constructor(collectionName: string, userId: string | ObjectId) {
     super(collectionName);
 
     assert(
-      (typeof userId === 'string' && userId.length === 24) ||
-        userId instanceof ObjectId,
+      (typeof userId === 'string' && userId.length === 24)
+      || userId instanceof ObjectId,
       'User ID must be a 24-character string or an ObjectId',
     );
     assert(
@@ -56,17 +56,10 @@ class BaseSecureUserScopedRepo<
       'User ID must be a valid ObjectId',
     );
 
-    this.#userId =
-      userId instanceof ObjectId
+    this.#userId
+      = userId instanceof ObjectId
         ? userId
         : ObjectId.createFromHexString(userId);
-  }
-
-  async getUserRecords(
-    filter: Filter<TDocument> = {},
-    options?: FindOptions,
-  ): Promise<TModel[]> {
-    return this.getRecords(filter, options);
   }
 
   override async getRecords(
@@ -79,6 +72,13 @@ class BaseSecureUserScopedRepo<
       } as Filter<TDocument>,
       options,
     );
+  }
+
+  async getUserRecords(
+    filter: Filter<TDocument> = {},
+    options?: FindOptions,
+  ): Promise<TModel[]> {
+    return this.getRecords(filter, options);
   }
 
   protected get userId(): string {
@@ -118,12 +118,6 @@ class BaseSecureUserScopedRepo<
     return this.mapUserDocument(this.buildCreateRecord(record));
   }
 
-  protected async mapUserDocument(
-    _record: CreateRecordWithAudit<TModel>,
-  ): Promise<OptionalUnlessRequiredId<TDocument>> {
-    throw new Error('mapUserDocument must be implemented by subclass');
-  }
-
   protected override async mapUpdateDocument(
     record: UpdateUserScopedRecord<TModel>,
   ): Promise<Partial<TDocument>> {
@@ -131,6 +125,12 @@ class BaseSecureUserScopedRepo<
       ...(await this.mapUserUpdateDocument(record)),
       updatedAt: new Date(),
     } as Partial<TDocument>;
+  }
+
+  protected async mapUserDocument(
+    _record: CreateRecordWithAudit<TModel>,
+  ): Promise<OptionalUnlessRequiredId<TDocument>> {
+    throw new Error('mapUserDocument must be implemented by subclass');
   }
 
   protected async mapUserUpdateDocument(

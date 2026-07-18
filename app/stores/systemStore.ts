@@ -4,26 +4,26 @@ import type { BaseResponse } from '../models/base/BaseResponseModel';
 import type { RouteLocationAsRelativeGeneric } from 'vue-router';
 
 export interface CallToAction {
-  label: string;
-  icon?: string;
-  route: RouteLocationAsRelativeGeneric;
+  label: string
+  icon?: string
+  route: RouteLocationAsRelativeGeneric
 }
 
 export type ToastTheme = 'success' | 'danger' | 'warning' | 'info' | 'primary';
 
 interface ToastAlert {
-  id: string;
-  title: string;
-  message: string;
-  type?: ToastTheme;
-  icon?: string;
+  id: string
+  title: string
+  message: string
+  type?: ToastTheme
+  icon?: string
 }
 
 interface SystemState {
-  pageTitle: string | undefined;
-  ctaButton: CallToAction | undefined;
-  toasts: ToastAlert[];
-  defaultCurrency: string;
+  pageTitle: string | undefined
+  ctaButton: CallToAction | undefined
+  toasts: ToastAlert[]
+  defaultCurrency: string
 }
 
 const useSystemStore = defineStore('system', {

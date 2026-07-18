@@ -19,8 +19,8 @@ export default function generateColorFromText(...parts: string[]): string {
   const secondary = chroma * (1 - Math.abs((section % 2) - 1));
   const offset = lightness - chroma / 2;
 
-  const [red, green, blue] =
-    section < 1
+  const [red, green, blue]
+    = section < 1
       ? [0, chroma, secondary]
       : section < 2
         ? [0, chroma, secondary]

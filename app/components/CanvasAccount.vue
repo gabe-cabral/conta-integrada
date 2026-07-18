@@ -11,20 +11,20 @@ import useSystemStore from '~/stores/systemStore';
 import { useAppStore } from '~/stores/appStore';
 
 interface AccountForm extends Omit<BankAccount, '_id' | 'createdAt' | 'userId'> {
-  _id: string | null;
-  createdAt?: Date;
-  userId?: string;
+  _id: string | null
+  createdAt?: Date
+  userId?: string
 }
 
 const emits = defineEmits<{
-  close: [];
-  saved: [account: BankAccountData];
+  close: []
+  saved: [account: BankAccountData]
 }>();
 
 const props = withDefaults(
   defineProps<{
-    account?: BankAccount | null;
-    id?: string | null;
+    account?: BankAccount | null
+    id?: string | null
   }>(),
   {
     id: null,

@@ -1,8 +1,9 @@
 import { z } from 'zod';
 
+import type { AuditableRecord } from '#shared/zod/zodBase.ts';
+
 import { type CurrencyCode, currencyCodeSchema } from './currency.js';
 import { auditableRecordSchema } from '../zod/zodBase.js';
-import type { AuditableRecord } from '#shared/zod/zodBase.ts';
 
 /**
  * ISO 3166-1 alpha-2 country code.
@@ -109,8 +110,8 @@ export const FINANCIAL_INSTITUTION_IDENTIFIER_SCHEMES = [
   'EU_NATIONAL_BANK_CODE',
 ] as const;
 
-export type FinancialInstitutionIdentifierScheme =
-  (typeof FINANCIAL_INSTITUTION_IDENTIFIER_SCHEMES)[number];
+export type FinancialInstitutionIdentifierScheme
+  = (typeof FINANCIAL_INSTITUTION_IDENTIFIER_SCHEMES)[number];
 
 export const FINANCIAL_INSTITUTION_IDENTIFIER_SCHEME_DESCRIPTIONS: Record<
   FinancialInstitutionIdentifierScheme,
@@ -140,21 +141,21 @@ export const FINANCIAL_INSTITUTION_IDENTIFIER_SCHEME_DESCRIPTIONS: Record<
  */
 export interface FinancialInstitutionIdentifier {
   /** Identifier namespace, such as `BR_ISPB`, `BIC` or `LEI`. */
-  scheme: string;
+  scheme: string
   /** Identifier value exactly as published by the issuer, normalized only when safe. */
-  value: string;
+  value: string
   /** Authority that issued the identifier, such as `BCB`, `SWIFT` or `GLEIF`. */
-  issuer?: string;
+  issuer?: string
   /** ISO 3166-1 alpha-2 country code when the identifier is local to a country. */
-  countryCode?: CountryCode;
+  countryCode?: CountryCode
   /** Marks the preferred identifier for the institution in its country. */
-  primary?: boolean;
+  primary?: boolean
   /** Confidence assigned to this identifier. */
-  confidence?: IdentifierConfidence;
+  confidence?: IdentifierConfidence
   /** Date from which the identifier is considered valid. */
-  validFrom?: Date;
+  validFrom?: Date
   /** Date until which the identifier is considered valid. */
-  validUntil?: Date;
+  validUntil?: Date
 }
 
 /**
@@ -162,19 +163,19 @@ export interface FinancialInstitutionIdentifier {
  */
 export interface RegulatoryRegistration {
   /** Regulator or authority name, such as `BCB`. */
-  authority: string;
+  authority: string
   /** ISO 3166-1 alpha-2 country code of the authority. */
-  authorityCountryCode: CountryCode;
+  authorityCountryCode: CountryCode
   /** Registration category, such as `STR_PARTICIPANT` or `PIX_PARTICIPANT`. */
-  registrationType: string;
+  registrationType: string
   /** Registration identifier published by the authority. */
-  registrationId?: string;
+  registrationId?: string
   /** Operational status for this registration. */
-  status?: InstitutionStatus;
+  status?: InstitutionStatus
   /** Date when the registration started. */
-  startedAt?: Date;
+  startedAt?: Date
   /** Date when the registration ended. */
-  endedAt?: Date;
+  endedAt?: Date
 }
 
 /**
@@ -182,13 +183,13 @@ export interface RegulatoryRegistration {
  */
 export interface DataSourceReference {
   /** Source name used internally, such as `BCB_STR_PARTICIPANTS`. */
-  sourceName: string;
+  sourceName: string
   /** Public URL or internal reference for the source. */
-  sourceUrl?: string;
+  sourceUrl?: string
   /** Timestamp when the source was retrieved. */
-  retrievedAt: Date;
+  retrievedAt: Date
   /** Confidence assigned to the source. */
-  confidence: IdentifierConfidence;
+  confidence: IdentifierConfidence
 }
 
 /**
@@ -196,15 +197,15 @@ export interface DataSourceReference {
  */
 export interface FinancialInstitutionBranding {
   /** Public logo URL when the logo is externally hosted. */
-  logoUrl?: string | null;
+  logoUrl?: string | null
   /** Internal object key when the logo is stored by the application. */
-  logoKey?: string | null;
+  logoKey?: string | null
   /** Source or license reference for the logo. */
-  logoSource?: string | null;
+  logoSource?: string | null
   /** Main brand color in hex format. */
-  brandColor?: string | null;
+  brandColor?: string | null
   /** Indicates whether visual metadata was verified. */
-  verified?: boolean;
+  verified?: boolean
 }
 
 /**
@@ -212,37 +213,37 @@ export interface FinancialInstitutionBranding {
  */
 export interface FinancialInstitution extends AuditableRecord {
   /** Stable internal identifier, for example `fi_br_ispb_00000000`. */
-  _id: string;
+  _id: string
   /** Schema.org-compatible top-level type. */
-  type: FinancialInstitutionSchemaType;
+  type: FinancialInstitutionSchemaType
   /** ISO 3166-1 alpha-2 country code where the institution operates. */
-  countryCode: CountryCode;
+  countryCode: CountryCode
   /** Official or short name used for search. */
-  name: string;
+  name: string
   /** Friendly commercial name shown to users. */
-  displayName?: string;
+  displayName?: string
   /** Legal name published by official sources. */
-  legalName?: string;
+  legalName?: string
   /** Alternative names and abbreviations used for search. */
-  alternateNames?: string[];
+  alternateNames?: string[]
   /** Official website URL. */
-  url?: string;
+  url?: string
   /** Current operational status. */
-  status: InstitutionStatus;
+  status: InstitutionStatus
   /** Business classification used by the application. */
-  institutionType: InstitutionType;
+  institutionType: InstitutionType
   /** ISO 4217 currencies normally accepted by the institution. */
-  defaultCurrencies: CurrencyCode[];
+  defaultCurrencies: CurrencyCode[]
   /** Flexible identifiers used for deduplication and matching. */
-  identifiers: FinancialInstitutionIdentifier[];
+  identifiers: FinancialInstitutionIdentifier[]
   /** Regulatory authorizations and participation records. */
-  regulatoryRegistrations?: RegulatoryRegistration[];
+  regulatoryRegistrations?: RegulatoryRegistration[]
   /** Optional logo and brand metadata. */
-  branding?: FinancialInstitutionBranding;
+  branding?: FinancialInstitutionBranding
   /** Source references that explain where the data came from. */
-  sources: DataSourceReference[];
+  sources: DataSourceReference[]
   /** Last automated synchronization timestamp. */
-  lastSyncedAt?: Date | null;
+  lastSyncedAt?: Date | null
 }
 
 const countryCodeSchema = z

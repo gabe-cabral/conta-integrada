@@ -10,7 +10,7 @@ export const categorySchema = {
     },
     name: {
       bsonType: 'binData',
-      description: "Category's name",
+      description: 'Category\'s name',
     },
     active: {
       bsonType: 'bool',
@@ -18,7 +18,7 @@ export const categorySchema = {
     },
     color: {
       bsonType: ['null', 'string'],
-      description: "Category's color",
+      description: 'Category\'s color',
     },
     parentId: {
       bsonType: ['null', 'objectId'],

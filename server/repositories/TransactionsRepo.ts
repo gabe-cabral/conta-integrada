@@ -125,8 +125,8 @@ class TransactionsRepo {
   }
 
   #getCollection = async (): Promise<{
-    clientEncryption: ClientEncryption;
-    collection: Collection<TransactionSchema>;
+    clientEncryption: ClientEncryption
+    collection: Collection<TransactionSchema>
   }> => {
     const { db, clientEncryption } = await useSecureClient();
     const collection = db.collection('transactions') as Collection<TransactionSchema>;
