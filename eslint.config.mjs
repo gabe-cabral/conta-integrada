@@ -12,6 +12,11 @@ export default withNuxt(
       prettier: eslintPluginPrettier,
     },
     rules: {
+      // Nuxt and TypeScript resolve aliases such as `~~` and extensionless imports.
+      // Requiring `.ts` extensions conflicts with the current TypeScript configuration.
+      'import-x/extensions': 'off',
+      'n/no-missing-import': 'off',
+      '@stylistic/arrow-parens': ['error', 'always'],
       // Força o ESLint a apontar erros onde o Prettier não está formatado
       'prettier/prettier': [
         'error',

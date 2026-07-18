@@ -3,11 +3,9 @@ import { dateStringToDate } from '~~/shared/zod/zodDate';
 import { ObjectId } from 'mongodb';
 import { z } from 'zod';
 
-import type { UserTransactionsRequestQuery } from '~~/shared/types/transactions';
-
 const repository = new TransactionsRepo();
 
-const querySchema: z.ZodType<UserTransactionsRequestQuery> = z.strictObject({
+const querySchema = z.strictObject({
   dateStart: dateStringToDate,
   dateEnd: dateStringToDate.optional(),
 });
@@ -23,7 +21,7 @@ export default defineEventHandler(async (event) => {
 
     return repository.getUserTransactions(userId, dateStart, dateEnd);
   } catch (error) {
-    event.node.res.statusCode = 500;
+    setResponseStatus(event, 500);
     return { error: 'Internal Server Error', details: error };
   }
 });

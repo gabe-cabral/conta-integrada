@@ -27,7 +27,7 @@ export default defineEventHandler(async (event) => {
 
     return repository.getUserTransactions(userId, dateStart, dateEnd);
   } catch (error) {
-    event.node.res.statusCode = 500;
+    setResponseStatus(event, 500);
     return { error: 'Internal Server Error', details: error };
   }
 });
