@@ -3,6 +3,7 @@ import { MongoServerError } from 'mongodb';
 import type { ExchangeRateSnapshotDocument } from '#server/utils/exchangeRateSnapshots.ts';
 import type { Collection, Document } from 'mongodb';
 
+import { ensureIndexes } from '../helper.ts';
 import { getClient } from '../client.ts';
 import { env } from '../../../env.ts';
 
@@ -149,7 +150,7 @@ async function setup(): Promise<Collection<ExchangeRateSnapshotDocument> | null>
 }
 
 async function createIndexes(coll: Collection<ExchangeRateSnapshotDocument>) {
-  await coll.createIndexes([
+  await ensureIndexes(coll, [
     {
       key: { baseCurrency: 1, status: 1, valuationDate: -1 },
       name: 'base-currency-status-valuation-date-desc',

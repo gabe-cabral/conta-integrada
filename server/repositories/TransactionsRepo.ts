@@ -1,64 +1,14 @@
 import { ObjectId } from 'mongodb';
-import { z } from 'zod';
 
 import type { ClientEncryption, Collection, Document, InsertManyResult } from 'mongodb';
+import type { TransactionSchema } from '#shared/schemas/transactionPersistence.ts';
 import type { Transaction } from '../../shared/types/transactions';
 
-import { zodBsonDatetime, zodBsonEncrypt, zodObjectId } from '../../shared/zod/mongodb';
 import { getKeyAltName } from '../utils/key-alt-name';
 import { useSecureClient } from '../utils/mongo';
 
-export const transactionsSchema = z
-  .object({
-    userId: zodObjectId,
-    _id: zodObjectId,
-    date: zodBsonDatetime,
-    datePrecision: z.enum(['DATE', 'DATETIME']),
-    description: zodBsonEncrypt,
-    amount: zodBsonEncrypt,
-    type: z.enum([
-      'ADJUSTMENT',
-      'CONTRIBUTION',
-      'DIVIDEND',
-      'EXPENSE',
-      'INCOME',
-      'INTEREST',
-      'INVESTMENT',
-      'REDEMPTION',
-      'REFUND',
-      'TAX',
-      'TRANSFER',
-    ]),
-    status: z.enum(['CANCELED', 'CONFIRMED', 'PENDING']),
-    categoryId: zodObjectId.nullable(),
-    sourceId: zodObjectId,
-    sourceType: z.enum([
-      'CHECKING',
-      'CREDIT_CARD',
-      'INVESTMENT',
-      'LOAN',
-      'OTHER',
-      'SAVINGS',
-      'WALLET',
-    ]),
-    destinationId: zodObjectId.nullable(),
-    destinationType: z.nullable(
-      z.enum(['CHECKING', 'CREDIT_CARD', 'INVESTMENT', 'LOAN', 'OTHER', 'SAVINGS', 'WALLET']),
-    ),
-    tags: z.array(zodObjectId),
-    attachmentsCount: z.number().nonnegative(),
-    hasRecurrence: z.boolean(),
-    recurrence: zodBsonEncrypt,
-    createdAt: zodBsonDatetime,
-    updatedAt: zodBsonDatetime.nullable(),
-    conciliationId: zodObjectId.nullable(),
-  })
-  .meta({
-    title: 'Transaction',
-    description: 'Schema for financial transactions',
-  });
-
-export type TransactionSchema = z.infer<typeof transactionsSchema>;
+export { transactionsSchema } from '#shared/schemas/transactionPersistence.ts';
+export type { TransactionSchema } from '#shared/schemas/transactionPersistence.ts';
 
 class TransactionsRepo {
   async getTransactionById(

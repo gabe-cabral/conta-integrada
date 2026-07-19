@@ -3,6 +3,7 @@ import { MongoServerError } from 'mongodb';
 import type { Currency } from '#shared/schemas/currency.ts';
 import type { Collection, Document } from 'mongodb';
 
+import { ensureIndexes } from '../helper.ts';
 import { getClient } from '../client.ts';
 import { env } from '../../../env.ts';
 
@@ -119,7 +120,7 @@ async function setup(): Promise<Collection<Currency> | null> {
 }
 
 async function createIndexes(coll: Collection<Currency>) {
-  await coll.createIndexes([
+  await ensureIndexes(coll, [
     { key: { 'countryUsage.countryCode': 1, 'active': 1 }, name: 'country-usage-active' },
   ]);
 }

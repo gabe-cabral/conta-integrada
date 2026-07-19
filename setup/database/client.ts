@@ -1,11 +1,14 @@
 import { ClientEncryption, MongoClient } from 'mongodb';
 
 import type {
+  AWSEncryptionKeyOptions,
+  AzureEncryptionKeyOptions,
   ClientEncryptionOptions,
   Collection,
   CreateCollectionOptions,
   Db,
   Document,
+  GCPEncryptionKeyOptions,
   UUID,
 } from 'mongodb';
 import type { KMSProviderName } from './helper.ts';
@@ -17,10 +20,21 @@ import {
 } from './helper.ts';
 import { env } from '../../env.ts';
 
+const databaseClients = new Set<MongoClient>();
+
 export type CreateEncryptedCollectionFunction = <TSchema extends Document = Document>(
   encryptedCollectionName: string,
-  encryptedFieldsMap: CreateCollectionOptions,
+  encryptedFieldsMap: EncryptedCollectionOptions,
 ) => Promise<{ collection: Collection<TSchema>, encryptedFields: Document }>;
+
+type EncryptedCollectionOptions = Omit<CreateCollectionOptions, 'encryptedFields'> & {
+  encryptedFields: Document
+};
+
+type QueryableEncryptionMasterKey
+  = | AWSEncryptionKeyOptions
+    | AzureEncryptionKeyOptions
+    | GCPEncryptionKeyOptions;
 
 async function getClient(userCertFile?: string): Promise<{
   client: MongoClient
@@ -34,6 +48,7 @@ async function getClient(userCertFile?: string): Promise<{
   });
 
   await normalClient.connect();
+  databaseClients.add(normalClient);
 
   const db = normalClient.db(env.MONGODB_DATA_DB);
 
@@ -45,7 +60,7 @@ async function getClient(userCertFile?: string): Promise<{
     } catch (err) {
       console.error('Error closing MongoDB:', err);
     } finally {
-      process.exit(0);
+      process.exitCode = 0;
     }
   }
 
@@ -97,13 +112,37 @@ async function getSecureClient(userCertFile?: string): Promise<{
   );
 
   await encryptedClient.connect();
+  databaseClients.add(encryptedClient);
 
   const db = encryptedClient.db(env.MONGODB_DATA_DB);
 
   async function createEncryptedCollection<TSchema extends Document = Document>(
     encryptedCollectionName: string,
-    createCollectionOptions: CreateCollectionOptions,
+    createCollectionOptions: EncryptedCollectionOptions,
   ): Promise<{ collection: Collection<TSchema>, encryptedFields: Document }> {
+    const getExistingEncryptedCollection = async () => {
+      const collectionInfo = await db
+        .listCollections({ name: encryptedCollectionName }, { nameOnly: false })
+        .next();
+
+      if (!collectionInfo) return null;
+
+      const encryptedFields = collectionInfo.options?.encryptedFields;
+      if (!encryptedFields) {
+        throw new Error(
+          `Collection "${encryptedCollectionName}" already exists without encryptedFields`,
+        );
+      }
+
+      return {
+        collection: db.collection<TSchema>(encryptedCollectionName),
+        encryptedFields,
+      };
+    };
+
+    const existingCollection = await getExistingEncryptedCollection();
+    if (existingCollection) return existingCollection;
+
     try {
       return await clientEncryption.createEncryptedCollection<TSchema>(
         db,
@@ -111,10 +150,13 @@ async function getSecureClient(userCertFile?: string): Promise<{
         {
           provider: kmsProviderName,
           createCollectionOptions,
-          masterKey: customerMasterKeyCredentials,
+          masterKey: customerMasterKeyCredentials as QueryableEncryptionMasterKey,
         },
       );
     } catch (err) {
+      const collectionCreatedConcurrently = await getExistingEncryptedCollection();
+      if (collectionCreatedConcurrently) return collectionCreatedConcurrently;
+
       throw new Error(`Unable to create encrypted collection due to the following error: ${err}`, {
         cause: err,
       });
@@ -161,4 +203,9 @@ async function getSecureClient(userCertFile?: string): Promise<{
   };
 }
 
-export { getClient, getSecureClient };
+async function closeDatabaseClients(): Promise<void> {
+  await Promise.all([...databaseClients].map((client) => client.close()));
+  databaseClients.clear();
+}
+
+export { closeDatabaseClients, getClient, getSecureClient };

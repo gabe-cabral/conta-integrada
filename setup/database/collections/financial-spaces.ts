@@ -3,8 +3,9 @@ import { MongoServerError } from 'mongodb';
 import type { FinancialSpace } from '#shared/schemas/financialSpaces.ts';
 import type { Collection, Document } from 'mongodb';
 
-import { FINANCIAL_SPACE_ICONS } from '#shared/schemas/financialSpaces.ts';
+import { FINANCIAL_SPACE_ICONS } from '#shared/constants/financialSpaces.ts';
 
+import { ensureIndexes } from '../helper.ts';
 import { getClient } from '../client.ts';
 import { env } from '../../../env.ts';
 
@@ -50,7 +51,7 @@ const financialSpacesCollectionSchema = {
 } as Document;
 
 async function createIndexes(collection: Collection<FinancialSpace>) {
-  await collection.createIndexes([
+  await ensureIndexes(collection, [
     { key: { userId: 1, categoryIds: 1 }, name: 'user-categories' },
     { key: { userId: 1, createdAt: 1 }, name: 'user-created-at' },
     { key: { userId: 1, showOnDashboard: 1 }, name: 'user-dashboard' },

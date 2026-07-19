@@ -3,6 +3,7 @@ import { MongoServerError } from 'mongodb';
 import type { FinancialInstitution } from '#shared/schemas/financialInstitutions.ts';
 import type { Collection, Document, ObjectId } from 'mongodb';
 
+import { ensureIndexes } from '../helper.ts';
 import { getClient } from '../client.ts';
 import { env } from '../../../env.ts';
 
@@ -217,7 +218,7 @@ async function setup(): Promise<Collection<FinancialInstitutionDocument> | null>
 }
 
 async function createIndexes(coll: Collection<FinancialInstitutionDocument>) {
-  await coll.createIndexes([
+  await ensureIndexes(coll, [
     { key: { 'identifiers.scheme': 1, 'identifiers.value': 1 }, name: 'identifier-scheme-value' },
     {
       key: {

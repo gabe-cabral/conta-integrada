@@ -2,19 +2,92 @@ import type {
   AutoEncryptionOptions,
   AWSEncryptionKeyOptions,
   AzureEncryptionKeyOptions,
-  ClientEncryption,
+  Collection,
+  CreateCollectionOptions,
   Db,
+  Document,
   GCPEncryptionKeyOptions,
+  IndexDescription,
   KMIPEncryptionKeyOptions,
   KMSProviders,
 } from 'mongodb';
 
 export type KMSProviderName = 'aws' | 'azure' | 'gcp' | 'kmip' | 'local';
-type CustomerMasterKeyCredentials
-  = | AWSEncryptionKeyOptions
-    | AzureEncryptionKeyOptions
-    | GCPEncryptionKeyOptions
-    | KMIPEncryptionKeyOptions;
+
+type CollectionValidationOptions = Pick<
+  CreateCollectionOptions,
+  'validationAction' | 'validationLevel' | 'validator'
+>;
+
+export async function ensureCollection<TSchema extends Document>(
+  db: Db,
+  collectionName: string,
+  options: CollectionValidationOptions,
+): Promise<Collection<TSchema>> {
+  const exists = await db.listCollections({ name: collectionName }, { nameOnly: true }).hasNext();
+
+  if (!exists) {
+    try {
+      const collection = await db.createCollection<TSchema>(collectionName, options);
+      console.log(`Collection "${collectionName}" successfully created!`);
+      return collection;
+    } catch (error) {
+      if (!isNamespaceExistsError(error)) throw error;
+    }
+  }
+
+  await db.command({ collMod: collectionName, ...options });
+  console.log(`Schema da colecao '${collectionName}' atualizado!`);
+  return db.collection<TSchema>(collectionName);
+}
+
+export async function ensureIndexes<TSchema extends Document>(
+  collection: Collection<TSchema>,
+  indexes: IndexDescription[],
+): Promise<void> {
+  const existingIndexes = await collection.indexes();
+
+  for (const index of indexes) {
+    if (!index.name) throw new Error('Managed indexes must have a name');
+
+    const existingByName = existingIndexes.find((existing) => existing.name === index.name);
+
+    if (existingByName && isSameIndex(existingByName, index)) continue;
+
+    if (existingByName) {
+      await collection.dropIndex(index.name);
+    } else if (existingIndexes.some((existing) => isSameIndex(existing, index))) {
+      continue;
+    }
+
+    const { key, ...options } = index;
+    await collection.createIndex(key, options);
+  }
+}
+
+function isNamespaceExistsError(error: unknown): boolean {
+  return (
+    typeof error === 'object'
+    && error !== null
+    && (('codeName' in error && error.codeName === 'NamespaceExists')
+      || ('code' in error && error.code === 48))
+  );
+}
+
+function isSameIndex(existing: IndexDescription, expected: IndexDescription): boolean {
+  const getComparableOptions = (index: IndexDescription) => ({
+    key: index.key,
+    unique: index.unique,
+    sparse: index.sparse,
+    partialFilterExpression: index.partialFilterExpression,
+    expireAfterSeconds: index.expireAfterSeconds,
+    collation: index.collation,
+  });
+
+  const existingOptions = JSON.stringify(getComparableOptions(existing));
+  const expectedOptions = JSON.stringify(getComparableOptions(expected));
+  return existingOptions === expectedOptions;
+}
 
 function getKmipTlsOptions() {
   const tlsOptions = {
@@ -134,25 +207,4 @@ export function getAutoEncryptionOptions(
   }
 
   return autoEncryptionOptions;
-}
-
-export async function createEncryptedCollection(
-  clientEncryption: ClientEncryption,
-  encryptedDatabase: Db,
-  encryptedCollectionName: string,
-  kmsProviderName: KMSProviderName,
-  encryptedFieldsMap: Document,
-  customerMasterKeyCredentials: CustomerMasterKeyCredentials,
-) {
-  try {
-    await clientEncryption.createEncryptedCollection(encryptedDatabase, encryptedCollectionName, {
-      provider: kmsProviderName,
-      createCollectionOptions: encryptedFieldsMap,
-      masterKey: customerMasterKeyCredentials,
-    });
-  } catch (err) {
-    throw new Error(`Unable to create encrypted collection due to the following error: ${err}`, {
-      cause: err,
-    });
-  }
 }

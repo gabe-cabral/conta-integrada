@@ -3,6 +3,7 @@ import { MongoServerError } from 'mongodb';
 import type { UserPreference } from '#shared/schemas/userPreferences.ts';
 import type { Collection, Document } from 'mongodb';
 
+import { ensureIndexes } from '../helper.ts';
 import { getClient } from '../client.ts';
 import { env } from '../../../env.ts';
 
@@ -28,7 +29,7 @@ const userPreferencesCollectionSchema = {
 } as Document;
 
 async function createIndexes(collection: Collection<UserPreference>) {
-  await collection.createIndex({ userId: 1 }, { name: 'user-id', unique: true });
+  await ensureIndexes(collection, [{ key: { userId: 1 }, name: 'user-id', unique: true }]);
 }
 
 async function setup(): Promise<Collection<UserPreference> | null> {
