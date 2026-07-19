@@ -3,10 +3,26 @@ import { nuxt as nexsoNuxt } from '@nexso/eslint-config-typescript';
 import eslintPluginPrettier from 'eslint-plugin-prettier';
 
 // @ts-check
+// eslint-disable-next-line import-x/no-named-as-default
 import withNuxt from './.nuxt/eslint.config.mjs';
 
 export default withNuxt(
   ...nexsoNuxt,
+  {
+    rules: {
+      '@stylistic/max-len': [
+        'error',
+        {
+          code: 100,
+          ignoreComments: true,
+          ignoreUrls: true,
+          ignoreStrings: true,
+          ignoreTemplateLiterals: true,
+          ignoreRegExpLiterals: true,
+        },
+      ],
+    },
+  },
   {
     plugins: {
       prettier: eslintPluginPrettier,
@@ -20,6 +36,7 @@ export default withNuxt(
     },
   },
   {
+    files: ['**/*.vue'],
     rules: {
       'vue/first-attribute-linebreak': [
         'error',
@@ -41,7 +58,25 @@ export default withNuxt(
           math: 'always',
         },
       ],
+      '@stylistic/max-len': 'off',
+      'vue/max-len': [
+        'error',
+        {
+          code: 100,
+          template: 100,
+          tabWidth: 2,
+          ignoreComments: true,
+          ignoreUrls: true,
+          ignoreStrings: true,
+          ignoreTemplateLiterals: true,
+          ignoreRegExpLiterals: true,
+          ignoreHTMLAttributeValues: true,
+        },
+      ],
     },
+  },
+  {
+    files: ['**/*.ts', '**/*.tsx', '**/*.vue'],
     settings: {
       'import-x/resolver-next': [
         createTypeScriptImportResolver({

@@ -1,7 +1,7 @@
 import { ObjectId } from 'mongodb';
 
 import type { TransactionCategory } from '#shared/types/transactions.ts';
-import type { Binary } from 'mongodb';
+import type { AnyBulkWriteOperation, Binary } from 'mongodb';
 
 import { getKeyAltName } from '#server/utils/key-alt-name.ts';
 
@@ -44,9 +44,18 @@ async function load(userId: string) {
     documents.push(doc);
   }
 
-  const result = await coll.insertMany(documents);
+  const operations: AnyBulkWriteOperation<TransactionCategoryDb>[] = documents.map((document) => ({
+    updateOne: {
+      filter: { _id: document._id, userId: document.userId },
+      update: { $setOnInsert: document },
+      upsert: true,
+    },
+  }));
 
-  console.log(`✅ ${result.insertedCount} categorias inseridas.`);
+  const result = await coll.bulkWrite(operations, { ordered: false });
+  const existingCount = documents.length - result.upsertedCount;
+
+  console.log(`${result.upsertedCount} categorias inseridas; ${existingCount} já existiam.`);
 }
 
 export { load };
