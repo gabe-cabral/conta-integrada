@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useAppStore } from '~/stores/appStore';
+
 const menuItems = [
   { name: 'Início', link: '/' },
   { name: 'Transações', link: '/transactions' },
@@ -16,6 +18,7 @@ const userMenuItens = [
 ];
 
 const { loggedIn: userIsLogged } = useUserSession();
+const appStore = useAppStore();
 
 watch(userIsLogged, (newVal) => {
   if (!newVal) {
@@ -59,12 +62,11 @@ onMounted(async () => {
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
               >
-                <img
-                  src="https://github.com/mdo.png"
-                  alt="mdo"
-                  width="32"
-                  height="32"
-                  class="rounded-circle me-2"
+                <UserAvatar
+                  :src="appStore.userProfile?.avatarUrl"
+                  :name="appStore.userProfile?.name ?? user?.name"
+                  :size="32"
+                  class="me-2"
                 />
                 <span class="d-inline-block text-truncate" style="max-width: 10rem">{{
                   user?.name?.split(' ')?.at(0)
@@ -93,7 +95,7 @@ onMounted(async () => {
                   <hr class="dropdown-divider" />
                 </li>
                 <li>
-                  <NuxtLink class="dropdown-item" to="/">
+                  <NuxtLink class="dropdown-item" to="/user/profile">
                     <i class="bi bi-person me-2" />
                     Perfil
                   </NuxtLink>

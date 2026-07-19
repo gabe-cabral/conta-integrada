@@ -40,6 +40,7 @@
     "@unhead/vue": "^3.1.8",
     "bootstrap": "^5.3.8",
     "bootstrap-icons": "^1.13.1",
+    "bowser": "^2.14.1",
     "decimal.js": "^10.6.0",
     "eslint": "^10.7.0",
     "h3": "^1.15.11",

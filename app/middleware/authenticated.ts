@@ -12,7 +12,10 @@ export default defineNuxtRouteMiddleware(async () => {
     appStore.setLastInputCategoryId(null);
     appStore.setLastInputSourceId(null);
 
-    await appStore.getUserPreferences();
+    await Promise.all([
+      appStore.getUserPreferences(),
+      appStore.getUserProfile(),
+    ]);
     await callOnce('categories', () => appStore.getCategories());
   } catch (error) {
     console.error('Error in authenticated middleware:', error);

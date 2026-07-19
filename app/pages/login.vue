@@ -7,20 +7,26 @@ const { register, authenticate } = useWebAuthn({
 const { fetch: fetchUserSession, loggedIn } = useUserSession();
 
 const userName = ref('');
+const initialPin = ref('');
 const signingUp = ref(false);
 const checking = ref(false);
 
 async function submit() {
   checking.value = true;
 
-  if (signingUp.value) {
-    await register({ userName: userName.value }).then(fetchUserSession); // refetch the user session
-    return;
+  try {
+    if (signingUp.value) {
+      await register({
+        userName: userName.value,
+        initialPin: initialPin.value,
+      }).then(fetchUserSession);
+      return;
+    }
+
+    await authenticate(userName.value).then(fetchUserSession);
+  } finally {
+    checking.value = false;
   }
-
-  await authenticate(userName.value).then(fetchUserSession); // refetch the user session
-
-  checking.value = false;
 }
 
 watch(loggedIn, (newVal) => {
@@ -44,9 +50,33 @@ watch(loggedIn, (newVal) => {
           autocomplete="email"
         />
       </div>
+      <div v-if="signingUp" class="mb-3">
+        <label for="initialPin" class="form-label">PIN inicial</label>
+        <input
+          id="initialPin"
+          v-model="initialPin"
+          type="password"
+          inputmode="numeric"
+          pattern="[0-9]{6,12}"
+          minlength="6"
+          maxlength="12"
+          autocomplete="one-time-code"
+          class="form-control"
+          required
+        />
+        <div class="form-text">Use o PIN recebido para cadastrar sua primeira passkey.</div>
+      </div>
       <button type="submit" class="btn btn-primary mt-4 w-100" :disabled="checking">
         <span v-if="checking" class="spinner-border spinner-border-sm" aria-hidden="true" />
         {{ signingUp ? 'Registrar' : 'Entrar' }}
+      </button>
+      <button
+        type="button"
+        class="btn btn-link mt-3"
+        :disabled="checking"
+        @click="signingUp = !signingUp"
+      >
+        {{ signingUp ? 'Já tenho uma passkey' : 'Primeiro acesso' }}
       </button>
     </form>
   </LayoutPage>

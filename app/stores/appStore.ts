@@ -15,11 +15,23 @@ export interface AppState {
   lastInputSourceId: string | null
 }
 
+export interface UserProfile {
+  _id: string
+  name: string
+  email: string
+  active: boolean
+  avatarUrl: string
+  createdAt: string | null
+  updatedAt: string | null
+  lastAccessAt: string | null
+}
+
 export const useAppStore = defineStore('appStore', () => {
   const { user } = useUserSession();
   const systemStore = useSystemStore();
 
   const loading = ref(false);
+  const userProfile = ref<UserProfile | null>(null);
   const currencies = ref<Currency[]>([]);
   const categories = ref<TransactionCategory[]>([]);
   const transactionTypes = ref<TransactionTypeDisplay[]>([
@@ -35,6 +47,24 @@ export const useAppStore = defineStore('appStore', () => {
 
   function setCurrencyList(currencyList: Currency[]) {
     currencies.value = currencyList;
+  }
+
+  function setUserProfile(profile: UserProfile) {
+    userProfile.value = profile;
+  }
+
+  async function getUserProfile(force = false): Promise<UserProfile> {
+    if (!user?.value?.id) throw new Error('User not logged in');
+    if (!force && userProfile.value?._id === user.value.id) {
+      return userProfile.value;
+    }
+
+    const requestFetch = import.meta.server ? useRequestFetch() : $fetch;
+    const profile = await requestFetch<UserProfile>(
+      `/api/users/${user.value.id}`,
+    );
+    setUserProfile(profile);
+    return profile;
   }
 
   async function getUserPreferences() {
@@ -89,6 +119,7 @@ export const useAppStore = defineStore('appStore', () => {
 
   return {
     loading,
+    userProfile,
     currencies,
     categories,
     transactionTypes,
@@ -96,10 +127,12 @@ export const useAppStore = defineStore('appStore', () => {
     lastInputCategoryId,
     lastInputSourceId,
     setCurrencyList,
+    setUserProfile,
     setLastInputDate,
     setLastInputCategoryId,
     setLastInputSourceId,
     getUserPreferences,
+    getUserProfile,
     getCategories,
   };
 });

@@ -1,0 +1,6 @@
+$kind: http-request
+name: Passkey List
+url: "{{HOST}}/api/users/{{user_id}}/auth-credentials"
+method: GET
+order: 5300000000000002
+

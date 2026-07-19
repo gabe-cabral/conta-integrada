@@ -1,0 +1,12 @@
+$kind: http-request
+name: Profile Update
+url: "{{HOST}}/api/users/{{user_id}}"
+method: PATCH
+body:
+  type: json
+  content: |-
+    {
+      "name": "Maria de Souza Silva"
+    }
+order: 5300000000000001
+

@@ -1,0 +1,21 @@
+$kind: http-request
+name: Auth Session Create
+url: "{{HOST}}/api/internal/auth-sessions"
+method: POST
+headers:
+  - key: x-internal-api-secret
+    value: "{{API_SECRET}}"
+body:
+  type: json
+  content: |-
+    {
+      "userId": "{{user_id}}",
+      "sessionId": "external-session-id",
+      "credentialId": "passkey-credential-id",
+      "browser": "Chrome 140",
+      "os": "Windows 11",
+      "platform": "desktop",
+      "expiresAt": "2026-07-20T00:00:00.000Z"
+    }
+order: 5200000000000003
+

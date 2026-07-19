@@ -1,0 +1,6 @@
+$kind: http-request
+name: Passkey Delete
+url: "{{HOST}}/api/users/{{user_id}}/auth-credentials/{{credential_id}}"
+method: DELETE
+order: 5300000000000003
+

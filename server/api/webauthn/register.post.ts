@@ -1,67 +1,88 @@
+import AuthCredentialsRepo from '~~/server/repositories/AuthCredentialsRepo';
+import AuthChallengesRepo from '~~/server/repositories/AuthChallengesRepo';
+import { startAuthenticatedSession } from '~~/server/utils/authSession';
+import { getDeviceDetails } from '~~/server/utils/device';
+import UsersRepo from '~~/server/repositories/UsersRepo';
 import { z } from 'zod';
 
+const registrationUserSchema = z.strictObject({
+  userName: z.string().trim().toLowerCase().email().max(320),
+  displayName: z.string().trim().min(2).max(150).optional(),
+  initialPin: z.string().regex(/^\d{6,12}$/).optional(),
+});
 export default defineWebAuthnRegisterEventHandler({
-  // optional
   async validateUser(userBody, event) {
-    // bonus: check if the user is already authenticated to link a credential to his account
-    // We first check if the user is already authenticated by getting the session
-    // And verify that the email is the same as the one in session
+    const body = registrationUserSchema.parse(userBody);
+    const usersRepository = new UsersRepo();
+    const user = await usersRepository.findByEmail(body.userName);
     const session = await getUserSession(event);
 
-    if (session.user?.id && session.user.id !== userBody.userName) {
-      throw createError({ statusCode: 400, message: 'Email not matching curent session' });
+    if (!user?.active) {
+      throw createError({ statusCode: 400, message: 'Unable to register passkey' });
     }
 
-    // If he registers a new account with credentials
-    return z
-      .object({
-        // we want the userName to be a valid email
-        userName: z.string().email(),
-      })
-      .parse(userBody);
+    if (session.user?.id === user._id.toHexString()) return body;
+
+    if (
+      !body.initialPin
+      || !user.initialPinHash
+      || !(await verifyPassword(user.initialPinHash, body.initialPin))
+    ) {
+      throw createError({ statusCode: 400, message: 'Unable to register passkey' });
+    }
+
+    return body;
+  },
+
+  async excludeCredentials(_event, userName) {
+    const user = await new UsersRepo().findByEmail(userName);
+    if (!user) return [];
+    return new AuthCredentialsRepo().listByUserId(user._id);
+  },
+
+  getOptions() {
+    return {
+      authenticatorSelection: {
+        residentKey: 'preferred',
+        userVerification: 'required',
+      },
+    };
+  },
+
+  async storeChallenge(_event, challenge, attemptId) {
+    await new AuthChallengesRepo().store(attemptId, challenge, 'registration');
+  },
+
+  async getChallenge(_event, attemptId) {
+    return new AuthChallengesRepo().consume(attemptId, 'registration');
   },
 
   async onSuccess(event, { credential, user }) {
-    // The credential creation has been successful
-    // We need to create a user if it does not exist
-    const db = await useDatabase();
-    const coll = db.collection('users');
+    const usersRepository = new UsersRepo();
+    const dbUser = await usersRepository.findByEmail(user.userName);
 
-    // Get the user from the database
-    let dbUser = await coll.findOne({ email: user.userName });
-
-    if (!dbUser) {
-      // Store new user in database & its credentials
-      const result = await coll.insertOne({
-        email: user.userName,
-        createdAt: new Date(),
-      });
-
-      dbUser = await coll.findOne({ _id: result.insertedId });
-    }
-
-    if (!dbUser) {
+    if (!dbUser?.active) {
       throw createError({ statusCode: 404, message: 'User not found' });
     }
 
-    // we now need to store the credential in our database and link it to the user
-    await db.collection('auth_credentials').insertOne({
+    const device = getDeviceDetails(event);
+    await new AuthCredentialsRepo().insertRecord({
+      ...credential,
       userId: dbUser._id,
-      id: credential.id,
-      publicKey: credential.publicKey,
-      counter: credential.counter,
-      backedUp: credential.backedUp,
-      transports: credential.transports,
-      createdAt: new Date(),
+      ...device,
     });
 
-    // Set the user session
-    await setUserSession(event, {
-      user: {
-        id: dbUser._id.toHexString(),
-        name: dbUser?.name,
-      },
-      loggedInAt: Date.now(),
-    });
+    const authenticatedAt = new Date();
+    await Promise.all([
+      usersRepository.clearInitialPin(dbUser._id),
+      usersRepository.updateLastAccess(dbUser._id, authenticatedAt),
+    ]);
+    await startAuthenticatedSession(
+      event,
+      dbUser,
+      credential.id,
+      device,
+      authenticatedAt,
+    );
   },
 });

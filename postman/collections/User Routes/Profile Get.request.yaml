@@ -1,0 +1,6 @@
+$kind: http-request
+name: Profile Get
+url: "{{HOST}}/api/users/{{user_id}}"
+method: GET
+order: 5300000000000000
+

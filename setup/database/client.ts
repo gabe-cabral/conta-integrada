@@ -21,6 +21,7 @@ import {
 import { env } from '../../env.ts';
 
 const databaseClients = new Set<MongoClient>();
+let shutdownHandlersRegistered = false;
 
 export type CreateEncryptedCollectionFunction = <TSchema extends Document = Document>(
   encryptedCollectionName: string,
@@ -49,30 +50,9 @@ async function getClient(userCertFile?: string): Promise<{
 
   await normalClient.connect();
   databaseClients.add(normalClient);
+  registerShutdownHandlers();
 
   const db = normalClient.db(env.MONGODB_DATA_DB);
-
-  async function gracefulShutdown(signal: string) {
-    console.log(`\nReceived ${signal}. Closing MongoDB...`);
-    try {
-      await normalClient.close();
-      console.log('MongoDB disconnected cleanly');
-    } catch (err) {
-      console.error('Error closing MongoDB:', err);
-    } finally {
-      process.exitCode = 0;
-    }
-  }
-
-  // Eventos padrão de desligamento no Node.js
-  ['SIGINT', 'SIGTERM'].forEach((signal) => {
-    process.on(signal, () => gracefulShutdown(signal));
-  });
-
-  // Garantir fechamento antes de sair naturalmente
-  process.on('beforeExit', async () => {
-    if (normalClient) await normalClient.close();
-  });
 
   return { client: normalClient, db };
 }
@@ -113,6 +93,7 @@ async function getSecureClient(userCertFile?: string): Promise<{
 
   await encryptedClient.connect();
   databaseClients.add(encryptedClient);
+  registerShutdownHandlers();
 
   const db = encryptedClient.db(env.MONGODB_DATA_DB);
 
@@ -174,26 +155,6 @@ async function getSecureClient(userCertFile?: string): Promise<{
     }
   }
 
-  async function gracefulShutdown(signal: string) {
-    console.log(`\nReceived ${signal}. Closing MongoDB...`);
-    try {
-      await encryptedClient.close();
-      console.log('MongoDB disconnected cleanly');
-    } catch (err) {
-      console.error('Error closing MongoDB:', err);
-    }
-  }
-
-  // Eventos padrão de desligamento no Node.js
-  ['SIGINT', 'SIGTERM'].forEach((signal) => {
-    process.on(signal, () => gracefulShutdown(signal));
-  });
-
-  // Garantir fechamento antes de sair naturalmente
-  process.on('beforeExit', async () => {
-    if (encryptedClient) await encryptedClient.close();
-  });
-
   return {
     client: encryptedClient,
     clientEncryption,
@@ -206,6 +167,26 @@ async function getSecureClient(userCertFile?: string): Promise<{
 async function closeDatabaseClients(): Promise<void> {
   await Promise.all([...databaseClients].map((client) => client.close()));
   databaseClients.clear();
+}
+
+function registerShutdownHandlers(): void {
+  if (shutdownHandlersRegistered) return;
+  shutdownHandlersRegistered = true;
+
+  for (const signal of ['SIGINT', 'SIGTERM'] as const) {
+    process.once(signal, async () => {
+      console.log(`\nReceived ${signal}. Closing MongoDB...`);
+      try {
+        await closeDatabaseClients();
+        console.log('MongoDB disconnected cleanly');
+      } catch (error) {
+        console.error('Error closing MongoDB:', error);
+        process.exitCode = 1;
+      }
+    });
+  }
+
+  process.once('beforeExit', closeDatabaseClients);
 }
 
 export { closeDatabaseClients, getClient, getSecureClient };

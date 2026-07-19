@@ -4,3 +4,7 @@ values:
     value: ''
   - key: HOST
     value: 'http://localhost:3000'
+  - key: user_id
+    value: ''
+  - key: credential_id
+    value: ''
