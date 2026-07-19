@@ -8,7 +8,7 @@ const menuItems = [
 
 const userMenuItens = [
   { name: 'Contas', link: '/user/accounts', icon: 'bank' },
-  { name: 'Espaços', link: '/user/financial-spaces', icon: 'boxes' },
+  { name: 'Espaços', link: '/user/financial-spaces', icon: 'grid-1x2-fill' },
   { name: 'Cartões', link: '/', icon: 'credit-card' },
   { name: 'Categorias', link: '/', icon: 'bookmarks' },
   { separator: true },
@@ -95,7 +95,7 @@ onMounted(async () => {
                 <li>
                   <NuxtLink class="dropdown-item" to="/">
                     <i class="bi bi-person me-2" />
-                    Conta
+                    Perfil
                   </NuxtLink>
                 </li>
                 <li>

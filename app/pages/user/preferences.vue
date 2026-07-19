@@ -84,8 +84,10 @@ onMounted(load);
 
     <form v-else class="card" @submit.prevent="save">
       <div class="card-body">
-        <h5 class="card-title">Preferências</h5>
-        <h6 class="card-subtitle mb-3 text-body-secondary">Moedas</h6>
+        <h5 class="card-title">Moedas</h5>
+        <h6 class="card-subtitle mb-4 text-body-secondary">
+          Configuração global das moedas no seu perfil.
+        </h6>
 
         <div class="mb-3">
           <label for="currencies" class="form-label">Moedas utilizadas por mim</label>
