@@ -1,0 +1,36 @@
+export default {
+  preferences: {
+    pageTitle: 'Preferências',
+    appearance: {
+      title: 'Aparência',
+      description: 'Escolha como a interface será exibida neste dispositivo.',
+      theme: 'Tema',
+      auto: 'Sistema',
+      autoDescription: 'Acompanha a preferência de aparência do sistema.',
+      light: 'Claro',
+      lightDescription: 'Usa sempre o tema claro.',
+      dark: 'Escuro',
+      darkDescription: 'Usa sempre o tema escuro.',
+    },
+    language: {
+      title: 'Idioma',
+      description: 'Escolha o idioma usado na interface.',
+      label: 'Idioma da interface',
+      saving: 'Alterando idioma...',
+      persisted: 'A escolha é salva neste navegador.',
+    },
+    currencies: {
+      title: 'Moedas',
+      description: 'Configuração global das moedas no seu perfil.',
+      usedCurrencies: 'Moedas utilizadas por mim',
+      placeholder: 'Selecione as moedas utilizadas por você',
+      availableAriaLabel: 'Define as moedas disponíveis para uso',
+      defaultCurrency: 'Moeda padrão',
+      defaultAriaLabel: 'Define a moeda padrão para exibição de valores',
+      loading: 'Carregando preferências...',
+      save: 'Salvar',
+      successMessage: 'Preferências atualizadas com sucesso.',
+      successTitle: 'Preferências',
+    },
+  },
+};

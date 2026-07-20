@@ -80,6 +80,8 @@ Check out the [deployment documentation](https://nuxt.com/docs/getting-started/d
 - [Bootstrap](https://getbootstrap.com/) - The CSS framework used
 - [MongoDB](https://www.mongodb.com/) - The database used
 - [TomSelect](https://tom-select.js.org/) - The select input library used to multiple selections
+- [Nuxt i18n](https://i18n.nuxtjs.org/) - The internationalization library used
+  - [Vue i18n](https://vue-i18n.intlify.dev/) - The internationalization library used by Nuxt i18n
 
 ## Funcionalidades
 

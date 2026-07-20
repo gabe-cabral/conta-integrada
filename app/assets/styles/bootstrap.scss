@@ -9,7 +9,7 @@
 // Configuration
 @import 'bootstrap/scss/functions';
 @import 'bootstrap/scss/variables';
-// @import 'bootstrap/scss/variables-dark';
+@import 'bootstrap/scss/variables-dark';
 
 // Merge the maps
 $theme-colors: map-merge($theme-colors, $nx-colors);

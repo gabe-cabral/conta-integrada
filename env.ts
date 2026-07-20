@@ -7,6 +7,8 @@ export const env = createEnv({
    * Will throw if you access these variables on the client.
    */
   server: {
+    NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
+
     // Nuxt
     NUXT_SESSION_PASSWORD: z
       .string()
@@ -22,6 +24,7 @@ export const env = createEnv({
       .min(24)
       .max(128)
       .regex(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z0-9]).+$/),
+    BASE_URL: z.url(),
 
     // GCP
     GCP_EMAIL: z.email(),

@@ -2,7 +2,7 @@ import { fileURLToPath } from 'node:url';
 
 import { ViteImageOptimizer } from 'vite-plugin-image-optimizer';
 
-import './env'; // Load environment variables from env.ts
+import { env } from './env';
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -17,6 +17,7 @@ export default defineNuxtConfig({
     '@nuxt/scripts',
     '@pinia/nuxt',
     'nuxt-auth-utils',
+    '@nuxtjs/i18n',
   ],
   imports: {
     dirs: ['shared/schemas', 'shared/utils'],
@@ -28,29 +29,29 @@ export default defineNuxtConfig({
   ],
 
   runtimeConfig: {
-    internalApiSecret: process.env.INTERNAL_API_SECRET || '',
+    internalApiSecret: env.INTERNAL_API_SECRET || '',
     session: {
       name: 'nuxt-session',
-      password: process.env.NUXT_SESSION_PASSWORD || 'supersecret',
+      password: env.NUXT_SESSION_PASSWORD || 'supersecret',
       maxAge: 4 * 60 * 60, // 4 hours,
       cookie: {
         sameSite: 'lax',
       },
     },
     mongoDb: {
-      uri: process.env.MONGODB_URI || '',
-      dbName: process.env.MONGODB_DATA_DB || 'conta-integrada-dev',
-      certPath: process.env.MONGODB_CERT_PATH || '',
-      kmsProviderName: process.env.MONGODB_KMS_PROVIDER_NAME || 'gcp',
-      keyVaultDatabaseName: process.env.MONGODB_KEY_VAULT_DB_NAME || 'encryption',
-      keyVaultCollectionName: process.env.MONGODB_KEY_VAULT_COLLECTION_NAME || 'keyVault',
+      uri: env.MONGODB_URI || '',
+      dbName: env.MONGODB_DATA_DB || 'conta-integrada-dev',
+      certPath: env.MONGODB_CERT_PATH || '',
+      kmsProviderName: env.MONGODB_KMS_PROVIDER_NAME || 'gcp',
+      keyVaultDatabaseName: env.MONGODB_KEY_VAULT_DB_NAME || 'encryption',
+      keyVaultCollectionName: env.MONGODB_KEY_VAULT_COLLECTION_NAME || 'keyVault',
       gcp: {
-        email: process.env.MONGODB_GCP_EMAIL,
-        privateKey: process.env.MONGODB_GCP_PRIVATE_KEY,
-        cmkProjectId: process.env.MONGODB_GCP_PROJECT_ID,
-        cmkLocation: process.env.MONGODB_CMK_LOCATION,
-        cmkKeyRing: process.env.MONGODB_CMK_KEY_RING,
-        cmkKeyName: process.env.MONGODB_CMK_KEY_NAME,
+        email: env.GCP_EMAIL,
+        privateKey: env.GCP_PRIVATE_KEY,
+        cmkProjectId: env.MONGODB_GCP_PROJECT_ID,
+        cmkLocation: env.MONGODB_CMK_LOCATION,
+        cmkKeyRing: env.MONGODB_CMK_KEY_RING,
+        cmkKeyName: env.MONGODB_CMK_KEY_NAME,
       },
     },
   },
@@ -75,6 +76,49 @@ export default defineNuxtConfig({
         // { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap', media: 'print', onload: 'this.media=\'all\'' },
       ],
     },
+  },
+
+  i18n: {
+    defaultLocale: 'pt-BR',
+    strategy: 'no_prefix',
+    baseUrl: env.BASE_URL,
+    differentDomains: env.NODE_ENV === 'production',
+    locales: [
+      {
+        code: 'pt-BR',
+        iso: 'pt-BR',
+        name: 'Português',
+        file: 'pt-BR.ts',
+        language: 'pt-BR',
+        domain: 'containtegrada.com.br',
+        domainDefault: true,
+      },
+      {
+        code: 'en',
+        iso: 'en-US',
+        name: 'English',
+        file: 'en.ts',
+        language: 'en-US',
+        domain: 'allinoneaccounts.au',
+      },
+      {
+        code: 'es-CO',
+        iso: 'es-CO',
+        name: 'Español (Colombia)',
+        files: ['es.ts', 'es-CO.ts'],
+        language: 'es-CO',
+        domain: 'cuentaintegrada.co',
+      },
+    ],
+    detectBrowserLanguage: {
+      useCookie: true,
+      cookieKey: 'essential.i18n_redirected',
+      redirectOn: 'root',
+    },
+  },
+
+  routeRules: {
+    '/': { swr: 60, cache: { varies: ['host'] } },
   },
 
   vite: {

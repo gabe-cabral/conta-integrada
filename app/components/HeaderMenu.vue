@@ -108,7 +108,9 @@ onMounted(async () => {
               </ul>
             </div>
 
-            <NuxtLink v-else to="/login" class="btn btn-primary ms-auto">Entrar</NuxtLink>
+            <NuxtLink v-else-if="!$route.path.startsWith('/login')" to="/login" class="btn btn-primary ms-auto">
+              Entrar
+            </NuxtLink>
           </template>
         </AuthState>
       </div>
