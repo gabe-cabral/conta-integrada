@@ -351,28 +351,13 @@ onUnmounted(() => iconDropdown?.dispose());
         </div>
       </div>
 
-      <div class="mb-3">
-        <label for="financial_space_color" class="form-label">Cor</label>
-        <div class="input-group">
-          <input
-            id="financial_space_color"
-            v-model="financialSpaceForm.color"
-            type="color"
-            class="form-control form-control-color"
-            title="Escolher cor do espaço"
-            style="max-width: 5rem"
-            @input="markColorAsManual"
-          />
-          <input
-            id="financial_space_color_hex"
-            v-model.trim="financialSpaceForm.color"
-            type="text"
-            class="form-control font-monospace text-uppercase"
-            title="Escolher cor do espaço"
-            @input="markColorAsManual"
-          />
-        </div>
-      </div>
+      <ColorPicker
+        id="financial_space_color"
+        v-model="financialSpaceForm.color"
+        label="Cor"
+        title="Escolher cor do espaço"
+        @input="markColorAsManual"
+      />
 
       <div class="mb-3">
         <label for="financial_space_currencies" class="form-label"

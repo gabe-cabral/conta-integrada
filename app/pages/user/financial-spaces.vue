@@ -73,9 +73,13 @@ function getCurrencies(financialSpace: FinancialSpace) {
 }
 
 function getCategories(financialSpace: FinancialSpace) {
-  if (financialSpace.categoryMode === 'all') return appStore.categories;
+  if (financialSpace.categoryMode === 'all') {
+    return appStore.categories.filter((category) => category.active);
+  }
   const selectedIds = new Set(financialSpace.categoryIds);
-  return appStore.categories.filter((category) => selectedIds.has(category._id));
+  return appStore.categories.filter(
+    (category) => category.active && selectedIds.has(category._id),
+  );
 }
 
 async function load() {

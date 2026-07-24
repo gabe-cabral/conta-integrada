@@ -25,5 +25,5 @@ logs
 
 # Project files
 .native
-*.json
+/*.json
 *.pem

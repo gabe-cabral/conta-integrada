@@ -1,0 +1,16 @@
+$kind: http-request
+name: Activity Create
+url: "{{HOST}}/api/users/{{user_id}}/categories"
+method: POST
+body:
+  type: json
+  content: |-
+    {
+      "name": "Lavagem do veículo",
+      "active": true,
+      "color": "#5096DE",
+      "parentId": "{{user_category_id}}",
+      "kind": "EXPENSE",
+      "level": "ACTIVITY"
+    }
+order: 5200000000000004

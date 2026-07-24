@@ -1,0 +1,14 @@
+$kind: http-request
+name: Category Update
+url: "{{HOST}}/api/internal/categories/{{catalog_category_id}}"
+method: PATCH
+headers:
+  - key: x-internal-api-secret
+    value: "{{INTERNAL_API_SECRET}}"
+body:
+  type: json
+  content: |-
+    {
+      "active": false
+    }
+order: 4480000000000004

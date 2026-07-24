@@ -1,0 +1,389 @@
+[
+  {
+    "_id": "69767d5c1b836a6a40911d41",
+    "name": { "en": "Housing", "es": "Vivienda", "pt-BR": "Moradia" },
+    "active": true,
+    "color": "#8193ff",
+    "parentId": null,
+    "kind": "EXPENSE",
+    "level": "CATEGORY"
+  },
+  {
+    "_id": "69767d5c1b836a6a40911d42",
+    "name": { "en": "Food", "es": "Alimentación", "pt-BR": "Alimentação" },
+    "active": true,
+    "color": "#e274a8",
+    "parentId": null,
+    "kind": "EXPENSE",
+    "level": "CATEGORY"
+  },
+  {
+    "_id": "69767d5c1b836a6a40911d43",
+    "name": { "en": "Transportation", "es": "Transporte", "pt-BR": "Transporte" },
+    "active": true,
+    "color": "#5096de",
+    "parentId": null,
+    "kind": "EXPENSE",
+    "level": "CATEGORY"
+  },
+  {
+    "_id": "69767d5c1b836a6a40911d44",
+    "name": { "en": "Health", "es": "Salud", "pt-BR": "Saúde" },
+    "active": true,
+    "color": "#72b4ff",
+    "parentId": null,
+    "kind": "EXPENSE",
+    "level": "CATEGORY"
+  },
+  {
+    "_id": "69767d5c1b836a6a40911d45",
+    "name": { "en": "Education", "es": "Educación", "pt-BR": "Educação" },
+    "active": true,
+    "color": "#6470ba",
+    "parentId": null,
+    "kind": "EXPENSE",
+    "level": "CATEGORY"
+  },
+  {
+    "_id": "69767d5c1b836a6a40911d46",
+    "name": { "en": "Entertainment", "es": "Entretenimiento", "pt-BR": "Lazer" },
+    "active": true,
+    "color": "#b8e64c",
+    "parentId": null,
+    "kind": "EXPENSE",
+    "level": "CATEGORY"
+  },
+  {
+    "_id": "69767d5c1b836a6a40911d47",
+    "name": { "en": "Shopping", "es": "Compras", "pt-BR": "Compras" },
+    "active": true,
+    "color": "#f67cff",
+    "parentId": null,
+    "kind": "EXPENSE",
+    "level": "CATEGORY"
+  },
+  {
+    "_id": "69767d5c1b836a6a40911d48",
+    "name": { "en": "Utilities", "es": "Servicios públicos", "pt-BR": "Serviços públicos" },
+    "active": true,
+    "color": "#c671e4",
+    "parentId": null,
+    "kind": "EXPENSE",
+    "level": "CATEGORY"
+  },
+  {
+    "_id": "69767d5c1b836a6a40911d49",
+    "name": { "en": "Debt", "es": "Deudas", "pt-BR": "Dívidas" },
+    "active": true,
+    "color": "#ff6c6c",
+    "parentId": null,
+    "kind": "EXPENSE",
+    "level": "CATEGORY"
+  },
+  {
+    "_id": "69767d5c1b836a6a40911d4a",
+    "name": { "en": "Insurance", "es": "Seguros", "pt-BR": "Seguros" },
+    "active": true,
+    "color": "#afafaf",
+    "parentId": null,
+    "kind": "EXPENSE",
+    "level": "CATEGORY"
+  },
+  {
+    "_id": "69767d5c1b836a6a40911d4b",
+    "name": { "en": "Salary", "es": "Salario", "pt-BR": "Salário" },
+    "active": true,
+    "color": "#2bdca9",
+    "parentId": null,
+    "kind": "INCOME",
+    "level": "CATEGORY"
+  },
+  {
+    "_id": "69767d5c1b836a6a40911d4c",
+    "name": { "en": "Bonuses", "es": "Bonificaciones", "pt-BR": "Bonificações" },
+    "active": true,
+    "color": "#38b790",
+    "parentId": null,
+    "kind": "INCOME",
+    "level": "CATEGORY"
+  },
+  {
+    "_id": "69767d5c1b836a6a40911d4d",
+    "name": { "en": "Investments", "es": "Inversiones", "pt-BR": "Investimentos" },
+    "active": true,
+    "color": "#22a17b",
+    "parentId": null,
+    "kind": "INCOME",
+    "level": "CATEGORY"
+  },
+  {
+    "_id": "69767d5c1b836a6a40911d4e",
+    "name": { "en": "Freelance", "es": "Trabajo independiente", "pt-BR": "Freelance" },
+    "active": true,
+    "color": "#168b68",
+    "parentId": null,
+    "kind": "INCOME",
+    "level": "CATEGORY"
+  },
+  {
+    "_id": "69767d5c1b836a6a40911d4f",
+    "name": { "en": "Own business", "es": "Negocio propio", "pt-BR": "Negócio próprio" },
+    "active": true,
+    "color": "#087553",
+    "parentId": null,
+    "kind": "INCOME",
+    "level": "CATEGORY"
+  },
+  {
+    "_id": "697689e91b836a6a40911d50",
+    "name": { "en": "Rent", "es": "Arriendo", "pt-BR": "Aluguel" },
+    "active": true,
+    "color": "#8193ff",
+    "parentId": "69767d5c1b836a6a40911d41",
+    "kind": "EXPENSE",
+    "level": "ACTIVITY"
+  },
+  {
+    "_id": "697689e91b836a6a40911d51",
+    "name": { "en": "Condominium", "es": "Administración", "pt-BR": "Condomínio" },
+    "active": true,
+    "color": "#8193ff",
+    "parentId": "69767d5c1b836a6a40911d41",
+    "kind": "EXPENSE",
+    "level": "ACTIVITY"
+  },
+  {
+    "_id": "697689e91b836a6a40911d52",
+    "name": { "en": "Groceries", "es": "Mercado", "pt-BR": "Mercado" },
+    "active": true,
+    "color": "#e274a8",
+    "parentId": "69767d5c1b836a6a40911d42",
+    "kind": "EXPENSE",
+    "level": "ACTIVITY"
+  },
+  {
+    "_id": "697689e91b836a6a40911d53",
+    "name": { "en": "Restaurants", "es": "Restaurantes", "pt-BR": "Restaurantes" },
+    "active": true,
+    "color": "#e274a8",
+    "parentId": "69767d5c1b836a6a40911d42",
+    "kind": "EXPENSE",
+    "level": "ACTIVITY"
+  },
+  {
+    "_id": "697689e91b836a6a40911d54",
+    "name": { "en": "Fuel", "es": "Combustible", "pt-BR": "Combustível" },
+    "active": true,
+    "color": "#5096de",
+    "parentId": "69767d5c1b836a6a40911d43",
+    "kind": "EXPENSE",
+    "level": "ACTIVITY"
+  },
+  {
+    "_id": "697689e91b836a6a40911d55",
+    "name": { "en": "Ride sharing", "es": "Uber", "pt-BR": "Aplicativo de transporte" },
+    "active": true,
+    "color": "#5096de",
+    "parentId": "69767d5c1b836a6a40911d43",
+    "kind": "EXPENSE",
+    "level": "ACTIVITY"
+  },
+  {
+    "_id": "697689e91b836a6a40911d56",
+    "name": { "en": "Public transit", "es": "Transporte público", "pt-BR": "Transporte público" },
+    "active": true,
+    "color": "#5096de",
+    "parentId": "69767d5c1b836a6a40911d43",
+    "kind": "EXPENSE",
+    "level": "ACTIVITY"
+  },
+  {
+    "_id": "697689e91b836a6a40911d57",
+    "name": { "en": "Vehicle maintenance", "es": "Mantenimiento del vehículo", "pt-BR": "Manutenção do veículo" },
+    "active": true,
+    "color": "#5096de",
+    "parentId": "69767d5c1b836a6a40911d43",
+    "kind": "EXPENSE",
+    "level": "ACTIVITY"
+  },
+  {
+    "_id": "697689e91b836a6a40911d58",
+    "name": { "en": "Medical appointments", "es": "Consultas médicas", "pt-BR": "Consultas médicas" },
+    "active": true,
+    "color": "#72b4ff",
+    "parentId": "69767d5c1b836a6a40911d44",
+    "kind": "EXPENSE",
+    "level": "ACTIVITY"
+  },
+  {
+    "_id": "697689e91b836a6a40911d59",
+    "name": { "en": "Medication", "es": "Medicamentos", "pt-BR": "Medicamentos" },
+    "active": true,
+    "color": "#72b4ff",
+    "parentId": "69767d5c1b836a6a40911d44",
+    "kind": "EXPENSE",
+    "level": "ACTIVITY"
+  },
+  {
+    "_id": "697689e91b836a6a40911d5a",
+    "name": { "en": "Tuition", "es": "Matrícula", "pt-BR": "Mensalidade" },
+    "active": true,
+    "color": "#6470ba",
+    "parentId": "69767d5c1b836a6a40911d45",
+    "kind": "EXPENSE",
+    "level": "ACTIVITY"
+  },
+  {
+    "_id": "697689e91b836a6a40911d5b",
+    "name": { "en": "Courses", "es": "Cursos", "pt-BR": "Cursos" },
+    "active": true,
+    "color": "#6470ba",
+    "parentId": "69767d5c1b836a6a40911d45",
+    "kind": "EXPENSE",
+    "level": "ACTIVITY"
+  },
+  {
+    "_id": "697689e91b836a6a40911d5c",
+    "name": { "en": "Movies", "es": "Cine", "pt-BR": "Cinema" },
+    "active": true,
+    "color": "#b8e64c",
+    "parentId": "69767d5c1b836a6a40911d46",
+    "kind": "EXPENSE",
+    "level": "ACTIVITY"
+  },
+  {
+    "_id": "697689e91b836a6a40911d5d",
+    "name": { "en": "Subscriptions", "es": "Suscripciones", "pt-BR": "Assinaturas" },
+    "active": true,
+    "color": "#b8e64c",
+    "parentId": "69767d5c1b836a6a40911d46",
+    "kind": "EXPENSE",
+    "level": "ACTIVITY"
+  },
+  {
+    "_id": "697689e91b836a6a40911d5e",
+    "name": { "en": "Clothing", "es": "Ropa", "pt-BR": "Roupas" },
+    "active": true,
+    "color": "#f67cff",
+    "parentId": "69767d5c1b836a6a40911d47",
+    "kind": "EXPENSE",
+    "level": "ACTIVITY"
+  },
+  {
+    "_id": "697689e91b836a6a40911d5f",
+    "name": { "en": "Electronics", "es": "Electrónica", "pt-BR": "Eletrônicos" },
+    "active": true,
+    "color": "#f67cff",
+    "parentId": "69767d5c1b836a6a40911d47",
+    "kind": "EXPENSE",
+    "level": "ACTIVITY"
+  },
+  {
+    "_id": "697689e91b836a6a40911d60",
+    "name": { "en": "Electricity", "es": "Energía", "pt-BR": "Energia" },
+    "active": true,
+    "color": "#c671e4",
+    "parentId": "69767d5c1b836a6a40911d48",
+    "kind": "EXPENSE",
+    "level": "ACTIVITY"
+  },
+  {
+    "_id": "697689e91b836a6a40911d61",
+    "name": { "en": "Internet", "es": "Internet", "pt-BR": "Internet" },
+    "active": true,
+    "color": "#c671e4",
+    "parentId": "69767d5c1b836a6a40911d48",
+    "kind": "EXPENSE",
+    "level": "ACTIVITY"
+  },
+  {
+    "_id": "697689e91b836a6a40911d62",
+    "name": { "en": "Credit card", "es": "Tarjeta de crédito", "pt-BR": "Cartão de crédito" },
+    "active": true,
+    "color": "#ff6c6c",
+    "parentId": "69767d5c1b836a6a40911d49",
+    "kind": "EXPENSE",
+    "level": "ACTIVITY"
+  },
+  {
+    "_id": "697689e91b836a6a40911d63",
+    "name": { "en": "Loan", "es": "Préstamo", "pt-BR": "Empréstimo" },
+    "active": true,
+    "color": "#ff6c6c",
+    "parentId": "69767d5c1b836a6a40911d49",
+    "kind": "EXPENSE",
+    "level": "ACTIVITY"
+  },
+  {
+    "_id": "697689e91b836a6a40911d64",
+    "name": { "en": "Vehicle insurance", "es": "Seguro del vehículo", "pt-BR": "Seguro do veículo" },
+    "active": true,
+    "color": "#afafaf",
+    "parentId": "69767d5c1b836a6a40911d4a",
+    "kind": "EXPENSE",
+    "level": "ACTIVITY"
+  },
+  {
+    "_id": "697689e91b836a6a40911d65",
+    "name": { "en": "Health insurance", "es": "Seguro de salud", "pt-BR": "Plano de saúde" },
+    "active": true,
+    "color": "#afafaf",
+    "parentId": "69767d5c1b836a6a40911d4a",
+    "kind": "EXPENSE",
+    "level": "ACTIVITY"
+  },
+  {
+    "_id": "697689e91b836a6a40911d66",
+    "name": { "en": "Payroll", "es": "Nómina", "pt-BR": "Folha de pagamento" },
+    "active": true,
+    "color": "#2bdca9",
+    "parentId": "69767d5c1b836a6a40911d4b",
+    "kind": "INCOME",
+    "level": "ACTIVITY"
+  },
+  {
+    "_id": "697689e91b836a6a40911d67",
+    "name": { "en": "Annual bonus", "es": "Bono anual", "pt-BR": "Bônus anual" },
+    "active": true,
+    "color": "#38b790",
+    "parentId": "69767d5c1b836a6a40911d4c",
+    "kind": "INCOME",
+    "level": "ACTIVITY"
+  },
+  {
+    "_id": "697689e91b836a6a40911d68",
+    "name": { "en": "Dividends", "es": "Dividendos", "pt-BR": "Dividendos" },
+    "active": true,
+    "color": "#22a17b",
+    "parentId": "69767d5c1b836a6a40911d4d",
+    "kind": "INCOME",
+    "level": "ACTIVITY"
+  },
+  {
+    "_id": "697689e91b836a6a40911d69",
+    "name": { "en": "Interest", "es": "Intereses", "pt-BR": "Juros" },
+    "active": true,
+    "color": "#22a17b",
+    "parentId": "69767d5c1b836a6a40911d4d",
+    "kind": "INCOME",
+    "level": "ACTIVITY"
+  },
+  {
+    "_id": "697689e91b836a6a40911d6a",
+    "name": { "en": "Consulting", "es": "Consultoría", "pt-BR": "Consultoria" },
+    "active": true,
+    "color": "#168b68",
+    "parentId": "69767d5c1b836a6a40911d4e",
+    "kind": "INCOME",
+    "level": "ACTIVITY"
+  },
+  {
+    "_id": "697689e91b836a6a40911d6b",
+    "name": { "en": "Sales", "es": "Ventas", "pt-BR": "Vendas" },
+    "active": true,
+    "color": "#087553",
+    "parentId": "69767d5c1b836a6a40911d4f",
+    "kind": "INCOME",
+    "level": "ACTIVITY"
+  }
+]

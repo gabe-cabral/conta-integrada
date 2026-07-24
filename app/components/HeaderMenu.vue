@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { useAppStore } from '~/stores/appStore';
 
+const { loggedIn: userIsLogged } = useUserSession();
+const { t } = useI18n();
+const appStore = useAppStore();
+
 const menuItems = [
   { name: 'Início', link: '/' },
   { name: 'Transações', link: '/transactions' },
@@ -8,17 +12,14 @@ const menuItems = [
   { name: 'Orçamento', link: '/budget' },
 ];
 
-const userMenuItens = [
-  { name: 'Contas', link: '/user/accounts', icon: 'bank' },
+const userMenuItens = computed(() => [
   { name: 'Espaços', link: '/user/financial-spaces', icon: 'grid-1x2-fill' },
+  { name: 'Contas', link: '/user/accounts', icon: 'bank' },
   { name: 'Cartões', link: '/', icon: 'credit-card' },
-  { name: 'Categorias', link: '/', icon: 'bookmarks' },
+  { name: t('categories.pageTitle'), link: '/user/categories', icon: 'bookmarks' },
   { separator: true },
   { name: 'Preferências', link: '/user/preferences', icon: 'toggles2' },
-];
-
-const { loggedIn: userIsLogged } = useUserSession();
-const appStore = useAppStore();
+]);
 
 watch(userIsLogged, (newVal) => {
   if (!newVal) {

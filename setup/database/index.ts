@@ -6,6 +6,7 @@ import { setup as setupAuthCredentials } from './collections/auth_credentials.ts
 import { setup as setupFinancialSpaces } from './collections/financial-spaces.ts';
 import { setup as setupUserPreferences } from './collections/user_preferences.ts';
 import { setup as setupAuthChallenges } from './collections/auth_challenges.ts';
+import { setup as setupUserCategories } from './collections/user-categories.ts';
 import { setup as setupAuthSessions } from './collections/auth_sessions.ts';
 import { setup as setupTransactions } from './collections/transactions.ts';
 import { setup as setupCategories } from './collections/categories.ts';
@@ -19,6 +20,7 @@ async function main() {
   await setupAuthSessions();
   await setupAuthChallenges();
   await setupCategories();
+  await setupUserCategories();
   await setupTransactions();
   await setupFinancialInstitutions();
   await setupCurrency();

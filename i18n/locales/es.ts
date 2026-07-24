@@ -1,4 +1,32 @@
 export default {
+  categories: {
+    pageTitle: 'Categorías',
+    description: 'Elige las categorías sugeridas y personaliza las actividades que usas para organizar tus movimientos.',
+    income: 'Ingresos',
+    expense: 'Gastos',
+    addCategory: 'Agregar categoría',
+    addActivity: 'Agregar actividad',
+    activities: 'Actividades',
+    loading: 'Cargando categorías...',
+    standard: 'Conta Integrada',
+    custom: 'Personalizada',
+    toggle: 'Cambiar estado de {name}',
+    edit: 'Editar {name}',
+    noActivities: 'No hay actividades disponibles.',
+    empty: 'No hay categorías disponibles.',
+    form: {
+      categoryTitle: 'categoría',
+      activityTitle: 'actividad',
+      activityFor: 'Actividad de {name}',
+      name: 'Nombre',
+      nameRequired: 'Ingresa un nombre.',
+      kind: 'Tipo',
+      color: 'Color',
+      active: 'Activa',
+      save: 'Guardar',
+      successMessage: 'Categoría actualizada correctamente.',
+    },
+  },
   preferences: {
     pageTitle: 'Preferencias',
     appearance: {

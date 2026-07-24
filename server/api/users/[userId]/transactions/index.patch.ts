@@ -1,3 +1,4 @@
+import { assertCategoriesBelongToUser } from '~~/server/utils/categories';
 import { useDatabase } from '~~/server/utils/mongo';
 import { z } from 'zod';
 
@@ -63,6 +64,11 @@ export default defineEventHandler(async (event) => {
 
       body.createdAt = new Date();
       body.userId = user.id;
+      if (body.categoryId) {
+        await assertCategoriesBelongToUser(user.id, [body.categoryId], {
+          activeOnly: true,
+        });
+      }
 
       return insertTransaction(body);
     }

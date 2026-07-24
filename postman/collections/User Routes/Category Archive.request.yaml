@@ -1,0 +1,5 @@
+$kind: http-request
+name: Category Archive
+url: "{{HOST}}/api/users/{{user_id}}/categories/{{user_category_id}}"
+method: DELETE
+order: 5200000000000007

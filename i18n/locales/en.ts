@@ -1,4 +1,32 @@
 export default {
+  categories: {
+    pageTitle: 'Categories',
+    description: 'Choose suggested categories and customize the activities used to organize your transactions.',
+    income: 'Income',
+    expense: 'Expenses',
+    addCategory: 'Add category',
+    addActivity: 'Add activity',
+    activities: 'Activities',
+    loading: 'Loading categories...',
+    standard: 'Conta Integrada',
+    custom: 'Custom',
+    toggle: 'Change status of {name}',
+    edit: 'Edit {name}',
+    noActivities: 'No activities available.',
+    empty: 'No categories available.',
+    form: {
+      categoryTitle: 'category',
+      activityTitle: 'activity',
+      activityFor: 'Activity for {name}',
+      name: 'Name',
+      nameRequired: 'Enter a name.',
+      kind: 'Type',
+      color: 'Color',
+      active: 'Active',
+      save: 'Save',
+      successMessage: 'Category updated successfully.',
+    },
+  },
   preferences: {
     pageTitle: 'Preferences',
     appearance: {

@@ -1,0 +1,12 @@
+$kind: http-request
+name: Category Adopt
+url: "{{HOST}}/api/users/{{user_id}}/categories"
+method: POST
+body:
+  type: json
+  content: |-
+    {
+      "catalogCategoryId": "{{catalog_category_id}}",
+      "active": true
+    }
+order: 5200000000000002

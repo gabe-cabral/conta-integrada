@@ -1,4 +1,11 @@
-import type { TransactionCategory, TransactionTypeDisplay } from '~~/shared/types/transactions';
+import { getLocalizedCategoryName } from '~~/shared/utils/categories';
+
+import type {
+  Category,
+  CategoryConfiguration,
+  ResolvedUserCategory,
+} from '~~/shared/schemas/categories';
+import type { TransactionTypeDisplay } from '~~/shared/types/transactions';
 import type { UserPreference } from '~~/shared/schemas/userPreferences';
 import type { Currency } from '~~/shared/types/finances';
 
@@ -8,7 +15,8 @@ import useSystemStore from './systemStore';
 
 export interface AppState {
   currencies: Currency[]
-  categories: TransactionCategory[]
+  catalogCategories: Category[]
+  categories: ResolvedUserCategory[]
   transactionTypes: TransactionTypeDisplay[]
   lastInputDate: Date | null
   lastInputCategoryId: string | null
@@ -26,14 +34,20 @@ export interface UserProfile {
   lastAccessAt: string | null
 }
 
+interface I18nInjection {
+  locale: { value: string }
+}
+
 export const useAppStore = defineStore('appStore', () => {
   const { user } = useUserSession();
+  const { $i18n } = useNuxtApp() as unknown as { $i18n: I18nInjection };
   const systemStore = useSystemStore();
 
   const loading = ref(false);
   const userProfile = ref<UserProfile | null>(null);
   const currencies = ref<Currency[]>([]);
-  const categories = ref<TransactionCategory[]>([]);
+  const catalogCategories = ref<Category[]>([]);
+  const categories = ref<ResolvedUserCategory[]>([]);
   const transactionTypes = ref<TransactionTypeDisplay[]>([
     { code: 'EXPENSE', label: 'Despesa' },
     { code: 'INCOME', label: 'Receita' },
@@ -74,7 +88,8 @@ export const useAppStore = defineStore('appStore', () => {
     const preference = await requestFetch<UserPreference>(
       `/api/users/${user.value.id}/user_preferences`,
     );
-    currencies.value = preference.currencies.map(isoCodeToCurrency);
+    currencies.value = preference.currencies.map((code) =>
+      isoCodeToCurrency(code));
     systemStore.setDefaultCurrency(preference.defaultCurrency);
   }
 
@@ -96,12 +111,45 @@ export const useAppStore = defineStore('appStore', () => {
     loading.value = true;
 
     try {
-      const { data } = await useFetch<TransactionCategory[]>(
+      const requestFetch = import.meta.server ? useRequestFetch() : $fetch;
+      const configuration = await requestFetch<CategoryConfiguration>(
         `/api/users/${user.value.id}/categories`,
       );
 
-      if (Array.isArray(data.value)) {
-        categories.value = data.value;
+      if (configuration) {
+        catalogCategories.value = configuration.catalog;
+        const catalogById = new Map(
+          configuration.catalog.map((category) => [category._id, category]),
+        );
+
+        categories.value = configuration.categories.reduce<
+          ResolvedUserCategory[]
+        >((resolved, category) => {
+          if (category.name) {
+            resolved.push({
+              ...category,
+              name: category.name,
+              source: 'custom',
+            });
+            return resolved;
+          }
+
+          const catalogCategory = category.catalogCategoryId
+            ? catalogById.get(category.catalogCategoryId)
+            : undefined;
+          if (!catalogCategory) return resolved;
+
+          resolved.push({
+            ...category,
+            name: getLocalizedCategoryName(
+              catalogCategory.name,
+              $i18n.locale.value,
+            ),
+            active: category.active && catalogCategory.active,
+            source: 'system',
+          });
+          return resolved;
+        }, []);
       }
     } catch (error) {
       console.error('Error fetching categories:', error);
@@ -117,10 +165,34 @@ export const useAppStore = defineStore('appStore', () => {
     }
   }
 
+  watch(() => $i18n.locale.value, (currentLocale) => {
+    const catalogById = new Map(
+      catalogCategories.value.map((category) => [category._id, category]),
+    );
+
+    categories.value = categories.value.map((category) => {
+      if (category.source !== 'system' || !category.catalogCategoryId) {
+        return category;
+      }
+
+      const catalogCategory = catalogById.get(category.catalogCategoryId);
+      return catalogCategory
+        ? {
+            ...category,
+            name: getLocalizedCategoryName(
+              catalogCategory.name,
+              currentLocale,
+            ),
+          }
+        : category;
+    });
+  });
+
   return {
     loading,
     userProfile,
     currencies,
+    catalogCategories,
     categories,
     transactionTypes,
     lastInputDate,

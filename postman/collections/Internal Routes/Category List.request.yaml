@@ -1,0 +1,8 @@
+$kind: http-request
+name: Category List
+url: "{{HOST}}/api/internal/categories"
+method: GET
+headers:
+  - key: x-internal-api-secret
+    value: "{{INTERNAL_API_SECRET}}"
+order: 4480000000000001

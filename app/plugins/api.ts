@@ -2,11 +2,17 @@ import useSystemStore from '~/stores/systemStore';
 
 export default defineNuxtPlugin((nuxtApp) => {
   const { session } = useUserSession();
+  const requestHeaders = import.meta.server
+    ? useRequestHeaders(['cookie'])
+    : {};
 
   const api = $fetch.create({
-    baseURL: 'http://localhost:3000/api',
+    baseURL: '/api',
 
     onRequest({ options, error }) {
+      if (requestHeaders.cookie) {
+        options.headers.set('cookie', requestHeaders.cookie);
+      }
       options.headers.set('X-Correlation-ID', crypto.randomUUID());
       options.headers.set('X-User-ID', session.value?.user?.id || 'guest');
 

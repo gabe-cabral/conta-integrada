@@ -1,0 +1,16 @@
+$kind: http-request
+name: Category Create
+url: "{{HOST}}/api/users/{{user_id}}/categories"
+method: POST
+body:
+  type: json
+  content: |-
+    {
+      "name": "Viagens internacionais",
+      "active": true,
+      "color": "#6F42C1",
+      "parentId": null,
+      "kind": "EXPENSE",
+      "level": "CATEGORY"
+    }
+order: 5200000000000003

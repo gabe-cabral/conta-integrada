@@ -1,0 +1,5 @@
+$kind: http-request
+name: Category Get
+url: "{{HOST}}/api/users/{{user_id}}/categories/{{user_category_id}}"
+method: GET
+order: 5200000000000005

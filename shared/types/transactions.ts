@@ -1,3 +1,4 @@
+import type { ResolvedUserCategory } from '../schemas/categories.js';
 import type { AuditableRecord } from '../zod/zodBase.js';
 import type { AccountType } from './resources';
 import type { DocumentOwner } from './user';
@@ -30,15 +31,7 @@ export interface TransactionRecurrence {
   totalOccurrences?: number
 }
 
-export interface TransactionCategory {
-  _id: string
-  name: string
-  active: boolean
-  color: string
-  parentId?: string
-  kind: TransactionType
-  userId: string
-}
+export type TransactionCategory = ResolvedUserCategory;
 
 export interface Transaction extends DocumentOwner, AuditableRecord {
   _id: string

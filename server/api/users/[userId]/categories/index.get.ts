@@ -1,21 +1,19 @@
-import { ObjectId } from 'mongodb';
-import z from 'zod';
+import UserCategoriesRepo from '~~/server/repositories/UserCategoriesRepo';
+import CategoriesRepo from '~~/server/repositories/CategoriesRepo';
+import { zodObjectId } from '~~/shared/zod/mongodb';
+import { z } from 'zod';
 
-const routeSchema = z.object({
-  userId: z.string().length(24),
-});
+const routeSchema = z.strictObject({ userId: zodObjectId });
 
 export default defineEventHandler(async (event) => {
-  const params = await getValidatedRouterParams(event, routeSchema.parse);
-
+  const { userId } = await getValidatedRouterParams(event, routeSchema.parse);
   const { user } = await requireUserSession(event);
+  if (user.id !== userId) throw createError({ statusCode: 403, message: 'Forbidden' });
 
-  if (user.id !== params!.userId) {
-    throw createError({ statusCode: 403, message: 'Forbidden' });
-  }
+  const [catalog, categories] = await Promise.all([
+    new CategoriesRepo().listCategories(),
+    new UserCategoriesRepo(userId).getConfiguredCategories(),
+  ]);
 
-  const { db } = await useSecureClient();
-  const collection = db.collection('categories');
-
-  return collection.find({ userId: ObjectId.createFromHexString(user.id) }).toArray();
+  return { catalog, categories };
 });

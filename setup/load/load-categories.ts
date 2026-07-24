@@ -1,61 +1,86 @@
 import { ObjectId } from 'mongodb';
 
-import type { TransactionCategory } from '#shared/types/transactions.ts';
-import type { AnyBulkWriteOperation, Binary } from 'mongodb';
+import type { Category } from '#shared/schemas/categories.ts';
+import type { AnyBulkWriteOperation } from 'mongodb';
 
-import { getKeyAltName } from '#server/utils/key-alt-name.ts';
+import { CATEGORY_KINDS, CATEGORY_LEVELS } from '#shared/constants/categories.ts';
 
-import data from './conta-integrada-dev.categories.json' with { type: 'json' };
-import { getSecureClient } from '../database/client.ts';
+import data from './categories-catalog.json' with { type: 'json' };
+import { getClient } from '../database/client.ts';
 
-interface TransactionCategoryDb extends Omit<
-  TransactionCategory,
-  'name' | '_id' | 'parentId' | 'userId'
-> {
-  name: Binary
+type CategoryDbDocument = Omit<Category, '_id' | 'parentId'> & {
   _id: ObjectId
   parentId: ObjectId | null
-  userId: ObjectId
+};
+
+if (!Array.isArray(data)) throw new Error('Category data is not a list.');
+const seedCategories = data.map((item) => parseCategory(item));
+
+async function load() {
+  const { db } = await getClient();
+  const collection = db.collection<CategoryDbDocument>('categories');
+  const documents = seedCategories.map(mapData);
+  const operations: AnyBulkWriteOperation<CategoryDbDocument>[] = documents.map(
+    (document) => ({
+      replaceOne: {
+        filter: { _id: document._id },
+        replacement: document,
+        upsert: true,
+      },
+    }),
+  );
+  const result = await collection.bulkWrite(operations, { ordered: false });
+
+  console.log(
+    `${result.upsertedCount} categorias do catálogo inseridas; `
+    + `${result.modifiedCount} atualizadas; `
+    + `${result.matchedCount - result.modifiedCount} já estavam atualizadas.`,
+  );
 }
 
-async function load(userId: string) {
-  if (!Array.isArray(data)) throw new Error('Data is not a list.');
+function mapData(category: Category): CategoryDbDocument {
+  return {
+    ...category,
+    _id: ObjectId.createFromHexString(category._id),
+    parentId: category.parentId
+      ? ObjectId.createFromHexString(category.parentId)
+      : null,
+  };
+}
 
-  const { db, clientEncryption } = await getSecureClient();
-  const coll = db.collection<TransactionCategoryDb>('categories');
-  const keyAltName = getKeyAltName(userId);
-  const documents: TransactionCategoryDb[] = [];
+function parseCategory(value: unknown): Category {
+  if (!isCategory(value)) throw new Error('Invalid category seed record.');
+  return value;
+}
 
-  async function mapData(d: TransactionCategory): Promise<TransactionCategoryDb> {
-    return {
-      ...d,
-      name: await clientEncryption.encrypt(d.name, {
-        algorithm: 'AEAD_AES_256_CBC_HMAC_SHA_512-Random',
-        keyAltName,
-      }),
-      _id: ObjectId.createFromHexString(d._id),
-      parentId: d.parentId ? ObjectId.createFromHexString(d.parentId) : null,
-      userId: ObjectId.createFromHexString(userId),
-    };
-  }
+function isCategory(value: unknown): value is Category {
+  if (!value || typeof value !== 'object') return false;
 
-  for await (const item of data) {
-    const doc = await mapData(item as TransactionCategory);
-    documents.push(doc);
-  }
+  const category = value as Record<string, unknown>;
+  const name = category.name as Record<string, unknown> | undefined;
+  const parentId = category.parentId;
 
-  const operations: AnyBulkWriteOperation<TransactionCategoryDb>[] = documents.map((document) => ({
-    updateOne: {
-      filter: { _id: document._id, userId: document.userId },
-      update: { $setOnInsert: document },
-      upsert: true,
-    },
-  }));
-
-  const result = await coll.bulkWrite(operations, { ordered: false });
-  const existingCount = documents.length - result.upsertedCount;
-
-  console.log(`${result.upsertedCount} categorias inseridas; ${existingCount} já existiam.`);
+  return (
+    typeof category._id === 'string'
+    && ObjectId.isValid(category._id)
+    && Boolean(name)
+    && typeof name?.en === 'string'
+    && name.en.length > 0
+    && typeof name.es === 'string'
+    && name.es.length > 0
+    && typeof name['pt-BR'] === 'string'
+    && name['pt-BR'].length > 0
+    && typeof category.active === 'boolean'
+    && typeof category.color === 'string'
+    && /^#[0-9a-f]{6}$/i.test(category.color)
+    && (parentId === null
+      || (typeof parentId === 'string' && ObjectId.isValid(parentId)))
+    && CATEGORY_KINDS.includes(category.kind as never)
+    && CATEGORY_LEVELS.includes(category.level as never)
+    && (category.level === 'CATEGORY'
+      ? parentId === null
+      : parentId !== null)
+  );
 }
 
 export { load };

@@ -1,3 +1,4 @@
+import { assertCategoriesBelongToUser } from '~~/server/utils/categories';
 import TransactionsRepo from '~~/server/repositories/TransactionsRepo';
 import { z } from 'zod';
 
@@ -70,6 +71,11 @@ export default defineEventHandler(async (event) => {
 
   try {
     body.userId = user.id;
+    if (body.categoryId) {
+      await assertCategoriesBelongToUser(user.id, [body.categoryId], {
+        activeOnly: true,
+      });
+    }
 
     const id = await repository.insertTransaction(body);
 

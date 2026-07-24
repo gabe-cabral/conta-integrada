@@ -62,12 +62,20 @@ function getCurrencySymbol(code: string) {
 }
 
 const categories = computed(() => {
-  return appStore.categories.filter((c) => !c.parentId && c.kind === transaction.value?.type);
+  return appStore.categories.filter(
+    (category) =>
+      category.active
+      && !category.parentId
+      && category.kind === transaction.value?.type,
+  );
 });
 
 function getSubcategories(parentId: string) {
   return appStore.categories.filter(
-    (c) => c.parentId === parentId && c.kind === transaction.value?.type,
+    (category) =>
+      category.active
+      && category.parentId === parentId
+      && category.kind === transaction.value?.type,
   );
 }
 

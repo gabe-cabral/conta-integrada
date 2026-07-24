@@ -1,0 +1,23 @@
+$kind: http-request
+name: Category Create
+url: "{{HOST}}/api/internal/categories"
+method: POST
+headers:
+  - key: x-internal-api-secret
+    value: "{{INTERNAL_API_SECRET}}"
+body:
+  type: json
+  content: |-
+    {
+      "name": {
+        "en": "Taxes",
+        "es": "Impuestos",
+        "pt-BR": "Impostos"
+      },
+      "active": true,
+      "color": "#AF8B4C",
+      "parentId": null,
+      "kind": "EXPENSE",
+      "level": "CATEGORY"
+    }
+order: 4480000000000003
