@@ -7,6 +7,8 @@ export default {
     addCategory: 'Adicionar categoria',
     addActivity: 'Adicionar atividade',
     activities: 'Atividades',
+    activeSection: 'Ativos',
+    inactiveSection: 'Inativos',
     loading: 'Carregando categorias...',
     standard: 'Conta Integrada',
     custom: 'Personalizada',
@@ -14,6 +16,9 @@ export default {
     edit: 'Editar {name}',
     noActivities: 'Nenhuma atividade disponível.',
     empty: 'Nenhuma categoria disponível.',
+    sectionSummary: 'Exibindo {activities} em {categories}',
+    activitiesCount: '{count} atividade | {count} atividades',
+    categoriesCount: '{count} categoria | {count} categorias',
     form: {
       categoryTitle: 'categoria',
       activityTitle: 'atividade',
