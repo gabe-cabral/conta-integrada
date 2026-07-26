@@ -283,126 +283,118 @@ load();
 
     <div v-else class="tab-content bg-body border border-top-0 rounded-bottom p-3">
       <div class="tab-pane active" role="tabpanel">
-        <div v-if="rootCategories.length" class="accordion category-list">
+        <div v-if="rootCategories.length" class="accordion">
           <article
             v-for="category in rootCategories"
             :key="category.key"
-            class="accordion-item"
+            class="card shadow-sm mb-4"
             :class="{ 'category-inactive': !category.active }"
           >
-            <div class="accordion-header d-flex align-items-center gap-2 pe-3">
-              <button
-                type="button"
-                class="accordion-button flex-grow-0 w-auto pe-2"
-                :class="{ collapsed: !expandedKeys.has(category.key) }"
-                :aria-expanded="expandedKeys.has(category.key)"
-                @click="toggleExpanded(category.key)"
-              >
-                <span
-                  class="category-color me-2"
-                  :style="{ backgroundColor: category.color }"
-                  aria-hidden="true"
-                />
-                <span class="text-truncate">{{ category.name }}</span>
-              </button>
+            <div class="accordion-item">
+              <div class="accordion-header d-flex align-items-center gap-2">
+                <button
+                  type="button"
+                  class="accordion-button flex-grow-1"
+                  :class="{ collapsed: !expandedKeys.has(category.key) }"
+                  :aria-expanded="expandedKeys.has(category.key)"
+                  @click="toggleExpanded(category.key)"
+                >
+                  <span
+                    class="category-color me-2"
+                    :style="{ backgroundColor: category.color }"
+                    aria-hidden="true"
+                  />
+                  <span class="text-truncate">{{ category.name }}</span>
 
-              <button
-                v-if="category.source === 'custom'"
-                type="button"
-                class="btn btn-sm btn-outline-secondary flex-shrink-0"
-                :aria-label="t('categories.edit', { name: category.name })"
-                @click="editCategory(category)"
-              >
-                <i class="bi bi-pencil" aria-hidden="true" />
-              </button>
+                  <button
+                          v-if="category.source === 'custom'" type="button"
+                          class="btn btn-sm btn-outline-secondary flex-shrink-0 mx-2"
+                          :aria-label="t('categories.edit', { name: category.name })"
+                          @click.stop="editCategory(category)">
+                    <i class="bi bi-pencil" aria-hidden="true" />
+                  </button>
 
-              <span class="badge text-bg-light border ms-auto">
-                {{ category.source === 'system'
-                  ? t('categories.standard')
-                  : t('categories.custom') }}
-              </span>
+                  <span v-if="category.source === 'system'" class="badge text-bg-light border mx-2">
+                    {{ t('categories.standard') }}
+                  </span>
 
-              <div class="form-check form-switch mb-0">
-                <input
-                  :id="`category_active_${category.key}`"
-                  type="checkbox"
-                  class="form-check-input"
-                  :checked="category.active"
-                  :disabled="!category.available || updatingIds.has(category.key)"
-                  :aria-label="t('categories.toggle', { name: category.name })"
-                  @change="toggleCategory(
-                    category,
-                    ($event.target as HTMLInputElement).checked,
-                  )"
-                />
+                  <div class="form-check form-switch ms-auto mb-0 me-2">
+                    <input
+                          :id="`category_active_${category.key}`" type="checkbox"
+                          class="form-check-input" :checked="category.active"
+                          :disabled="!category.available || updatingIds.has(category.key)"
+                          :aria-label="t('categories.toggle', { name: category.name })" @change="toggleCategory(
+                            category,
+                            ($event.target as HTMLInputElement).checked,
+                          )" />
+                  </div>
+                </button>
+
               </div>
 
-            </div>
-
-            <div v-show="expandedKeys.has(category.key)" class="accordion-collapse">
-              <div class="accordion-body pt-2">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                  <small class="text-body-secondary">{{ t('categories.activities') }}</small>
-                  <button
-                    type="button"
-                    class="btn btn-sm btn-outline-primary"
-                    :disabled="!category.record || !category.active"
-                    @click="openNewActivity(category)"
-                  >
-                    <i class="bi bi-plus-lg me-1" />{{ t('categories.addActivity') }}
-                  </button>
-                </div>
-
-                <ul v-if="getActivities(category.key).length" class="list-group list-group-flush">
-                  <li
-                    v-for="activity in getActivities(category.key)"
-                    :key="activity.key"
-                    class="list-group-item d-flex align-items-center gap-2 px-0"
-                    :class="{ 'category-inactive': !activity.active }"
-                  >
-                    <span
-                      class="category-color"
-                      :style="{ backgroundColor: activity.color }"
-                      aria-hidden="true"
-                    />
-                    <span>{{ activity.name }}</span>
+              <div v-show="expandedKeys.has(category.key)" class="accordion-collapse pe-3">
+                <div class="accordion-body pt-2 me-2">
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <small class="text-body-secondary">{{ t('categories.activities') }}</small>
                     <button
-                      v-if="activity.source === 'custom'"
                       type="button"
-                      class="btn btn-sm btn-outline-secondary flex-shrink-0"
-                      :aria-label="t('categories.edit', { name: activity.name })"
-                      @click="editCategory(activity)"
+                      class="btn btn-sm btn-outline-primary"
+                      :disabled="!category.record || !category.active"
+                      @click="openNewActivity(category)"
                     >
-                      <i class="bi bi-pencil" aria-hidden="true" />
+                      <i class="bi bi-plus-lg me-1" />{{ t('categories.addActivity') }}
                     </button>
-                    <span class="badge text-bg-light border ms-auto">
-                      {{ activity.source === 'system'
-                        ? t('categories.standard')
-                        : t('categories.custom') }}
-                    </span>
-                    <div class="form-check form-switch mb-0">
-                      <input
-                        :id="`activity_active_${activity.key}`"
-                        type="checkbox"
-                        class="form-check-input"
-                        :checked="activity.active"
-                        :disabled="
-                          !activity.available
-                          || !category.active
-                          || updatingIds.has(activity.key)
-                        "
-                        :aria-label="t('categories.toggle', { name: activity.name })"
-                        @change="toggleCategory(
-                          activity,
-                          ($event.target as HTMLInputElement).checked,
-                        )"
+                  </div>
+
+                  <ul v-if="getActivities(category.key).length" class="list-group list-group-flush">
+                    <li
+                      v-for="activity in getActivities(category.key)"
+                      :key="activity.key"
+                      class="list-group-item d-flex align-items-center gap-2 px-0"
+                      :class="{ 'category-inactive': !activity.active }"
+                    >
+                      <span
+                        class="category-color"
+                        :style="{ backgroundColor: activity.color }"
+                        aria-hidden="true"
                       />
-                    </div>
-                  </li>
-                </ul>
-                <p v-else class="small text-body-secondary mb-0">
-                  {{ t('categories.noActivities') }}
-                </p>
+                      <span>{{ activity.name }}</span>
+                      <button
+                        v-if="activity.source === 'custom'"
+                        type="button"
+                        class="btn btn-sm btn-outline-secondary flex-shrink-0"
+                        :aria-label="t('categories.edit', { name: activity.name })"
+                        @click="editCategory(activity)"
+                      >
+                        <i class="bi bi-pencil" aria-hidden="true" />
+                      </button>
+                      <span v-if="activity.source === 'system'" class="badge text-bg-light border ms-auto">
+                        {{ t('categories.standard') }}
+                      </span>
+                      <div class="form-check form-switch mb-0">
+                        <input
+                          :id="`activity_active_${activity.key}`"
+                          type="checkbox"
+                          class="form-check-input"
+                          :checked="activity.active"
+                          :disabled="
+                            !activity.available
+                            || !category.active
+                            || updatingIds.has(activity.key)
+                          "
+                          :aria-label="t('categories.toggle', { name: activity.name })"
+                          @change="toggleCategory(
+                            activity,
+                            ($event.target as HTMLInputElement).checked,
+                          )"
+                        />
+                      </div>
+                    </li>
+                  </ul>
+                  <p v-else class="small text-body-secondary mb-0">
+                    {{ t('categories.noActivities') }}
+                  </p>
+                </div>
               </div>
             </div>
           </article>
@@ -444,5 +436,9 @@ load();
 
 .accordion-header .accordion-button {
   min-width: 0;
+}
+
+.accordion-button::after {
+  margin-left: 0;
 }
 </style>
