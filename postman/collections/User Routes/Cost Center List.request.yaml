@@ -1,0 +1,5 @@
+$kind: http-request
+name: Cost Center List
+url: "{{HOST}}/api/users/{{user_id}}/cost-centers"
+method: GET
+order: 5200000000000002

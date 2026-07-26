@@ -1,3 +1,4 @@
+import { assertCostCenterBelongsToUser } from '~~/server/utils/costCenters';
 import TransactionsRepo from '~~/server/repositories/TransactionsRepo';
 import { z } from 'zod';
 
@@ -28,6 +29,7 @@ const postSchema = z.strictObject({
   ]),
   status: z.enum(['CANCELED', 'CONFIRMED', 'PENDING']),
   categoryId: z.nullish(z.string().length(24)),
+  costCenterId: z.nullish(z.string().length(24)),
   sourceId: z.string().length(24),
   sourceType: z.enum([
     'CHECKING',
@@ -70,6 +72,12 @@ export default defineEventHandler(async (event) => {
 
   try {
     body.userId = user.id;
+    if (body.costCenterId) {
+      await assertCostCenterBelongsToUser(user.id, body.costCenterId, {
+        activeOnly: true,
+      });
+    }
+    body.costCenterId ??= null;
 
     const id = await repository.insertTransaction(body);
 

@@ -11,6 +11,7 @@ const emits = defineEmits<{
 
 const props = withDefaults(
   defineProps<{
+    createTitle?: string
     id?: string | null
     kind: string
     loading?: boolean
@@ -21,6 +22,7 @@ const props = withDefaults(
     validated?: boolean
   }>(),
   {
+    createTitle: '',
     id: null,
     loading: false,
     sending: false,
@@ -33,7 +35,8 @@ const props = withDefaults(
 const panelId = computed(() => `${props.kind}_form`);
 const labelId = computed(() => `${props.kind}_form_label`);
 const isOpen = computed(() => Boolean(props.id));
-const heading = computed(() => (props.id === 'new' ? `Novo ${props.title}` : props.title));
+const heading = computed(() =>
+  props.id === 'new' ? (props.createTitle || `Novo ${props.title}`) : props.title);
 const submitText = computed(() => {
   if (props.submitLabel) return props.submitLabel;
   return props.id === 'new' ? `Criar ${props.title}` : 'Salvar alteracoes';

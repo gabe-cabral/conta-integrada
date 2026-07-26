@@ -19,9 +19,15 @@ async function setup(): Promise<Collection<Transaction>> {
     validationAction: 'error',
   });
 
+  await collection.updateMany(
+    { costCenterId: { $exists: false } },
+    { $set: { costCenterId: null } },
+  );
+
   await ensureIndexes(collection, [
     { key: { userId: 1, date: -1 }, name: 'user-date' },
     { key: { userId: 1 }, name: 'user-id' },
+    { key: { userId: 1, costCenterId: 1, date: -1 }, name: 'user-cost-center-date' },
   ]);
 
   return collection;

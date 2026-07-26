@@ -1,0 +1,7 @@
+$kind: http-request
+name: Cost Center Get
+url: "{{HOST}}/api/users/{{user_id}}/cost-centers/:costCenterId"
+method: GET
+pathVariables:
+  costCenterId: 6a4e995bfced1eb997cb51ae
+order: 5200000000000003

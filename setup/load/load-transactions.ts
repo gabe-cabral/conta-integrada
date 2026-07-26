@@ -16,6 +16,7 @@ async function load(userId: string) {
     type: 'EXPENSE',
     status: 'CONFIRMED',
     categoryId: null,
+    costCenterId: null,
     sourceId: '60c72b2f9b1d4c3a5f0e4d1c',
     sourceType: 'CHECKING',
     destinationId: null,

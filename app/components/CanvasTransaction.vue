@@ -194,6 +194,7 @@ onMounted(async () => {
           type: 'EXPENSE',
           status: 'PENDING',
           categoryId: appStore.lastInputCategoryId,
+          costCenterId: null,
           sourceId: appStore.lastInputSourceId,
         };
       } else {

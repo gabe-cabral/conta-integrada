@@ -1,0 +1,15 @@
+$kind: http-request
+name: Cost Center Update
+url: "{{HOST}}/api/users/{{user_id}}/cost-centers/:costCenterId"
+method: PATCH
+pathVariables:
+  costCenterId: 6a4e995bfced1eb997cb51ae
+body:
+  type: json
+  content: |-
+    {
+      "description": "Campanhas e eventos do time comercial",
+      "limit": null,
+      "active": true
+    }
+order: 5200000000000004

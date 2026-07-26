@@ -107,6 +107,9 @@ class TransactionsRepo {
       categoryId: transaction.categoryId
         ? ObjectId.createFromHexString(transaction.categoryId)
         : null,
+      costCenterId: transaction.costCenterId
+        ? ObjectId.createFromHexString(transaction.costCenterId)
+        : null,
       sourceId: ObjectId.createFromHexString(transaction.sourceId),
       userId: ObjectId.createFromHexString(transaction.userId),
 

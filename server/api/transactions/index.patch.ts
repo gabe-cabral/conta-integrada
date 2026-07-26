@@ -1,3 +1,4 @@
+import { assertCostCenterBelongsToUser } from '~~/server/utils/costCenters';
 import { useDatabase } from '~~/server/utils/mongo';
 import { z } from 'zod';
 
@@ -32,6 +33,7 @@ const postSchema = z.object({
   ]),
   status: z.enum(['CANCELED', 'CONFIRMED', 'PENDING']),
   categoryId: z.string().optional(),
+  costCenterId: z.string().length(24).nullish(),
   sourceId: z.string().min(1),
   destinationId: z.string().optional(),
   tags: z.array(z.string()).optional(),
@@ -63,6 +65,12 @@ export default defineEventHandler(async (event) => {
 
       body.createdAt = new Date();
       body.userId = user.id;
+      if (body.costCenterId) {
+        await assertCostCenterBelongsToUser(user.id, body.costCenterId, {
+          activeOnly: true,
+        });
+      }
+      body.costCenterId ??= null;
 
       return insertTransaction(body);
     }

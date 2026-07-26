@@ -42,6 +42,7 @@ export interface Transaction extends DocumentOwner, AuditableRecord {
   type: TransactionType
   status: 'PENDING' | 'CONFIRMED' | 'CANCELED'
   categoryId?: string | null
+  costCenterId: string | null
   sourceId: string
   sourceType: AccountType
   destinationId?: string | null

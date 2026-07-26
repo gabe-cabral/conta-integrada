@@ -1,0 +1,7 @@
+$kind: http-request
+name: Cost Center Delete
+url: "{{HOST}}/api/users/{{user_id}}/cost-centers/:costCenterId"
+method: DELETE
+pathVariables:
+  costCenterId: 6a4e995bfced1eb997cb51ae
+order: 5200000000000005

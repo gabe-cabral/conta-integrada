@@ -27,6 +27,7 @@ export const transactionsSchema = z
     ]),
     status: z.enum(['CANCELED', 'CONFIRMED', 'PENDING']),
     categoryId: bsonObjectId.nullable(),
+    costCenterId: bsonObjectId.nullable(),
     sourceId: bsonObjectId,
     sourceType: z.enum([
       'CHECKING',

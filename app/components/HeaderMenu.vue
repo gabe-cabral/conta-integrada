@@ -17,6 +17,7 @@ const userMenuItens = computed(() => [
   { name: 'Contas', link: '/user/accounts', icon: 'bank' },
   { name: 'Cartões', link: '/', icon: 'credit-card' },
   { name: t('categories.pageTitle'), link: '/user/categories', icon: 'bookmarks' },
+  { name: t('costCenters.pageTitle'), link: '/user/cost-centers', icon: 'diagram-3-fill' },
   { separator: true },
   { name: 'Preferências', link: '/user/preferences', icon: 'toggles2' },
 ]);

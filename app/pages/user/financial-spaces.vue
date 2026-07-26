@@ -154,9 +154,11 @@ load();
             <h5 class="card-title mb-0 me-auto" :style="{ color: financialSpace.color }">
               {{ financialSpace.name }}
             </h5>
-            <span class="font-monospace small text-body-secondary me-4" title="Moedas aceitas">
-              {{ getCurrencies(financialSpace).join(' · ') }}
-            </span>
+            <CurrencyList
+              class="me-4"
+              :currencies="getCurrencies(financialSpace)"
+              title="Moedas aceitas"
+            />
             <span class="text-success fw-semibold" title="Representatividade nas receitas">
               <i class="bi bi-arrow-up-right me-1" />80%
             </span>

@@ -89,6 +89,10 @@ Check out the [deployment documentation](https://nuxt.com/docs/getting-started/d
 
 Os espaços organizam contas, cartões, categorias e moedas em contextos independentes, como Casa, Pessoal ou Empresa. Cada espaço possui identidade visual própria, pode limitar as categorias disponíveis e pode ser exibido como uma visão separada na página inicial.
 
+### Centros de custos
+
+Os centros de custos permitem acompanhar gastos em escopos globais e independentes de espaços, contas e cartões. Cada centro pode ter um limite mensal por moeda, categorias associadas automaticamente e ser ativado ou inativado sem perder seu histórico.
+
 # Recursos
 
 ## Bank Logos

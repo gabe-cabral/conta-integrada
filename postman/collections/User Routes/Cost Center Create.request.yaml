@@ -1,0 +1,19 @@
+$kind: http-request
+name: Cost Center Create
+url: "{{HOST}}/api/users/{{user_id}}/cost-centers"
+method: POST
+body:
+  type: json
+  content: |-
+    {
+      "name": "Marketing",
+      "description": "Campanhas, anúncios e eventos",
+      "limit": {
+        "amountInCents": 500000,
+        "currency": "BRL",
+        "period": "monthly"
+      },
+      "categoryIds": [],
+      "active": true
+    }
+order: 5200000000000001
